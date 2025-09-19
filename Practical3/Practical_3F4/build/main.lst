@@ -1,0 +1,2462 @@
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"main.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Core/Src/main.c"
+  20              		.section	.text.MX_GPIO_Init,"ax",%progbits
+  21              		.align	1
+  22              		.syntax unified
+  23              		.thumb
+  24              		.thumb_func
+  26              	MX_GPIO_Init:
+  27              	.LFB140:
+   1:Core/Src/main.c **** //TADALAS BRANCH - F4
+   2:Core/Src/main.c **** /* USER CODE BEGIN Header */
+   3:Core/Src/main.c **** /**
+   4:Core/Src/main.c ****   ******************************************************************************
+   5:Core/Src/main.c ****   * @file           : main.c
+   6:Core/Src/main.c ****   * @brief          : Main program body
+   7:Core/Src/main.c ****   ******************************************************************************
+   8:Core/Src/main.c ****   * @attention
+   9:Core/Src/main.c ****   *
+  10:Core/Src/main.c ****   * Copyright (c) 2025 STMicroelectronics.
+  11:Core/Src/main.c ****   * All rights reserved.
+  12:Core/Src/main.c ****   *
+  13:Core/Src/main.c ****   * This software is licensed under terms that can be found in the LICENSE file
+  14:Core/Src/main.c ****   * in the root directory of this software component.
+  15:Core/Src/main.c ****   * If no LICENSE file comes with this software, it is provided AS-IS.
+  16:Core/Src/main.c ****   *
+  17:Core/Src/main.c ****   ******************************************************************************
+  18:Core/Src/main.c ****   */
+  19:Core/Src/main.c **** /* USER CODE END Header */
+  20:Core/Src/main.c **** 
+  21:Core/Src/main.c **** /* Includes ------------------------------------------------------------------*/
+  22:Core/Src/main.c **** #include "main.h"
+  23:Core/Src/main.c **** #include <stdint.h>
+  24:Core/Src/main.c **** #include <stdio.h>
+  25:Core/Src/main.c **** 
+  26:Core/Src/main.c **** /* Private variables ---------------------------------------------------------*/
+  27:Core/Src/main.c **** int sizes[] = {128, 160, 192, 224, 256};
+  28:Core/Src/main.c **** int numSizes = 5;
+  29:Core/Src/main.c **** int maxIter = 100;
+  30:Core/Src/main.c **** 
+  31:Core/Src/main.c **** /* Private function prototypes -----------------------------------------------*/
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 2
+
+
+  32:Core/Src/main.c **** void SystemClock_Config(void);
+  33:Core/Src/main.c **** static void MX_GPIO_Init(void);
+  34:Core/Src/main.c **** void LED_ON(void);
+  35:Core/Src/main.c **** uint64_t Calculate_double_Mandelbrot(int width, int height, int maxIter);
+  36:Core/Src/main.c **** static inline void DWT_init(void);
+  37:Core/Src/main.c **** void Error_Handler(void);
+  38:Core/Src/main.c **** 
+  39:Core/Src/main.c **** /* Private user code ---------------------------------------------------------*/
+  40:Core/Src/main.c **** 
+  41:Core/Src/main.c **** /* Main program --------------------------------------------------------------*/
+  42:Core/Src/main.c **** int main(void)
+  43:Core/Src/main.c **** {
+  44:Core/Src/main.c ****     volatile uint32_t elapsed_Time;
+  45:Core/Src/main.c ****     volatile uint32_t elapsed_Cycles;
+  46:Core/Src/main.c **** 
+  47:Core/Src/main.c ****     /* Initialize the HAL Library */
+  48:Core/Src/main.c ****     HAL_Init();
+  49:Core/Src/main.c **** 
+  50:Core/Src/main.c ****     /* Configure the system clock */
+  51:Core/Src/main.c ****     SystemClock_Config();
+  52:Core/Src/main.c **** 
+  53:Core/Src/main.c ****     /* Initialize GPIOs */
+  54:Core/Src/main.c ****     MX_GPIO_Init();
+  55:Core/Src/main.c **** 
+  56:Core/Src/main.c ****     /* Turn on LED0 to signal start */
+  57:Core/Src/main.c ****     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
+  58:Core/Src/main.c ****     HAL_Delay(2000);
+  59:Core/Src/main.c **** 
+  60:Core/Src/main.c ****     /* Initialize DWT cycle counter */
+  61:Core/Src/main.c ****     DWT_init();
+  62:Core/Src/main.c **** 
+  63:Core/Src/main.c ****     /* Run Mandelbrot for each image size */
+  64:Core/Src/main.c ****     for (int i = 0; i < numSizes; i++) {
+  65:Core/Src/main.c ****         int size = sizes[i];
+  66:Core/Src/main.c **** 
+  67:Core/Src/main.c ****         /* Reset DWT counter */
+  68:Core/Src/main.c ****         DWT->CYCCNT = 0;
+  69:Core/Src/main.c ****         uint32_t startCycle = DWT->CYCCNT;
+  70:Core/Src/main.c ****         uint32_t startTime = HAL_GetTick();
+  71:Core/Src/main.c **** 
+  72:Core/Src/main.c ****         uint64_t checksum = Calculate_double_Mandelbrot(size, size, maxIter);
+  73:Core/Src/main.c **** 
+  74:Core/Src/main.c ****         uint32_t endTime = HAL_GetTick();
+  75:Core/Src/main.c ****         uint32_t endCycle = DWT->CYCCNT;
+  76:Core/Src/main.c **** 
+  77:Core/Src/main.c ****         elapsed_Time = endTime - startTime;
+  78:Core/Src/main.c ****         elapsed_Cycles = endCycle - startCycle;
+  79:Core/Src/main.c **** 
+  80:Core/Src/main.c ****         uint64_t totalPixels = (uint64_t)size * (uint64_t)size;
+  81:Core/Src/main.c ****         uint64_t throughput = 0;
+  82:Core/Src/main.c ****         if (elapsed_Time > 0) {
+  83:Core/Src/main.c ****             throughput = (totalPixels * 1000ULL) / elapsed_Time; // pixels per second
+  84:Core/Src/main.c ****         }
+  85:Core/Src/main.c **** 
+  86:Core/Src/main.c ****         /* Print results */
+  87:Core/Src/main.c ****         printf("Image Size: %dx%d\n", size, size);
+  88:Core/Src/main.c ****         printf("Checksum = %llu\n", (unsigned long long)checksum);
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 3
+
+
+  89:Core/Src/main.c ****         printf("Wall-clock time = %lu ms\n", (unsigned long)elapsed_Time);
+  90:Core/Src/main.c ****         printf("CPU cycles = %lu\n", (unsigned long)elapsed_Cycles);
+  91:Core/Src/main.c ****         printf("Throughput = %llu pixels/s\n\n", (unsigned long long)throughput);
+  92:Core/Src/main.c **** 
+  93:Core/Src/main.c ****         HAL_Delay(200); // Short pause between runs
+  94:Core/Src/main.c ****     }
+  95:Core/Src/main.c **** 
+  96:Core/Src/main.c ****     /* Turn off LED0, turn on LED1 to signal end */
+  97:Core/Src/main.c ****     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+  98:Core/Src/main.c ****     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
+  99:Core/Src/main.c ****     HAL_Delay(3000);
+ 100:Core/Src/main.c ****     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+ 101:Core/Src/main.c ****     HAL_Delay(2000);
+ 102:Core/Src/main.c **** 
+ 103:Core/Src/main.c ****     /* Infinite loop */
+ 104:Core/Src/main.c ****     while (1) {
+ 105:Core/Src/main.c ****         // Optional idle code
+ 106:Core/Src/main.c ****     }
+ 107:Core/Src/main.c **** }
+ 108:Core/Src/main.c **** 
+ 109:Core/Src/main.c **** /* Mandelbrot calculation using double precision */
+ 110:Core/Src/main.c **** uint64_t Calculate_double_Mandelbrot(int width, int height, int maxIter)
+ 111:Core/Src/main.c **** {
+ 112:Core/Src/main.c ****     uint64_t checksum = 0;
+ 113:Core/Src/main.c **** 
+ 114:Core/Src/main.c ****     for (int y = 0; y < height; y++) {
+ 115:Core/Src/main.c ****         for (int x = 0; x < width; x++) {
+ 116:Core/Src/main.c ****             double x0 = ((double)x / (double)width) * 3.5 - 2.5;
+ 117:Core/Src/main.c ****             double y0 = ((double)y / (double)height) * 2.0 - 1.0;
+ 118:Core/Src/main.c **** 
+ 119:Core/Src/main.c ****             double xi = 0.0, yi = 0.0;
+ 120:Core/Src/main.c ****             int iteration = 0;
+ 121:Core/Src/main.c **** 
+ 122:Core/Src/main.c ****             while (iteration < maxIter && (xi*xi + yi*yi) <= 4.0) {
+ 123:Core/Src/main.c ****                 double tmp = xi*xi - yi*yi;
+ 124:Core/Src/main.c ****                 yi = 2.0*xi*yi + y0;
+ 125:Core/Src/main.c ****                 xi = tmp + x0;
+ 126:Core/Src/main.c ****                 iteration++;
+ 127:Core/Src/main.c ****             }
+ 128:Core/Src/main.c **** 
+ 129:Core/Src/main.c ****             checksum += (uint64_t)iteration;
+ 130:Core/Src/main.c ****         }
+ 131:Core/Src/main.c ****     }
+ 132:Core/Src/main.c **** 
+ 133:Core/Src/main.c ****     return checksum;
+ 134:Core/Src/main.c **** }
+ 135:Core/Src/main.c **** 
+ 136:Core/Src/main.c **** /* DWT initialization for cycle counting */
+ 137:Core/Src/main.c **** static inline void DWT_init(void)
+ 138:Core/Src/main.c **** {
+ 139:Core/Src/main.c ****     CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+ 140:Core/Src/main.c ****     #if defined(DWT_LAR)
+ 141:Core/Src/main.c ****         DWT->LAR = 0xC5ACCE55; // unlock if needed
+ 142:Core/Src/main.c ****     #endif
+ 143:Core/Src/main.c ****     DWT->CYCCNT = 0;
+ 144:Core/Src/main.c ****     DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+ 145:Core/Src/main.c **** }
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 4
+
+
+ 146:Core/Src/main.c **** 
+ 147:Core/Src/main.c **** /* GPIO Initialization */
+ 148:Core/Src/main.c **** static void MX_GPIO_Init(void)
+ 149:Core/Src/main.c **** {
+  28              		.loc 1 149 1 view -0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 24
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 70B5     		push	{r4, r5, r6, lr}
+  33              	.LCFI0:
+  34              		.cfi_def_cfa_offset 16
+  35              		.cfi_offset 4, -16
+  36              		.cfi_offset 5, -12
+  37              		.cfi_offset 6, -8
+  38              		.cfi_offset 14, -4
+  39 0002 86B0     		sub	sp, sp, #24
+  40              	.LCFI1:
+  41              		.cfi_def_cfa_offset 40
+ 150:Core/Src/main.c ****     GPIO_InitTypeDef GPIO_InitStruct = {0};
+  42              		.loc 1 150 5 view .LVU1
+  43              		.loc 1 150 22 is_stmt 0 view .LVU2
+  44 0004 0024     		movs	r4, #0
+  45 0006 0194     		str	r4, [sp, #4]
+  46 0008 0294     		str	r4, [sp, #8]
+  47 000a 0394     		str	r4, [sp, #12]
+  48 000c 0494     		str	r4, [sp, #16]
+  49 000e 0594     		str	r4, [sp, #20]
+ 151:Core/Src/main.c **** 
+ 152:Core/Src/main.c ****     /* Enable GPIOB clock */
+ 153:Core/Src/main.c ****     __HAL_RCC_GPIOB_CLK_ENABLE();
+  50              		.loc 1 153 5 is_stmt 1 view .LVU3
+  51              	.LBB8:
+  52              		.loc 1 153 5 view .LVU4
+  53 0010 0094     		str	r4, [sp]
+  54              		.loc 1 153 5 view .LVU5
+  55 0012 0D4B     		ldr	r3, .L3
+  56 0014 1A6B     		ldr	r2, [r3, #48]
+  57 0016 42F00202 		orr	r2, r2, #2
+  58 001a 1A63     		str	r2, [r3, #48]
+  59              		.loc 1 153 5 view .LVU6
+  60 001c 1B6B     		ldr	r3, [r3, #48]
+  61 001e 03F00203 		and	r3, r3, #2
+  62 0022 0093     		str	r3, [sp]
+  63              		.loc 1 153 5 view .LVU7
+  64 0024 009B     		ldr	r3, [sp]
+  65              	.LBE8:
+  66              		.loc 1 153 5 view .LVU8
+ 154:Core/Src/main.c **** 
+ 155:Core/Src/main.c ****     /* Configure PB0-PB7 as output */
+ 156:Core/Src/main.c ****     GPIO_InitStruct.Pin = GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3 |
+  67              		.loc 1 156 5 view .LVU9
+  68              		.loc 1 156 25 is_stmt 0 view .LVU10
+  69 0026 FF26     		movs	r6, #255
+  70 0028 0196     		str	r6, [sp, #4]
+ 157:Core/Src/main.c ****                           GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7;
+ 158:Core/Src/main.c ****     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  71              		.loc 1 158 5 is_stmt 1 view .LVU11
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 5
+
+
+  72              		.loc 1 158 26 is_stmt 0 view .LVU12
+  73 002a 0123     		movs	r3, #1
+  74 002c 0293     		str	r3, [sp, #8]
+ 159:Core/Src/main.c ****     GPIO_InitStruct.Pull = GPIO_NOPULL;
+  75              		.loc 1 159 5 is_stmt 1 view .LVU13
+ 160:Core/Src/main.c ****     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  76              		.loc 1 160 5 view .LVU14
+ 161:Core/Src/main.c ****     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  77              		.loc 1 161 5 view .LVU15
+  78 002e 074D     		ldr	r5, .L3+4
+  79 0030 01A9     		add	r1, sp, #4
+  80 0032 2846     		mov	r0, r5
+  81 0034 FFF7FEFF 		bl	HAL_GPIO_Init
+  82              	.LVL0:
+ 162:Core/Src/main.c **** 
+ 163:Core/Src/main.c ****     /* Reset all pins */
+ 164:Core/Src/main.c ****     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3 |
+  83              		.loc 1 164 5 view .LVU16
+  84 0038 2246     		mov	r2, r4
+  85 003a 3146     		mov	r1, r6
+  86 003c 2846     		mov	r0, r5
+  87 003e FFF7FEFF 		bl	HAL_GPIO_WritePin
+  88              	.LVL1:
+ 165:Core/Src/main.c ****                              GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7, GPIO_PIN_RESET);
+ 166:Core/Src/main.c **** }
+  89              		.loc 1 166 1 is_stmt 0 view .LVU17
+  90 0042 06B0     		add	sp, sp, #24
+  91              	.LCFI2:
+  92              		.cfi_def_cfa_offset 16
+  93              		@ sp needed
+  94 0044 70BD     		pop	{r4, r5, r6, pc}
+  95              	.L4:
+  96 0046 00BF     		.align	2
+  97              	.L3:
+  98 0048 00380240 		.word	1073887232
+  99 004c 00040240 		.word	1073873920
+ 100              		.cfi_endproc
+ 101              	.LFE140:
+ 103              		.global	__aeabi_i2d
+ 104              		.global	__aeabi_ddiv
+ 105              		.global	__aeabi_dmul
+ 106              		.global	__aeabi_dsub
+ 107              		.global	__aeabi_dadd
+ 108              		.global	__aeabi_dcmple
+ 109              		.section	.text.Calculate_double_Mandelbrot,"ax",%progbits
+ 110              		.align	1
+ 111              		.global	Calculate_double_Mandelbrot
+ 112              		.syntax unified
+ 113              		.thumb
+ 114              		.thumb_func
+ 116              	Calculate_double_Mandelbrot:
+ 117              	.LVL2:
+ 118              	.LFB138:
+ 111:Core/Src/main.c ****     uint64_t checksum = 0;
+ 119              		.loc 1 111 1 is_stmt 1 view -0
+ 120              		.cfi_startproc
+ 121              		@ args = 0, pretend = 0, frame = 56
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 6
+
+
+ 122              		@ frame_needed = 0, uses_anonymous_args = 0
+ 111:Core/Src/main.c ****     uint64_t checksum = 0;
+ 123              		.loc 1 111 1 is_stmt 0 view .LVU19
+ 124 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 125              	.LCFI3:
+ 126              		.cfi_def_cfa_offset 36
+ 127              		.cfi_offset 4, -36
+ 128              		.cfi_offset 5, -32
+ 129              		.cfi_offset 6, -28
+ 130              		.cfi_offset 7, -24
+ 131              		.cfi_offset 8, -20
+ 132              		.cfi_offset 9, -16
+ 133              		.cfi_offset 10, -12
+ 134              		.cfi_offset 11, -8
+ 135              		.cfi_offset 14, -4
+ 136 0004 8FB0     		sub	sp, sp, #60
+ 137              	.LCFI4:
+ 138              		.cfi_def_cfa_offset 96
+ 139 0006 0790     		str	r0, [sp, #28]
+ 140 0008 0C91     		str	r1, [sp, #48]
+ 141 000a 0D92     		str	r2, [sp, #52]
+ 112:Core/Src/main.c **** 
+ 142              		.loc 1 112 5 is_stmt 1 view .LVU20
+ 143              	.LVL3:
+ 114:Core/Src/main.c ****         for (int x = 0; x < width; x++) {
+ 144              		.loc 1 114 5 view .LVU21
+ 145              	.LBB9:
+ 114:Core/Src/main.c ****         for (int x = 0; x < width; x++) {
+ 146              		.loc 1 114 10 view .LVU22
+ 114:Core/Src/main.c ****         for (int x = 0; x < width; x++) {
+ 147              		.loc 1 114 14 is_stmt 0 view .LVU23
+ 148 000c 4FF00008 		mov	r8, #0
+ 149              	.LBE9:
+ 112:Core/Src/main.c **** 
+ 150              		.loc 1 112 14 view .LVU24
+ 151 0010 CDF82080 		str	r8, [sp, #32]
+ 152 0014 CDF82480 		str	r8, [sp, #36]
+ 153              	.LBB15:
+ 114:Core/Src/main.c ****         for (int x = 0; x < width; x++) {
+ 154              		.loc 1 114 5 view .LVU25
+ 155 0018 8DE0     		b	.L6
+ 156              	.LVL4:
+ 157              	.L9:
+ 158              	.LBB10:
+ 159              	.LBB11:
+ 160              	.LBB12:
+ 123:Core/Src/main.c ****                 yi = 2.0*xi*yi + y0;
+ 161              		.loc 1 123 17 is_stmt 1 view .LVU26
+ 123:Core/Src/main.c ****                 yi = 2.0*xi*yi + y0;
+ 162              		.loc 1 123 24 is_stmt 0 view .LVU27
+ 163 001a 5246     		mov	r2, r10
+ 164 001c 5B46     		mov	r3, fp
+ 165 001e DDE90001 		ldrd	r0, [sp]
+ 166 0022 FFF7FEFF 		bl	__aeabi_dsub
+ 167              	.LVL5:
+ 168 0026 8246     		mov	r10, r0
+ 169 0028 8B46     		mov	fp, r1
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 7
+
+
+ 170              	.LVL6:
+ 124:Core/Src/main.c ****                 xi = tmp + x0;
+ 171              		.loc 1 124 17 is_stmt 1 view .LVU28
+ 124:Core/Src/main.c ****                 xi = tmp + x0;
+ 172              		.loc 1 124 25 is_stmt 0 view .LVU29
+ 173 002a 2246     		mov	r2, r4
+ 174 002c 2B46     		mov	r3, r5
+ 175 002e 2046     		mov	r0, r4
+ 176 0030 2946     		mov	r1, r5
+ 177 0032 FFF7FEFF 		bl	__aeabi_dadd
+ 178              	.LVL7:
+ 124:Core/Src/main.c ****                 xi = tmp + x0;
+ 179              		.loc 1 124 28 view .LVU30
+ 180 0036 3246     		mov	r2, r6
+ 181 0038 3B46     		mov	r3, r7
+ 182 003a FFF7FEFF 		bl	__aeabi_dmul
+ 183              	.LVL8:
+ 124:Core/Src/main.c ****                 xi = tmp + x0;
+ 184              		.loc 1 124 20 view .LVU31
+ 185 003e DDE90423 		ldrd	r2, [sp, #16]
+ 186 0042 FFF7FEFF 		bl	__aeabi_dadd
+ 187              	.LVL9:
+ 188 0046 0646     		mov	r6, r0
+ 189              	.LVL10:
+ 124:Core/Src/main.c ****                 xi = tmp + x0;
+ 190              		.loc 1 124 20 view .LVU32
+ 191 0048 0F46     		mov	r7, r1
+ 192              	.LVL11:
+ 125:Core/Src/main.c ****                 iteration++;
+ 193              		.loc 1 125 17 is_stmt 1 view .LVU33
+ 125:Core/Src/main.c ****                 iteration++;
+ 194              		.loc 1 125 20 is_stmt 0 view .LVU34
+ 195 004a 5246     		mov	r2, r10
+ 196 004c 5B46     		mov	r3, fp
+ 197 004e DDE90201 		ldrd	r0, [sp, #8]
+ 198 0052 FFF7FEFF 		bl	__aeabi_dadd
+ 199              	.LVL12:
+ 200 0056 0446     		mov	r4, r0
+ 201              	.LVL13:
+ 125:Core/Src/main.c ****                 iteration++;
+ 202              		.loc 1 125 20 view .LVU35
+ 203 0058 0D46     		mov	r5, r1
+ 204              	.LVL14:
+ 126:Core/Src/main.c ****             }
+ 205              		.loc 1 126 17 is_stmt 1 view .LVU36
+ 126:Core/Src/main.c ****             }
+ 206              		.loc 1 126 26 is_stmt 0 view .LVU37
+ 207 005a 08F10108 		add	r8, r8, #1
+ 208              	.LVL15:
+ 209              	.L7:
+ 126:Core/Src/main.c ****             }
+ 210              		.loc 1 126 26 view .LVU38
+ 211              	.LBE12:
+ 122:Core/Src/main.c ****                 double tmp = xi*xi - yi*yi;
+ 212              		.loc 1 122 40 is_stmt 1 view .LVU39
+ 213 005e C845     		cmp	r8, r9
+ 214 0060 1BDA     		bge	.L8
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 8
+
+
+ 122:Core/Src/main.c ****                 double tmp = xi*xi - yi*yi;
+ 215              		.loc 1 122 46 is_stmt 0 discriminator 1 view .LVU40
+ 216 0062 2246     		mov	r2, r4
+ 217 0064 2B46     		mov	r3, r5
+ 218 0066 2046     		mov	r0, r4
+ 219 0068 2946     		mov	r1, r5
+ 220 006a FFF7FEFF 		bl	__aeabi_dmul
+ 221              	.LVL16:
+ 222 006e CDE90001 		strd	r0, [sp]
+ 122:Core/Src/main.c ****                 double tmp = xi*xi - yi*yi;
+ 223              		.loc 1 122 54 discriminator 1 view .LVU41
+ 224 0072 3246     		mov	r2, r6
+ 225 0074 3B46     		mov	r3, r7
+ 226 0076 3046     		mov	r0, r6
+ 227 0078 3946     		mov	r1, r7
+ 228 007a FFF7FEFF 		bl	__aeabi_dmul
+ 229              	.LVL17:
+ 230 007e 8246     		mov	r10, r0
+ 231 0080 8B46     		mov	fp, r1
+ 122:Core/Src/main.c ****                 double tmp = xi*xi - yi*yi;
+ 232              		.loc 1 122 50 discriminator 1 view .LVU42
+ 233 0082 0246     		mov	r2, r0
+ 234 0084 0B46     		mov	r3, r1
+ 235 0086 DDE90001 		ldrd	r0, [sp]
+ 236 008a FFF7FEFF 		bl	__aeabi_dadd
+ 237              	.LVL18:
+ 122:Core/Src/main.c ****                 double tmp = xi*xi - yi*yi;
+ 238              		.loc 1 122 40 discriminator 1 view .LVU43
+ 239 008e 0022     		movs	r2, #0
+ 240 0090 314B     		ldr	r3, .L16
+ 241 0092 FFF7FEFF 		bl	__aeabi_dcmple
+ 242              	.LVL19:
+ 243 0096 0028     		cmp	r0, #0
+ 244 0098 BFD1     		bne	.L9
+ 245              	.L8:
+ 129:Core/Src/main.c ****         }
+ 246              		.loc 1 129 22 view .LVU44
+ 247 009a DDF82890 		ldr	r9, [sp, #40]
+ 129:Core/Src/main.c ****         }
+ 248              		.loc 1 129 13 is_stmt 1 view .LVU45
+ 129:Core/Src/main.c ****         }
+ 249              		.loc 1 129 22 is_stmt 0 view .LVU46
+ 250 009e 089B     		ldr	r3, [sp, #32]
+ 251 00a0 18EB0302 		adds	r2, r8, r3
+ 252 00a4 0892     		str	r2, [sp, #32]
+ 253              	.LVL20:
+ 129:Core/Src/main.c ****         }
+ 254              		.loc 1 129 22 view .LVU47
+ 255 00a6 099B     		ldr	r3, [sp, #36]
+ 256 00a8 43EBE873 		adc	r3, r3, r8, asr #31
+ 257 00ac 0993     		str	r3, [sp, #36]
+ 258              	.LVL21:
+ 129:Core/Src/main.c ****         }
+ 259              		.loc 1 129 22 view .LVU48
+ 260              	.LBE11:
+ 115:Core/Src/main.c ****             double x0 = ((double)x / (double)width) * 3.5 - 2.5;
+ 261              		.loc 1 115 37 is_stmt 1 discriminator 2 view .LVU49
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 9
+
+
+ 262 00ae 09F10109 		add	r9, r9, #1
+ 263              	.LVL22:
+ 264              	.L11:
+ 115:Core/Src/main.c ****             double x0 = ((double)x / (double)width) * 3.5 - 2.5;
+ 265              		.loc 1 115 27 discriminator 1 view .LVU50
+ 266 00b2 079B     		ldr	r3, [sp, #28]
+ 267 00b4 9945     		cmp	r9, r3
+ 268 00b6 3ADA     		bge	.L14
+ 269              	.LBB13:
+ 116:Core/Src/main.c ****             double y0 = ((double)y / (double)height) * 2.0 - 1.0;
+ 270              		.loc 1 116 13 view .LVU51
+ 116:Core/Src/main.c ****             double y0 = ((double)y / (double)height) * 2.0 - 1.0;
+ 271              		.loc 1 116 26 is_stmt 0 view .LVU52
+ 272 00b8 4846     		mov	r0, r9
+ 273 00ba FFF7FEFF 		bl	__aeabi_i2d
+ 274              	.LVL23:
+ 275 00be 0446     		mov	r4, r0
+ 276 00c0 0D46     		mov	r5, r1
+ 116:Core/Src/main.c ****             double y0 = ((double)y / (double)height) * 2.0 - 1.0;
+ 277              		.loc 1 116 38 view .LVU53
+ 278 00c2 0798     		ldr	r0, [sp, #28]
+ 279 00c4 FFF7FEFF 		bl	__aeabi_i2d
+ 280              	.LVL24:
+ 281 00c8 0246     		mov	r2, r0
+ 282 00ca 0B46     		mov	r3, r1
+ 116:Core/Src/main.c ****             double y0 = ((double)y / (double)height) * 2.0 - 1.0;
+ 283              		.loc 1 116 36 view .LVU54
+ 284 00cc 2046     		mov	r0, r4
+ 285 00ce 2946     		mov	r1, r5
+ 286 00d0 FFF7FEFF 		bl	__aeabi_ddiv
+ 287              	.LVL25:
+ 116:Core/Src/main.c ****             double y0 = ((double)y / (double)height) * 2.0 - 1.0;
+ 288              		.loc 1 116 53 view .LVU55
+ 289 00d4 0022     		movs	r2, #0
+ 290 00d6 214B     		ldr	r3, .L16+4
+ 291 00d8 FFF7FEFF 		bl	__aeabi_dmul
+ 292              	.LVL26:
+ 116:Core/Src/main.c ****             double y0 = ((double)y / (double)height) * 2.0 - 1.0;
+ 293              		.loc 1 116 20 view .LVU56
+ 294 00dc 0022     		movs	r2, #0
+ 295 00de 204B     		ldr	r3, .L16+8
+ 296 00e0 FFF7FEFF 		bl	__aeabi_dsub
+ 297              	.LVL27:
+ 298 00e4 CDE90201 		strd	r0, [sp, #8]
+ 299              	.LVL28:
+ 117:Core/Src/main.c **** 
+ 300              		.loc 1 117 13 is_stmt 1 view .LVU57
+ 117:Core/Src/main.c **** 
+ 301              		.loc 1 117 26 is_stmt 0 view .LVU58
+ 302 00e8 0B98     		ldr	r0, [sp, #44]
+ 303              	.LVL29:
+ 117:Core/Src/main.c **** 
+ 304              		.loc 1 117 26 view .LVU59
+ 305 00ea FFF7FEFF 		bl	__aeabi_i2d
+ 306              	.LVL30:
+ 307 00ee 0446     		mov	r4, r0
+ 308 00f0 0D46     		mov	r5, r1
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 10
+
+
+ 117:Core/Src/main.c **** 
+ 309              		.loc 1 117 38 view .LVU60
+ 310 00f2 0C98     		ldr	r0, [sp, #48]
+ 311 00f4 FFF7FEFF 		bl	__aeabi_i2d
+ 312              	.LVL31:
+ 313 00f8 0246     		mov	r2, r0
+ 314 00fa 0B46     		mov	r3, r1
+ 117:Core/Src/main.c **** 
+ 315              		.loc 1 117 36 view .LVU61
+ 316 00fc 2046     		mov	r0, r4
+ 317 00fe 2946     		mov	r1, r5
+ 318 0100 FFF7FEFF 		bl	__aeabi_ddiv
+ 319              	.LVL32:
+ 320 0104 0246     		mov	r2, r0
+ 321 0106 0B46     		mov	r3, r1
+ 117:Core/Src/main.c **** 
+ 322              		.loc 1 117 54 view .LVU62
+ 323 0108 FFF7FEFF 		bl	__aeabi_dadd
+ 324              	.LVL33:
+ 117:Core/Src/main.c **** 
+ 325              		.loc 1 117 20 view .LVU63
+ 326 010c 0022     		movs	r2, #0
+ 327 010e 154B     		ldr	r3, .L16+12
+ 328 0110 FFF7FEFF 		bl	__aeabi_dsub
+ 329              	.LVL34:
+ 330 0114 CDE90401 		strd	r0, [sp, #16]
+ 331              	.LVL35:
+ 119:Core/Src/main.c ****             int iteration = 0;
+ 332              		.loc 1 119 13 is_stmt 1 view .LVU64
+ 120:Core/Src/main.c **** 
+ 333              		.loc 1 120 13 view .LVU65
+ 122:Core/Src/main.c ****                 double tmp = xi*xi - yi*yi;
+ 334              		.loc 1 122 13 view .LVU66
+ 120:Core/Src/main.c **** 
+ 335              		.loc 1 120 17 is_stmt 0 view .LVU67
+ 336 0118 4FF00008 		mov	r8, #0
+ 119:Core/Src/main.c ****             int iteration = 0;
+ 337              		.loc 1 119 30 view .LVU68
+ 338 011c 0026     		movs	r6, #0
+ 339 011e 0027     		movs	r7, #0
+ 119:Core/Src/main.c ****             int iteration = 0;
+ 340              		.loc 1 119 20 view .LVU69
+ 341 0120 3446     		mov	r4, r6
+ 342 0122 3D46     		mov	r5, r7
+ 343 0124 CDF82890 		str	r9, [sp, #40]
+ 344 0128 DDF83490 		ldr	r9, [sp, #52]
+ 345              	.LVL36:
+ 122:Core/Src/main.c ****                 double tmp = xi*xi - yi*yi;
+ 346              		.loc 1 122 19 view .LVU70
+ 347 012c 97E7     		b	.L7
+ 348              	.LVL37:
+ 349              	.L14:
+ 122:Core/Src/main.c ****                 double tmp = xi*xi - yi*yi;
+ 350              		.loc 1 122 19 view .LVU71
+ 351              	.LBE13:
+ 352              	.LBE10:
+ 114:Core/Src/main.c ****         for (int x = 0; x < width; x++) {
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 11
+
+
+ 353              		.loc 1 114 34 discriminator 2 view .LVU72
+ 354 012e DDF82C80 		ldr	r8, [sp, #44]
+ 114:Core/Src/main.c ****         for (int x = 0; x < width; x++) {
+ 355              		.loc 1 114 34 is_stmt 1 discriminator 2 view .LVU73
+ 356 0132 08F10108 		add	r8, r8, #1
+ 357              	.LVL38:
+ 358              	.L6:
+ 114:Core/Src/main.c ****         for (int x = 0; x < width; x++) {
+ 359              		.loc 1 114 23 discriminator 1 view .LVU74
+ 360 0136 0C9B     		ldr	r3, [sp, #48]
+ 361 0138 9845     		cmp	r8, r3
+ 362 013a 05DA     		bge	.L15
+ 363              	.LBB14:
+ 115:Core/Src/main.c ****             double x0 = ((double)x / (double)width) * 3.5 - 2.5;
+ 364              		.loc 1 115 18 is_stmt 0 view .LVU75
+ 365 013c 4FF0000A 		mov	r10, #0
+ 366 0140 CDF82C80 		str	r8, [sp, #44]
+ 367 0144 D146     		mov	r9, r10
+ 368 0146 B4E7     		b	.L11
+ 369              	.L15:
+ 115:Core/Src/main.c ****             double x0 = ((double)x / (double)width) * 3.5 - 2.5;
+ 370              		.loc 1 115 18 view .LVU76
+ 371              	.LBE14:
+ 372              	.LBE15:
+ 134:Core/Src/main.c **** 
+ 373              		.loc 1 134 1 view .LVU77
+ 374 0148 DDF82490 		ldr	r9, [sp, #36]
+ 133:Core/Src/main.c **** }
+ 375              		.loc 1 133 5 is_stmt 1 view .LVU78
+ 134:Core/Src/main.c **** 
+ 376              		.loc 1 134 1 is_stmt 0 view .LVU79
+ 377 014c 0898     		ldr	r0, [sp, #32]
+ 378 014e 4946     		mov	r1, r9
+ 379 0150 0FB0     		add	sp, sp, #60
+ 380              	.LCFI5:
+ 381              		.cfi_def_cfa_offset 36
+ 382              		@ sp needed
+ 383 0152 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 384              	.LVL39:
+ 385              	.L17:
+ 134:Core/Src/main.c **** 
+ 386              		.loc 1 134 1 view .LVU80
+ 387 0156 00BF     		.align	2
+ 388              	.L16:
+ 389 0158 00001040 		.word	1074790400
+ 390 015c 00000C40 		.word	1074528256
+ 391 0160 00000440 		.word	1074003968
+ 392 0164 0000F03F 		.word	1072693248
+ 393              		.cfi_endproc
+ 394              	.LFE138:
+ 396              		.section	.text.Error_Handler,"ax",%progbits
+ 397              		.align	1
+ 398              		.global	Error_Handler
+ 399              		.syntax unified
+ 400              		.thumb
+ 401              		.thumb_func
+ 403              	Error_Handler:
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 12
+
+
+ 404              	.LFB142:
+ 167:Core/Src/main.c **** 
+ 168:Core/Src/main.c **** /* System Clock Configuration */
+ 169:Core/Src/main.c **** void SystemClock_Config(void)
+ 170:Core/Src/main.c **** {
+ 171:Core/Src/main.c ****     RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+ 172:Core/Src/main.c ****     RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+ 173:Core/Src/main.c **** 
+ 174:Core/Src/main.c ****     /* Enable power controller clock */
+ 175:Core/Src/main.c ****     __HAL_RCC_PWR_CLK_ENABLE();
+ 176:Core/Src/main.c ****     __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+ 177:Core/Src/main.c **** 
+ 178:Core/Src/main.c ****     /* Configure HSE oscillator and PLL */
+ 179:Core/Src/main.c ****     RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+ 180:Core/Src/main.c ****     RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+ 181:Core/Src/main.c ****     RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+ 182:Core/Src/main.c ****     RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+ 183:Core/Src/main.c ****     RCC_OscInitStruct.PLL.PLLM = 8;
+ 184:Core/Src/main.c ****     RCC_OscInitStruct.PLL.PLLN = 336;
+ 185:Core/Src/main.c ****     RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+ 186:Core/Src/main.c ****     RCC_OscInitStruct.PLL.PLLQ = 7;
+ 187:Core/Src/main.c ****     if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) Error_Handler();
+ 188:Core/Src/main.c **** 
+ 189:Core/Src/main.c ****     /* Configure clocks */
+ 190:Core/Src/main.c ****     RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK |
+ 191:Core/Src/main.c ****                                   RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+ 192:Core/Src/main.c ****     RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+ 193:Core/Src/main.c ****     RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+ 194:Core/Src/main.c ****     RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+ 195:Core/Src/main.c ****     RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+ 196:Core/Src/main.c ****     if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK) Error_Handler();
+ 197:Core/Src/main.c **** }
+ 198:Core/Src/main.c **** 
+ 199:Core/Src/main.c **** /* Error Handler */
+ 200:Core/Src/main.c **** void Error_Handler(void)
+ 201:Core/Src/main.c **** {
+ 405              		.loc 1 201 1 is_stmt 1 view -0
+ 406              		.cfi_startproc
+ 407              		@ Volatile: function does not return.
+ 408              		@ args = 0, pretend = 0, frame = 0
+ 409              		@ frame_needed = 0, uses_anonymous_args = 0
+ 410              		@ link register save eliminated.
+ 202:Core/Src/main.c ****     __disable_irq();
+ 411              		.loc 1 202 5 view .LVU82
+ 412              	.LBB16:
+ 413              	.LBI16:
+ 414              		.file 2 "Drivers/CMSIS/Include/cmsis_gcc.h"
+   1:Drivers/CMSIS/Include/cmsis_gcc.h **** /**************************************************************************//**
+   2:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @file     cmsis_gcc.h
+   3:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @brief    CMSIS compiler GCC header file
+   4:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @version  V5.4.1
+   5:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @date     27. May 2021
+   6:Drivers/CMSIS/Include/cmsis_gcc.h ****  ******************************************************************************/
+   7:Drivers/CMSIS/Include/cmsis_gcc.h **** /*
+   8:Drivers/CMSIS/Include/cmsis_gcc.h ****  * Copyright (c) 2009-2021 Arm Limited. All rights reserved.
+   9:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
+  10:Drivers/CMSIS/Include/cmsis_gcc.h ****  * SPDX-License-Identifier: Apache-2.0
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 13
+
+
+  11:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
+  12:Drivers/CMSIS/Include/cmsis_gcc.h ****  * Licensed under the Apache License, Version 2.0 (the License); you may
+  13:Drivers/CMSIS/Include/cmsis_gcc.h ****  * not use this file except in compliance with the License.
+  14:Drivers/CMSIS/Include/cmsis_gcc.h ****  * You may obtain a copy of the License at
+  15:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
+  16:Drivers/CMSIS/Include/cmsis_gcc.h ****  * www.apache.org/licenses/LICENSE-2.0
+  17:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
+  18:Drivers/CMSIS/Include/cmsis_gcc.h ****  * Unless required by applicable law or agreed to in writing, software
+  19:Drivers/CMSIS/Include/cmsis_gcc.h ****  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  20:Drivers/CMSIS/Include/cmsis_gcc.h ****  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  21:Drivers/CMSIS/Include/cmsis_gcc.h ****  * See the License for the specific language governing permissions and
+  22:Drivers/CMSIS/Include/cmsis_gcc.h ****  * limitations under the License.
+  23:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+  24:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+  25:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __CMSIS_GCC_H
+  26:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_H
+  27:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+  28:Drivers/CMSIS/Include/cmsis_gcc.h **** /* ignore some GCC warnings */
+  29:Drivers/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic push
+  30:Drivers/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wsign-conversion"
+  31:Drivers/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wconversion"
+  32:Drivers/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wunused-parameter"
+  33:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+  34:Drivers/CMSIS/Include/cmsis_gcc.h **** /* Fallback for __has_builtin */
+  35:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __has_builtin
+  36:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __has_builtin(x) (0)
+  37:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  38:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+  39:Drivers/CMSIS/Include/cmsis_gcc.h **** /* CMSIS compiler specific defines */
+  40:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __ASM
+  41:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __ASM                                  __asm
+  42:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  43:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __INLINE
+  44:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __INLINE                               inline
+  45:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  46:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __STATIC_INLINE
+  47:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __STATIC_INLINE                        static inline
+  48:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  49:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __STATIC_FORCEINLINE
+  50:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __STATIC_FORCEINLINE                   __attribute__((always_inline)) static inline
+  51:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  52:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __NO_RETURN
+  53:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __NO_RETURN                            __attribute__((__noreturn__))
+  54:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  55:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __USED
+  56:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __USED                                 __attribute__((used))
+  57:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  58:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __WEAK
+  59:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __WEAK                                 __attribute__((weak))
+  60:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  61:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __PACKED
+  62:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __PACKED                               __attribute__((packed, aligned(1)))
+  63:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  64:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __PACKED_STRUCT
+  65:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __PACKED_STRUCT                        struct __attribute__((packed, aligned(1)))
+  66:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  67:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __PACKED_UNION
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 14
+
+
+  68:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __PACKED_UNION                         union __attribute__((packed, aligned(1)))
+  69:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  70:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT32        /* deprecated */
+  71:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+  72:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+  73:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+  74:Drivers/CMSIS/Include/cmsis_gcc.h ****   struct __attribute__((packed)) T_UINT32 { uint32_t v; };
+  75:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+  76:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT32(x)                  (((struct T_UINT32 *)(x))->v)
+  77:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  78:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT16_WRITE
+  79:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+  80:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+  81:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+  82:Drivers/CMSIS/Include/cmsis_gcc.h ****   __PACKED_STRUCT T_UINT16_WRITE { uint16_t v; };
+  83:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+  84:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT16_WRITE(addr, val)    (void)((((struct T_UINT16_WRITE *)(void *)(addr))-
+  85:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  86:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT16_READ
+  87:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+  88:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+  89:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+  90:Drivers/CMSIS/Include/cmsis_gcc.h ****   __PACKED_STRUCT T_UINT16_READ { uint16_t v; };
+  91:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+  92:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT16_READ(addr)          (((const struct T_UINT16_READ *)(const void *)(add
+  93:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  94:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT32_WRITE
+  95:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+  96:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+  97:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+  98:Drivers/CMSIS/Include/cmsis_gcc.h ****   __PACKED_STRUCT T_UINT32_WRITE { uint32_t v; };
+  99:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+ 100:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT32_WRITE(addr, val)    (void)((((struct T_UINT32_WRITE *)(void *)(addr))-
+ 101:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 102:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT32_READ
+ 103:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+ 104:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+ 105:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+ 106:Drivers/CMSIS/Include/cmsis_gcc.h ****   __PACKED_STRUCT T_UINT32_READ { uint32_t v; };
+ 107:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+ 108:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT32_READ(addr)          (((const struct T_UINT32_READ *)(const void *)(add
+ 109:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 110:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __ALIGNED
+ 111:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __ALIGNED(x)                           __attribute__((aligned(x)))
+ 112:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 113:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __RESTRICT
+ 114:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __RESTRICT                             __restrict
+ 115:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 116:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __COMPILER_BARRIER
+ 117:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __COMPILER_BARRIER()                   __ASM volatile("":::"memory")
+ 118:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 119:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 120:Drivers/CMSIS/Include/cmsis_gcc.h **** /* #########################  Startup and Lowlevel Init  ######################## */
+ 121:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 122:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __PROGRAM_START
+ 123:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 124:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 15
+
+
+ 125:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Initializes data and bss sections
+ 126:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details This default implementations initialized all data and additional bss
+ 127:Drivers/CMSIS/Include/cmsis_gcc.h ****            sections relying on .copy.table and .zero.table specified properly
+ 128:Drivers/CMSIS/Include/cmsis_gcc.h ****            in the used linker script.
+ 129:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 130:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 131:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE __NO_RETURN void __cmsis_start(void)
+ 132:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 133:Drivers/CMSIS/Include/cmsis_gcc.h ****   extern void _start(void) __NO_RETURN;
+ 134:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 135:Drivers/CMSIS/Include/cmsis_gcc.h ****   typedef struct {
+ 136:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t const* src;
+ 137:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t* dest;
+ 138:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t  wlen;
+ 139:Drivers/CMSIS/Include/cmsis_gcc.h ****   } __copy_table_t;
+ 140:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 141:Drivers/CMSIS/Include/cmsis_gcc.h ****   typedef struct {
+ 142:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t* dest;
+ 143:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t  wlen;
+ 144:Drivers/CMSIS/Include/cmsis_gcc.h ****   } __zero_table_t;
+ 145:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 146:Drivers/CMSIS/Include/cmsis_gcc.h ****   extern const __copy_table_t __copy_table_start__;
+ 147:Drivers/CMSIS/Include/cmsis_gcc.h ****   extern const __copy_table_t __copy_table_end__;
+ 148:Drivers/CMSIS/Include/cmsis_gcc.h ****   extern const __zero_table_t __zero_table_start__;
+ 149:Drivers/CMSIS/Include/cmsis_gcc.h ****   extern const __zero_table_t __zero_table_end__;
+ 150:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 151:Drivers/CMSIS/Include/cmsis_gcc.h ****   for (__copy_table_t const* pTable = &__copy_table_start__; pTable < &__copy_table_end__; ++pTable
+ 152:Drivers/CMSIS/Include/cmsis_gcc.h ****     for(uint32_t i=0u; i<pTable->wlen; ++i) {
+ 153:Drivers/CMSIS/Include/cmsis_gcc.h ****       pTable->dest[i] = pTable->src[i];
+ 154:Drivers/CMSIS/Include/cmsis_gcc.h ****     }
+ 155:Drivers/CMSIS/Include/cmsis_gcc.h ****   }
+ 156:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 157:Drivers/CMSIS/Include/cmsis_gcc.h ****   for (__zero_table_t const* pTable = &__zero_table_start__; pTable < &__zero_table_end__; ++pTable
+ 158:Drivers/CMSIS/Include/cmsis_gcc.h ****     for(uint32_t i=0u; i<pTable->wlen; ++i) {
+ 159:Drivers/CMSIS/Include/cmsis_gcc.h ****       pTable->dest[i] = 0u;
+ 160:Drivers/CMSIS/Include/cmsis_gcc.h ****     }
+ 161:Drivers/CMSIS/Include/cmsis_gcc.h ****   }
+ 162:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 163:Drivers/CMSIS/Include/cmsis_gcc.h ****   _start();
+ 164:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 165:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 166:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __PROGRAM_START           __cmsis_start
+ 167:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 168:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 169:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __INITIAL_SP
+ 170:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __INITIAL_SP              __StackTop
+ 171:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 172:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 173:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __STACK_LIMIT
+ 174:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __STACK_LIMIT             __StackLimit
+ 175:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 176:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 177:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __VECTOR_TABLE
+ 178:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __VECTOR_TABLE            __Vectors
+ 179:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 180:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 181:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __VECTOR_TABLE_ATTRIBUTE
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 16
+
+
+ 182:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __VECTOR_TABLE_ATTRIBUTE  __attribute__((used, section(".vectors")))
+ 183:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 184:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 185:Drivers/CMSIS/Include/cmsis_gcc.h **** #if defined (__ARM_FEATURE_CMSE) && (__ARM_FEATURE_CMSE == 3U)
+ 186:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __STACK_SEAL
+ 187:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __STACK_SEAL              __StackSeal
+ 188:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 189:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 190:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __TZ_STACK_SEAL_SIZE
+ 191:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __TZ_STACK_SEAL_SIZE      8U
+ 192:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 193:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 194:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __TZ_STACK_SEAL_VALUE
+ 195:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __TZ_STACK_SEAL_VALUE     0xFEF5EDA5FEF5EDA5ULL
+ 196:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 197:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 198:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 199:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __TZ_set_STACKSEAL_S (uint32_t* stackTop) {
+ 200:Drivers/CMSIS/Include/cmsis_gcc.h ****   *((uint64_t *)stackTop) = __TZ_STACK_SEAL_VALUE;
+ 201:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 202:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 203:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 204:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 205:Drivers/CMSIS/Include/cmsis_gcc.h **** /* ##########################  Core Instruction Access  ######################### */
+ 206:Drivers/CMSIS/Include/cmsis_gcc.h **** /** \defgroup CMSIS_Core_InstructionInterface CMSIS Core Instruction Interface
+ 207:Drivers/CMSIS/Include/cmsis_gcc.h ****   Access to dedicated instructions
+ 208:Drivers/CMSIS/Include/cmsis_gcc.h ****   @{
+ 209:Drivers/CMSIS/Include/cmsis_gcc.h **** */
+ 210:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 211:Drivers/CMSIS/Include/cmsis_gcc.h **** /* Define macros for porting to both thumb1 and thumb2.
+ 212:Drivers/CMSIS/Include/cmsis_gcc.h ****  * For thumb1, use low register (r0-r7), specified by constraint "l"
+ 213:Drivers/CMSIS/Include/cmsis_gcc.h ****  * Otherwise, use general registers, specified by constraint "r" */
+ 214:Drivers/CMSIS/Include/cmsis_gcc.h **** #if defined (__thumb__) && !defined (__thumb2__)
+ 215:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_OUT_REG(r) "=l" (r)
+ 216:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_RW_REG(r) "+l" (r)
+ 217:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_USE_REG(r) "l" (r)
+ 218:Drivers/CMSIS/Include/cmsis_gcc.h **** #else
+ 219:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_OUT_REG(r) "=r" (r)
+ 220:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_RW_REG(r) "+r" (r)
+ 221:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_USE_REG(r) "r" (r)
+ 222:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 223:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 224:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 225:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   No Operation
+ 226:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details No Operation does nothing. This instruction can be used for code alignment purposes.
+ 227:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 228:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __NOP()                             __ASM volatile ("nop")
+ 229:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 230:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 231:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Wait For Interrupt
+ 232:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Wait For Interrupt is a hint instruction that suspends execution until one of a number o
+ 233:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 234:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __WFI()                             __ASM volatile ("wfi":::"memory")
+ 235:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 236:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 237:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 238:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Wait For Event
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 17
+
+
+ 239:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Wait For Event is a hint instruction that permits the processor to enter
+ 240:Drivers/CMSIS/Include/cmsis_gcc.h ****            a low-power state until one of a number of events occurs.
+ 241:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 242:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __WFE()                             __ASM volatile ("wfe":::"memory")
+ 243:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 244:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 245:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 246:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Send Event
+ 247:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Send Event is a hint instruction. It causes an event to be signaled to the CPU.
+ 248:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 249:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __SEV()                             __ASM volatile ("sev")
+ 250:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 251:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 252:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 253:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Instruction Synchronization Barrier
+ 254:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Instruction Synchronization Barrier flushes the pipeline in the processor,
+ 255:Drivers/CMSIS/Include/cmsis_gcc.h ****            so that all instructions following the ISB are fetched from cache or memory,
+ 256:Drivers/CMSIS/Include/cmsis_gcc.h ****            after the instruction has been completed.
+ 257:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 258:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __ISB(void)
+ 259:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 260:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("isb 0xF":::"memory");
+ 261:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 262:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 263:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 264:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 265:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Data Synchronization Barrier
+ 266:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Acts as a special kind of Data Memory Barrier.
+ 267:Drivers/CMSIS/Include/cmsis_gcc.h ****            It completes when all explicit memory accesses before this instruction complete.
+ 268:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 269:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __DSB(void)
+ 270:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 271:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("dsb 0xF":::"memory");
+ 272:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 273:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 274:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 275:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 276:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Data Memory Barrier
+ 277:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Ensures the apparent order of the explicit memory operations before
+ 278:Drivers/CMSIS/Include/cmsis_gcc.h ****            and after the instruction, without ensuring their completion.
+ 279:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 280:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __DMB(void)
+ 281:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 282:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("dmb 0xF":::"memory");
+ 283:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 284:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 285:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 286:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 287:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Reverse byte order (32 bit)
+ 288:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Reverses the byte order in unsigned integer value. For example, 0x12345678 becomes 0x785
+ 289:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    value  Value to reverse
+ 290:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return               Reversed value
+ 291:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 292:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __REV(uint32_t value)
+ 293:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 294:Drivers/CMSIS/Include/cmsis_gcc.h **** #if (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 5)
+ 295:Drivers/CMSIS/Include/cmsis_gcc.h ****   return __builtin_bswap32(value);
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 18
+
+
+ 296:Drivers/CMSIS/Include/cmsis_gcc.h **** #else
+ 297:Drivers/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
+ 298:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 299:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM ("rev %0, %1" : __CMSIS_GCC_OUT_REG (result) : __CMSIS_GCC_USE_REG (value) );
+ 300:Drivers/CMSIS/Include/cmsis_gcc.h ****   return result;
+ 301:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 302:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 303:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 304:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 305:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 306:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Reverse byte order (16 bit)
+ 307:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Reverses the byte order within each halfword of a word. For example, 0x12345678 becomes 
+ 308:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    value  Value to reverse
+ 309:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return               Reversed value
+ 310:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 311:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __REV16(uint32_t value)
+ 312:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 313:Drivers/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
+ 314:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 315:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM ("rev16 %0, %1" : __CMSIS_GCC_OUT_REG (result) : __CMSIS_GCC_USE_REG (value) );
+ 316:Drivers/CMSIS/Include/cmsis_gcc.h ****   return result;
+ 317:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 318:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 319:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 320:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 321:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Reverse byte order (16 bit)
+ 322:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Reverses the byte order in a 16-bit value and returns the signed 16-bit result. For exam
+ 323:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    value  Value to reverse
+ 324:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return               Reversed value
+ 325:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 326:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE int16_t __REVSH(int16_t value)
+ 327:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 328:Drivers/CMSIS/Include/cmsis_gcc.h **** #if (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)
+ 329:Drivers/CMSIS/Include/cmsis_gcc.h ****   return (int16_t)__builtin_bswap16(value);
+ 330:Drivers/CMSIS/Include/cmsis_gcc.h **** #else
+ 331:Drivers/CMSIS/Include/cmsis_gcc.h ****   int16_t result;
+ 332:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 333:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM ("revsh %0, %1" : __CMSIS_GCC_OUT_REG (result) : __CMSIS_GCC_USE_REG (value) );
+ 334:Drivers/CMSIS/Include/cmsis_gcc.h ****   return result;
+ 335:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 336:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 337:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 338:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 339:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 340:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Rotate Right in unsigned value (32 bit)
+ 341:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Rotate Right (immediate) provides the value of the contents of a register rotated by a v
+ 342:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    op1  Value to rotate
+ 343:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    op2  Number of Bits to rotate
+ 344:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return               Rotated value
+ 345:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 346:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __ROR(uint32_t op1, uint32_t op2)
+ 347:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 348:Drivers/CMSIS/Include/cmsis_gcc.h ****   op2 %= 32U;
+ 349:Drivers/CMSIS/Include/cmsis_gcc.h ****   if (op2 == 0U)
+ 350:Drivers/CMSIS/Include/cmsis_gcc.h ****   {
+ 351:Drivers/CMSIS/Include/cmsis_gcc.h ****     return op1;
+ 352:Drivers/CMSIS/Include/cmsis_gcc.h ****   }
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 19
+
+
+ 353:Drivers/CMSIS/Include/cmsis_gcc.h ****   return (op1 >> op2) | (op1 << (32U - op2));
+ 354:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 355:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 356:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 357:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 358:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Breakpoint
+ 359:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Causes the processor to enter Debug state.
+ 360:Drivers/CMSIS/Include/cmsis_gcc.h ****            Debug tools can use this to investigate system state when the instruction at a particula
+ 361:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    value  is ignored by the processor.
+ 362:Drivers/CMSIS/Include/cmsis_gcc.h ****                  If required, a debugger can use it to store additional information about the break
+ 363:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 364:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __BKPT(value)                       __ASM volatile ("bkpt "#value)
+ 365:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 366:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 367:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 368:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Reverse bit order of value
+ 369:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Reverses the bit order of the given value.
+ 370:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    value  Value to reverse
+ 371:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return               Reversed value
+ 372:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 373:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __RBIT(uint32_t value)
+ 374:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 375:Drivers/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
+ 376:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 377:Drivers/CMSIS/Include/cmsis_gcc.h **** #if ((defined (__ARM_ARCH_7M__      ) && (__ARM_ARCH_7M__      == 1)) || \
+ 378:Drivers/CMSIS/Include/cmsis_gcc.h ****      (defined (__ARM_ARCH_7EM__     ) && (__ARM_ARCH_7EM__     == 1)) || \
+ 379:Drivers/CMSIS/Include/cmsis_gcc.h ****      (defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1))    )
+ 380:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM ("rbit %0, %1" : "=r" (result) : "r" (value) );
+ 381:Drivers/CMSIS/Include/cmsis_gcc.h **** #else
+ 382:Drivers/CMSIS/Include/cmsis_gcc.h ****   uint32_t s = (4U /*sizeof(v)*/ * 8U) - 1U; /* extra shift needed at end */
+ 383:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 384:Drivers/CMSIS/Include/cmsis_gcc.h ****   result = value;                      /* r will be reversed bits of v; first get LSB of v */
+ 385:Drivers/CMSIS/Include/cmsis_gcc.h ****   for (value >>= 1U; value != 0U; value >>= 1U)
+ 386:Drivers/CMSIS/Include/cmsis_gcc.h ****   {
+ 387:Drivers/CMSIS/Include/cmsis_gcc.h ****     result <<= 1U;
+ 388:Drivers/CMSIS/Include/cmsis_gcc.h ****     result |= value & 1U;
+ 389:Drivers/CMSIS/Include/cmsis_gcc.h ****     s--;
+ 390:Drivers/CMSIS/Include/cmsis_gcc.h ****   }
+ 391:Drivers/CMSIS/Include/cmsis_gcc.h ****   result <<= s;                        /* shift when v's highest bits are zero */
+ 392:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 393:Drivers/CMSIS/Include/cmsis_gcc.h ****   return result;
+ 394:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 395:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 396:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 397:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 398:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Count leading zeros
+ 399:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Counts the number of leading zeros of a data value.
+ 400:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to count the leading zeros
+ 401:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return             number of leading zeros in value
+ 402:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 403:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint8_t __CLZ(uint32_t value)
+ 404:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 405:Drivers/CMSIS/Include/cmsis_gcc.h ****   /* Even though __builtin_clz produces a CLZ instruction on ARM, formally
+ 406:Drivers/CMSIS/Include/cmsis_gcc.h ****      __builtin_clz(0) is undefined behaviour, so handle this case specially.
+ 407:Drivers/CMSIS/Include/cmsis_gcc.h ****      This guarantees ARM-compatible results if happening to compile on a non-ARM
+ 408:Drivers/CMSIS/Include/cmsis_gcc.h ****      target, and ensures the compiler doesn't decide to activate any
+ 409:Drivers/CMSIS/Include/cmsis_gcc.h ****      optimisations using the logic "value was passed to __builtin_clz, so it
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 20
+
+
+ 410:Drivers/CMSIS/Include/cmsis_gcc.h ****      is non-zero".
+ 411:Drivers/CMSIS/Include/cmsis_gcc.h ****      ARM GCC 7.3 and possibly earlier will optimise this test away, leaving a
+ 412:Drivers/CMSIS/Include/cmsis_gcc.h ****      single CLZ instruction.
+ 413:Drivers/CMSIS/Include/cmsis_gcc.h ****    */
+ 414:Drivers/CMSIS/Include/cmsis_gcc.h ****   if (value == 0U)
+ 415:Drivers/CMSIS/Include/cmsis_gcc.h ****   {
+ 416:Drivers/CMSIS/Include/cmsis_gcc.h ****     return 32U;
+ 417:Drivers/CMSIS/Include/cmsis_gcc.h ****   }
+ 418:Drivers/CMSIS/Include/cmsis_gcc.h ****   return __builtin_clz(value);
+ 419:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 420:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 421:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 422:Drivers/CMSIS/Include/cmsis_gcc.h **** #if ((defined (__ARM_ARCH_7M__      ) && (__ARM_ARCH_7M__      == 1)) || \
+ 423:Drivers/CMSIS/Include/cmsis_gcc.h ****      (defined (__ARM_ARCH_7EM__     ) && (__ARM_ARCH_7EM__     == 1)) || \
+ 424:Drivers/CMSIS/Include/cmsis_gcc.h ****      (defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) || \
+ 425:Drivers/CMSIS/Include/cmsis_gcc.h ****      (defined (__ARM_ARCH_8M_BASE__ ) && (__ARM_ARCH_8M_BASE__ == 1))    )
+ 426:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 427:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   LDR Exclusive (8 bit)
+ 428:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a exclusive LDR instruction for 8 bit value.
+ 429:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to data
+ 430:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return             value of type uint8_t at (*ptr)
+ 431:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 432:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint8_t __LDREXB(volatile uint8_t *addr)
+ 433:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 434:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t result;
+ 435:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 436:Drivers/CMSIS/Include/cmsis_gcc.h **** #if (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)
+ 437:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldrexb %0, %1" : "=r" (result) : "Q" (*addr) );
+ 438:Drivers/CMSIS/Include/cmsis_gcc.h **** #else
+ 439:Drivers/CMSIS/Include/cmsis_gcc.h ****     /* Prior to GCC 4.8, "Q" will be expanded to [rx, #0] which is not
+ 440:Drivers/CMSIS/Include/cmsis_gcc.h ****        accepted by assembler. So has to use following less efficient pattern.
+ 441:Drivers/CMSIS/Include/cmsis_gcc.h ****     */
+ 442:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldrexb %0, [%1]" : "=r" (result) : "r" (addr) : "memory" );
+ 443:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 444:Drivers/CMSIS/Include/cmsis_gcc.h ****    return ((uint8_t) result);    /* Add explicit type cast here */
+ 445:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 446:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 447:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 448:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 449:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   LDR Exclusive (16 bit)
+ 450:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a exclusive LDR instruction for 16 bit values.
+ 451:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to data
+ 452:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return        value of type uint16_t at (*ptr)
+ 453:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 454:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint16_t __LDREXH(volatile uint16_t *addr)
+ 455:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 456:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t result;
+ 457:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 458:Drivers/CMSIS/Include/cmsis_gcc.h **** #if (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)
+ 459:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldrexh %0, %1" : "=r" (result) : "Q" (*addr) );
+ 460:Drivers/CMSIS/Include/cmsis_gcc.h **** #else
+ 461:Drivers/CMSIS/Include/cmsis_gcc.h ****     /* Prior to GCC 4.8, "Q" will be expanded to [rx, #0] which is not
+ 462:Drivers/CMSIS/Include/cmsis_gcc.h ****        accepted by assembler. So has to use following less efficient pattern.
+ 463:Drivers/CMSIS/Include/cmsis_gcc.h ****     */
+ 464:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldrexh %0, [%1]" : "=r" (result) : "r" (addr) : "memory" );
+ 465:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 466:Drivers/CMSIS/Include/cmsis_gcc.h ****    return ((uint16_t) result);    /* Add explicit type cast here */
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 21
+
+
+ 467:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 468:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 469:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 470:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 471:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   LDR Exclusive (32 bit)
+ 472:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a exclusive LDR instruction for 32 bit values.
+ 473:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to data
+ 474:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return        value of type uint32_t at (*ptr)
+ 475:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 476:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __LDREXW(volatile uint32_t *addr)
+ 477:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 478:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t result;
+ 479:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 480:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldrex %0, %1" : "=r" (result) : "Q" (*addr) );
+ 481:Drivers/CMSIS/Include/cmsis_gcc.h ****    return(result);
+ 482:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 483:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 484:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 485:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 486:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   STR Exclusive (8 bit)
+ 487:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a exclusive STR instruction for 8 bit values.
+ 488:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to store
+ 489:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to location
+ 490:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return          0  Function succeeded
+ 491:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return          1  Function failed
+ 492:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 493:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __STREXB(uint8_t value, volatile uint8_t *addr)
+ 494:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 495:Drivers/CMSIS/Include/cmsis_gcc.h ****    uint32_t result;
+ 496:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 497:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("strexb %0, %2, %1" : "=&r" (result), "=Q" (*addr) : "r" ((uint32_t)value) );
+ 498:Drivers/CMSIS/Include/cmsis_gcc.h ****    return(result);
+ 499:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 500:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 501:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 502:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 503:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   STR Exclusive (16 bit)
+ 504:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a exclusive STR instruction for 16 bit values.
+ 505:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to store
+ 506:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to location
+ 507:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return          0  Function succeeded
+ 508:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return          1  Function failed
+ 509:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 510:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __STREXH(uint16_t value, volatile uint16_t *addr)
+ 511:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 512:Drivers/CMSIS/Include/cmsis_gcc.h ****    uint32_t result;
+ 513:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 514:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("strexh %0, %2, %1" : "=&r" (result), "=Q" (*addr) : "r" ((uint32_t)value) );
+ 515:Drivers/CMSIS/Include/cmsis_gcc.h ****    return(result);
+ 516:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 517:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 518:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 519:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 520:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   STR Exclusive (32 bit)
+ 521:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a exclusive STR instruction for 32 bit values.
+ 522:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to store
+ 523:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to location
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 22
+
+
+ 524:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return          0  Function succeeded
+ 525:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return          1  Function failed
+ 526:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 527:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __STREXW(uint32_t value, volatile uint32_t *addr)
+ 528:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 529:Drivers/CMSIS/Include/cmsis_gcc.h ****    uint32_t result;
+ 530:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 531:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("strex %0, %2, %1" : "=&r" (result), "=Q" (*addr) : "r" (value) );
+ 532:Drivers/CMSIS/Include/cmsis_gcc.h ****    return(result);
+ 533:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 534:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 535:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 536:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 537:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Remove the exclusive lock
+ 538:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Removes the exclusive lock which is created by LDREX.
+ 539:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 540:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __CLREX(void)
+ 541:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 542:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("clrex" ::: "memory");
+ 543:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 544:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 545:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif /* ((defined (__ARM_ARCH_7M__      ) && (__ARM_ARCH_7M__      == 1)) || \
+ 546:Drivers/CMSIS/Include/cmsis_gcc.h ****            (defined (__ARM_ARCH_7EM__     ) && (__ARM_ARCH_7EM__     == 1)) || \
+ 547:Drivers/CMSIS/Include/cmsis_gcc.h ****            (defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) || \
+ 548:Drivers/CMSIS/Include/cmsis_gcc.h ****            (defined (__ARM_ARCH_8M_BASE__ ) && (__ARM_ARCH_8M_BASE__ == 1))    ) */
+ 549:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 550:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 551:Drivers/CMSIS/Include/cmsis_gcc.h **** #if ((defined (__ARM_ARCH_7M__      ) && (__ARM_ARCH_7M__      == 1)) || \
+ 552:Drivers/CMSIS/Include/cmsis_gcc.h ****      (defined (__ARM_ARCH_7EM__     ) && (__ARM_ARCH_7EM__     == 1)) || \
+ 553:Drivers/CMSIS/Include/cmsis_gcc.h ****      (defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1))    )
+ 554:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 555:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Signed Saturate
+ 556:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Saturates a signed value.
+ 557:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  ARG1  Value to be saturated
+ 558:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  ARG2  Bit position to saturate to (1..32)
+ 559:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return             Saturated value
+ 560:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 561:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __SSAT(ARG1, ARG2) \
+ 562:Drivers/CMSIS/Include/cmsis_gcc.h **** __extension__ \
+ 563:Drivers/CMSIS/Include/cmsis_gcc.h **** ({                          \
+ 564:Drivers/CMSIS/Include/cmsis_gcc.h ****   int32_t __RES, __ARG1 = (ARG1); \
+ 565:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("ssat %0, %1, %2" : "=r" (__RES) :  "I" (ARG2), "r" (__ARG1) : "cc" ); \
+ 566:Drivers/CMSIS/Include/cmsis_gcc.h ****   __RES; \
+ 567:Drivers/CMSIS/Include/cmsis_gcc.h ****  })
+ 568:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 569:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 570:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 571:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Unsigned Saturate
+ 572:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Saturates an unsigned value.
+ 573:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  ARG1  Value to be saturated
+ 574:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  ARG2  Bit position to saturate to (0..31)
+ 575:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return             Saturated value
+ 576:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 577:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __USAT(ARG1, ARG2) \
+ 578:Drivers/CMSIS/Include/cmsis_gcc.h **** __extension__ \
+ 579:Drivers/CMSIS/Include/cmsis_gcc.h **** ({                          \
+ 580:Drivers/CMSIS/Include/cmsis_gcc.h ****   uint32_t __RES, __ARG1 = (ARG1); \
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 23
+
+
+ 581:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("usat %0, %1, %2" : "=r" (__RES) :  "I" (ARG2), "r" (__ARG1) : "cc" ); \
+ 582:Drivers/CMSIS/Include/cmsis_gcc.h ****   __RES; \
+ 583:Drivers/CMSIS/Include/cmsis_gcc.h ****  })
+ 584:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 585:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 586:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 587:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Rotate Right with Extend (32 bit)
+ 588:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Moves each bit of a bitstring right by one bit.
+ 589:Drivers/CMSIS/Include/cmsis_gcc.h ****            The carry input is shifted in at the left end of the bitstring.
+ 590:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    value  Value to rotate
+ 591:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return               Rotated value
+ 592:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 593:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __RRX(uint32_t value)
+ 594:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 595:Drivers/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
+ 596:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 597:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("rrx %0, %1" : __CMSIS_GCC_OUT_REG (result) : __CMSIS_GCC_USE_REG (value) );
+ 598:Drivers/CMSIS/Include/cmsis_gcc.h ****   return(result);
+ 599:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 600:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 601:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 602:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 603:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   LDRT Unprivileged (8 bit)
+ 604:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a Unprivileged LDRT instruction for 8 bit value.
+ 605:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to data
+ 606:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return             value of type uint8_t at (*ptr)
+ 607:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 608:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint8_t __LDRBT(volatile uint8_t *ptr)
+ 609:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 610:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t result;
+ 611:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 612:Drivers/CMSIS/Include/cmsis_gcc.h **** #if (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)
+ 613:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldrbt %0, %1" : "=r" (result) : "Q" (*ptr) );
+ 614:Drivers/CMSIS/Include/cmsis_gcc.h **** #else
+ 615:Drivers/CMSIS/Include/cmsis_gcc.h ****     /* Prior to GCC 4.8, "Q" will be expanded to [rx, #0] which is not
+ 616:Drivers/CMSIS/Include/cmsis_gcc.h ****        accepted by assembler. So has to use following less efficient pattern.
+ 617:Drivers/CMSIS/Include/cmsis_gcc.h ****     */
+ 618:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldrbt %0, [%1]" : "=r" (result) : "r" (ptr) : "memory" );
+ 619:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 620:Drivers/CMSIS/Include/cmsis_gcc.h ****    return ((uint8_t) result);    /* Add explicit type cast here */
+ 621:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 622:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 623:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 624:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 625:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   LDRT Unprivileged (16 bit)
+ 626:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a Unprivileged LDRT instruction for 16 bit values.
+ 627:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to data
+ 628:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return        value of type uint16_t at (*ptr)
+ 629:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 630:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint16_t __LDRHT(volatile uint16_t *ptr)
+ 631:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 632:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t result;
+ 633:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 634:Drivers/CMSIS/Include/cmsis_gcc.h **** #if (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)
+ 635:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldrht %0, %1" : "=r" (result) : "Q" (*ptr) );
+ 636:Drivers/CMSIS/Include/cmsis_gcc.h **** #else
+ 637:Drivers/CMSIS/Include/cmsis_gcc.h ****     /* Prior to GCC 4.8, "Q" will be expanded to [rx, #0] which is not
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 24
+
+
+ 638:Drivers/CMSIS/Include/cmsis_gcc.h ****        accepted by assembler. So has to use following less efficient pattern.
+ 639:Drivers/CMSIS/Include/cmsis_gcc.h ****     */
+ 640:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldrht %0, [%1]" : "=r" (result) : "r" (ptr) : "memory" );
+ 641:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 642:Drivers/CMSIS/Include/cmsis_gcc.h ****    return ((uint16_t) result);    /* Add explicit type cast here */
+ 643:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 644:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 645:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 646:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 647:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   LDRT Unprivileged (32 bit)
+ 648:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a Unprivileged LDRT instruction for 32 bit values.
+ 649:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to data
+ 650:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return        value of type uint32_t at (*ptr)
+ 651:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 652:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __LDRT(volatile uint32_t *ptr)
+ 653:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 654:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t result;
+ 655:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 656:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldrt %0, %1" : "=r" (result) : "Q" (*ptr) );
+ 657:Drivers/CMSIS/Include/cmsis_gcc.h ****    return(result);
+ 658:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 659:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 660:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 661:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 662:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   STRT Unprivileged (8 bit)
+ 663:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a Unprivileged STRT instruction for 8 bit values.
+ 664:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to store
+ 665:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to location
+ 666:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 667:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __STRBT(uint8_t value, volatile uint8_t *ptr)
+ 668:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 669:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("strbt %1, %0" : "=Q" (*ptr) : "r" ((uint32_t)value) );
+ 670:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 671:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 672:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 673:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 674:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   STRT Unprivileged (16 bit)
+ 675:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a Unprivileged STRT instruction for 16 bit values.
+ 676:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to store
+ 677:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to location
+ 678:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 679:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __STRHT(uint16_t value, volatile uint16_t *ptr)
+ 680:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 681:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("strht %1, %0" : "=Q" (*ptr) : "r" ((uint32_t)value) );
+ 682:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 683:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 684:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 685:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 686:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   STRT Unprivileged (32 bit)
+ 687:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a Unprivileged STRT instruction for 32 bit values.
+ 688:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to store
+ 689:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to location
+ 690:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 691:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __STRT(uint32_t value, volatile uint32_t *ptr)
+ 692:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 693:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("strt %1, %0" : "=Q" (*ptr) : "r" (value) );
+ 694:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 25
+
+
+ 695:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 696:Drivers/CMSIS/Include/cmsis_gcc.h **** #else  /* ((defined (__ARM_ARCH_7M__      ) && (__ARM_ARCH_7M__      == 1)) || \
+ 697:Drivers/CMSIS/Include/cmsis_gcc.h ****            (defined (__ARM_ARCH_7EM__     ) && (__ARM_ARCH_7EM__     == 1)) || \
+ 698:Drivers/CMSIS/Include/cmsis_gcc.h ****            (defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1))    ) */
+ 699:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 700:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 701:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Signed Saturate
+ 702:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Saturates a signed value.
+ 703:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to be saturated
+ 704:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    sat  Bit position to saturate to (1..32)
+ 705:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return             Saturated value
+ 706:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 707:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE int32_t __SSAT(int32_t val, uint32_t sat)
+ 708:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 709:Drivers/CMSIS/Include/cmsis_gcc.h ****   if ((sat >= 1U) && (sat <= 32U))
+ 710:Drivers/CMSIS/Include/cmsis_gcc.h ****   {
+ 711:Drivers/CMSIS/Include/cmsis_gcc.h ****     const int32_t max = (int32_t)((1U << (sat - 1U)) - 1U);
+ 712:Drivers/CMSIS/Include/cmsis_gcc.h ****     const int32_t min = -1 - max ;
+ 713:Drivers/CMSIS/Include/cmsis_gcc.h ****     if (val > max)
+ 714:Drivers/CMSIS/Include/cmsis_gcc.h ****     {
+ 715:Drivers/CMSIS/Include/cmsis_gcc.h ****       return max;
+ 716:Drivers/CMSIS/Include/cmsis_gcc.h ****     }
+ 717:Drivers/CMSIS/Include/cmsis_gcc.h ****     else if (val < min)
+ 718:Drivers/CMSIS/Include/cmsis_gcc.h ****     {
+ 719:Drivers/CMSIS/Include/cmsis_gcc.h ****       return min;
+ 720:Drivers/CMSIS/Include/cmsis_gcc.h ****     }
+ 721:Drivers/CMSIS/Include/cmsis_gcc.h ****   }
+ 722:Drivers/CMSIS/Include/cmsis_gcc.h ****   return val;
+ 723:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 724:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 725:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 726:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Unsigned Saturate
+ 727:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Saturates an unsigned value.
+ 728:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to be saturated
+ 729:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    sat  Bit position to saturate to (0..31)
+ 730:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return             Saturated value
+ 731:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 732:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __USAT(int32_t val, uint32_t sat)
+ 733:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 734:Drivers/CMSIS/Include/cmsis_gcc.h ****   if (sat <= 31U)
+ 735:Drivers/CMSIS/Include/cmsis_gcc.h ****   {
+ 736:Drivers/CMSIS/Include/cmsis_gcc.h ****     const uint32_t max = ((1U << sat) - 1U);
+ 737:Drivers/CMSIS/Include/cmsis_gcc.h ****     if (val > (int32_t)max)
+ 738:Drivers/CMSIS/Include/cmsis_gcc.h ****     {
+ 739:Drivers/CMSIS/Include/cmsis_gcc.h ****       return max;
+ 740:Drivers/CMSIS/Include/cmsis_gcc.h ****     }
+ 741:Drivers/CMSIS/Include/cmsis_gcc.h ****     else if (val < 0)
+ 742:Drivers/CMSIS/Include/cmsis_gcc.h ****     {
+ 743:Drivers/CMSIS/Include/cmsis_gcc.h ****       return 0U;
+ 744:Drivers/CMSIS/Include/cmsis_gcc.h ****     }
+ 745:Drivers/CMSIS/Include/cmsis_gcc.h ****   }
+ 746:Drivers/CMSIS/Include/cmsis_gcc.h ****   return (uint32_t)val;
+ 747:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 748:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 749:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif /* ((defined (__ARM_ARCH_7M__      ) && (__ARM_ARCH_7M__      == 1)) || \
+ 750:Drivers/CMSIS/Include/cmsis_gcc.h ****            (defined (__ARM_ARCH_7EM__     ) && (__ARM_ARCH_7EM__     == 1)) || \
+ 751:Drivers/CMSIS/Include/cmsis_gcc.h ****            (defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1))    ) */
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 26
+
+
+ 752:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 753:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 754:Drivers/CMSIS/Include/cmsis_gcc.h **** #if ((defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) || \
+ 755:Drivers/CMSIS/Include/cmsis_gcc.h ****      (defined (__ARM_ARCH_8M_BASE__ ) && (__ARM_ARCH_8M_BASE__ == 1))    )
+ 756:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 757:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Load-Acquire (8 bit)
+ 758:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a LDAB instruction for 8 bit value.
+ 759:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to data
+ 760:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return             value of type uint8_t at (*ptr)
+ 761:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 762:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint8_t __LDAB(volatile uint8_t *ptr)
+ 763:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 764:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t result;
+ 765:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 766:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldab %0, %1" : "=r" (result) : "Q" (*ptr) : "memory" );
+ 767:Drivers/CMSIS/Include/cmsis_gcc.h ****    return ((uint8_t) result);
+ 768:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 769:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 770:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 771:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 772:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Load-Acquire (16 bit)
+ 773:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a LDAH instruction for 16 bit values.
+ 774:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to data
+ 775:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return        value of type uint16_t at (*ptr)
+ 776:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 777:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint16_t __LDAH(volatile uint16_t *ptr)
+ 778:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 779:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t result;
+ 780:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 781:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldah %0, %1" : "=r" (result) : "Q" (*ptr) : "memory" );
+ 782:Drivers/CMSIS/Include/cmsis_gcc.h ****    return ((uint16_t) result);
+ 783:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 784:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 785:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 786:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 787:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Load-Acquire (32 bit)
+ 788:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a LDA instruction for 32 bit values.
+ 789:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to data
+ 790:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return        value of type uint32_t at (*ptr)
+ 791:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 792:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __LDA(volatile uint32_t *ptr)
+ 793:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 794:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t result;
+ 795:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 796:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("lda %0, %1" : "=r" (result) : "Q" (*ptr) : "memory" );
+ 797:Drivers/CMSIS/Include/cmsis_gcc.h ****    return(result);
+ 798:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 799:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 800:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 801:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 802:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Store-Release (8 bit)
+ 803:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a STLB instruction for 8 bit values.
+ 804:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to store
+ 805:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to location
+ 806:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 807:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __STLB(uint8_t value, volatile uint8_t *ptr)
+ 808:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 27
+
+
+ 809:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("stlb %1, %0" : "=Q" (*ptr) : "r" ((uint32_t)value) : "memory" );
+ 810:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 811:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 812:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 813:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 814:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Store-Release (16 bit)
+ 815:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a STLH instruction for 16 bit values.
+ 816:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to store
+ 817:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to location
+ 818:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 819:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __STLH(uint16_t value, volatile uint16_t *ptr)
+ 820:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 821:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("stlh %1, %0" : "=Q" (*ptr) : "r" ((uint32_t)value) : "memory" );
+ 822:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 823:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 824:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 825:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 826:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Store-Release (32 bit)
+ 827:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a STL instruction for 32 bit values.
+ 828:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to store
+ 829:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to location
+ 830:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 831:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __STL(uint32_t value, volatile uint32_t *ptr)
+ 832:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 833:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("stl %1, %0" : "=Q" (*ptr) : "r" ((uint32_t)value) : "memory" );
+ 834:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 835:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 836:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 837:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 838:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Load-Acquire Exclusive (8 bit)
+ 839:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a LDAB exclusive instruction for 8 bit value.
+ 840:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to data
+ 841:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return             value of type uint8_t at (*ptr)
+ 842:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 843:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint8_t __LDAEXB(volatile uint8_t *ptr)
+ 844:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 845:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t result;
+ 846:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 847:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldaexb %0, %1" : "=r" (result) : "Q" (*ptr) : "memory" );
+ 848:Drivers/CMSIS/Include/cmsis_gcc.h ****    return ((uint8_t) result);
+ 849:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 850:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 851:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 852:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 853:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Load-Acquire Exclusive (16 bit)
+ 854:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a LDAH exclusive instruction for 16 bit values.
+ 855:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to data
+ 856:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return        value of type uint16_t at (*ptr)
+ 857:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 858:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint16_t __LDAEXH(volatile uint16_t *ptr)
+ 859:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 860:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t result;
+ 861:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 862:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldaexh %0, %1" : "=r" (result) : "Q" (*ptr) : "memory" );
+ 863:Drivers/CMSIS/Include/cmsis_gcc.h ****    return ((uint16_t) result);
+ 864:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 865:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 28
+
+
+ 866:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 867:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 868:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Load-Acquire Exclusive (32 bit)
+ 869:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a LDA exclusive instruction for 32 bit values.
+ 870:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to data
+ 871:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return        value of type uint32_t at (*ptr)
+ 872:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 873:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __LDAEX(volatile uint32_t *ptr)
+ 874:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 875:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t result;
+ 876:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 877:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldaex %0, %1" : "=r" (result) : "Q" (*ptr) : "memory" );
+ 878:Drivers/CMSIS/Include/cmsis_gcc.h ****    return(result);
+ 879:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 880:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 881:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 882:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 883:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Store-Release Exclusive (8 bit)
+ 884:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a STLB exclusive instruction for 8 bit values.
+ 885:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to store
+ 886:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to location
+ 887:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return          0  Function succeeded
+ 888:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return          1  Function failed
+ 889:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 890:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __STLEXB(uint8_t value, volatile uint8_t *ptr)
+ 891:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 892:Drivers/CMSIS/Include/cmsis_gcc.h ****    uint32_t result;
+ 893:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 894:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("stlexb %0, %2, %1" : "=&r" (result), "=Q" (*ptr) : "r" ((uint32_t)value) : "mem
+ 895:Drivers/CMSIS/Include/cmsis_gcc.h ****    return(result);
+ 896:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 897:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 898:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 899:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 900:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Store-Release Exclusive (16 bit)
+ 901:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a STLH exclusive instruction for 16 bit values.
+ 902:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to store
+ 903:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to location
+ 904:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return          0  Function succeeded
+ 905:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return          1  Function failed
+ 906:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 907:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __STLEXH(uint16_t value, volatile uint16_t *ptr)
+ 908:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 909:Drivers/CMSIS/Include/cmsis_gcc.h ****    uint32_t result;
+ 910:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 911:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("stlexh %0, %2, %1" : "=&r" (result), "=Q" (*ptr) : "r" ((uint32_t)value) : "mem
+ 912:Drivers/CMSIS/Include/cmsis_gcc.h ****    return(result);
+ 913:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 914:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 915:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 916:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 917:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Store-Release Exclusive (32 bit)
+ 918:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a STL exclusive instruction for 32 bit values.
+ 919:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to store
+ 920:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to location
+ 921:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return          0  Function succeeded
+ 922:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return          1  Function failed
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 29
+
+
+ 923:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 924:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __STLEX(uint32_t value, volatile uint32_t *ptr)
+ 925:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 926:Drivers/CMSIS/Include/cmsis_gcc.h ****    uint32_t result;
+ 927:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 928:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("stlex %0, %2, %1" : "=&r" (result), "=Q" (*ptr) : "r" ((uint32_t)value) : "memo
+ 929:Drivers/CMSIS/Include/cmsis_gcc.h ****    return(result);
+ 930:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 931:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 932:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif /* ((defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) || \
+ 933:Drivers/CMSIS/Include/cmsis_gcc.h ****            (defined (__ARM_ARCH_8M_BASE__ ) && (__ARM_ARCH_8M_BASE__ == 1))    ) */
+ 934:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 935:Drivers/CMSIS/Include/cmsis_gcc.h **** /*@}*/ /* end of group CMSIS_Core_InstructionInterface */
+ 936:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 937:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 938:Drivers/CMSIS/Include/cmsis_gcc.h **** /* ###########################  Core Function Access  ########################### */
+ 939:Drivers/CMSIS/Include/cmsis_gcc.h **** /** \ingroup  CMSIS_Core_FunctionInterface
+ 940:Drivers/CMSIS/Include/cmsis_gcc.h ****     \defgroup CMSIS_Core_RegAccFunctions CMSIS Core Register Access Functions
+ 941:Drivers/CMSIS/Include/cmsis_gcc.h ****   @{
+ 942:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 943:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 944:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 945:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Enable IRQ Interrupts
+ 946:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Enables IRQ interrupts by clearing special-purpose register PRIMASK.
+ 947:Drivers/CMSIS/Include/cmsis_gcc.h ****            Can only be executed in Privileged modes.
+ 948:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 949:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __enable_irq(void)
+ 950:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 951:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("cpsie i" : : : "memory");
+ 952:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 953:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 954:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 955:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 956:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Disable IRQ Interrupts
+ 957:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Disables IRQ interrupts by setting special-purpose register PRIMASK.
+ 958:Drivers/CMSIS/Include/cmsis_gcc.h ****            Can only be executed in Privileged modes.
+ 959:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 960:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __disable_irq(void)
+ 415              		.loc 2 960 27 view .LVU83
+ 416              	.LBB17:
+ 961:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 962:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("cpsid i" : : : "memory");
+ 417              		.loc 2 962 3 view .LVU84
+ 418              		.syntax unified
+ 419              	@ 962 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 420 0000 72B6     		cpsid i
+ 421              	@ 0 "" 2
+ 422              		.thumb
+ 423              		.syntax unified
+ 424              	.L19:
+ 425              	.LBE17:
+ 426              	.LBE16:
+ 203:Core/Src/main.c ****     while (1) {
+ 427              		.loc 1 203 5 view .LVU85
+ 204:Core/Src/main.c ****         // stay here
+ 205:Core/Src/main.c ****     }
+ 428              		.loc 1 205 5 view .LVU86
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 30
+
+
+ 203:Core/Src/main.c ****     while (1) {
+ 429              		.loc 1 203 11 view .LVU87
+ 430 0002 FEE7     		b	.L19
+ 431              		.cfi_endproc
+ 432              	.LFE142:
+ 434              		.section	.text.SystemClock_Config,"ax",%progbits
+ 435              		.align	1
+ 436              		.global	SystemClock_Config
+ 437              		.syntax unified
+ 438              		.thumb
+ 439              		.thumb_func
+ 441              	SystemClock_Config:
+ 442              	.LFB141:
+ 170:Core/Src/main.c ****     RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+ 443              		.loc 1 170 1 view -0
+ 444              		.cfi_startproc
+ 445              		@ args = 0, pretend = 0, frame = 80
+ 446              		@ frame_needed = 0, uses_anonymous_args = 0
+ 447 0000 00B5     		push	{lr}
+ 448              	.LCFI6:
+ 449              		.cfi_def_cfa_offset 4
+ 450              		.cfi_offset 14, -4
+ 451 0002 95B0     		sub	sp, sp, #84
+ 452              	.LCFI7:
+ 453              		.cfi_def_cfa_offset 88
+ 171:Core/Src/main.c ****     RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+ 454              		.loc 1 171 5 view .LVU89
+ 171:Core/Src/main.c ****     RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+ 455              		.loc 1 171 24 is_stmt 0 view .LVU90
+ 456 0004 3422     		movs	r2, #52
+ 457 0006 0021     		movs	r1, #0
+ 458 0008 07A8     		add	r0, sp, #28
+ 459 000a FFF7FEFF 		bl	memset
+ 460              	.LVL40:
+ 172:Core/Src/main.c **** 
+ 461              		.loc 1 172 5 is_stmt 1 view .LVU91
+ 172:Core/Src/main.c **** 
+ 462              		.loc 1 172 24 is_stmt 0 view .LVU92
+ 463 000e 0023     		movs	r3, #0
+ 464 0010 0293     		str	r3, [sp, #8]
+ 465 0012 0393     		str	r3, [sp, #12]
+ 466 0014 0493     		str	r3, [sp, #16]
+ 467 0016 0593     		str	r3, [sp, #20]
+ 468 0018 0693     		str	r3, [sp, #24]
+ 175:Core/Src/main.c ****     __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+ 469              		.loc 1 175 5 is_stmt 1 view .LVU93
+ 470              	.LBB18:
+ 175:Core/Src/main.c ****     __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+ 471              		.loc 1 175 5 view .LVU94
+ 472 001a 0093     		str	r3, [sp]
+ 175:Core/Src/main.c ****     __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+ 473              		.loc 1 175 5 view .LVU95
+ 474 001c 214A     		ldr	r2, .L26
+ 475 001e 116C     		ldr	r1, [r2, #64]
+ 476 0020 41F08051 		orr	r1, r1, #268435456
+ 477 0024 1164     		str	r1, [r2, #64]
+ 175:Core/Src/main.c ****     __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 31
+
+
+ 478              		.loc 1 175 5 view .LVU96
+ 479 0026 126C     		ldr	r2, [r2, #64]
+ 480 0028 02F08052 		and	r2, r2, #268435456
+ 481 002c 0092     		str	r2, [sp]
+ 175:Core/Src/main.c ****     __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+ 482              		.loc 1 175 5 view .LVU97
+ 483 002e 009A     		ldr	r2, [sp]
+ 484              	.LBE18:
+ 175:Core/Src/main.c ****     __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+ 485              		.loc 1 175 5 view .LVU98
+ 176:Core/Src/main.c **** 
+ 486              		.loc 1 176 5 view .LVU99
+ 487              	.LBB19:
+ 176:Core/Src/main.c **** 
+ 488              		.loc 1 176 5 view .LVU100
+ 489 0030 0193     		str	r3, [sp, #4]
+ 176:Core/Src/main.c **** 
+ 490              		.loc 1 176 5 view .LVU101
+ 491 0032 1D4B     		ldr	r3, .L26+4
+ 492 0034 1A68     		ldr	r2, [r3]
+ 493 0036 42F44042 		orr	r2, r2, #49152
+ 494 003a 1A60     		str	r2, [r3]
+ 176:Core/Src/main.c **** 
+ 495              		.loc 1 176 5 view .LVU102
+ 496 003c 1B68     		ldr	r3, [r3]
+ 497 003e 03F44043 		and	r3, r3, #49152
+ 498 0042 0193     		str	r3, [sp, #4]
+ 176:Core/Src/main.c **** 
+ 499              		.loc 1 176 5 view .LVU103
+ 500 0044 019B     		ldr	r3, [sp, #4]
+ 501              	.LBE19:
+ 176:Core/Src/main.c **** 
+ 502              		.loc 1 176 5 view .LVU104
+ 179:Core/Src/main.c ****     RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+ 503              		.loc 1 179 5 view .LVU105
+ 179:Core/Src/main.c ****     RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+ 504              		.loc 1 179 38 is_stmt 0 view .LVU106
+ 505 0046 0123     		movs	r3, #1
+ 506 0048 0793     		str	r3, [sp, #28]
+ 180:Core/Src/main.c ****     RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+ 507              		.loc 1 180 5 is_stmt 1 view .LVU107
+ 180:Core/Src/main.c ****     RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+ 508              		.loc 1 180 32 is_stmt 0 view .LVU108
+ 509 004a 4FF48033 		mov	r3, #65536
+ 510 004e 0893     		str	r3, [sp, #32]
+ 181:Core/Src/main.c ****     RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+ 511              		.loc 1 181 5 is_stmt 1 view .LVU109
+ 181:Core/Src/main.c ****     RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+ 512              		.loc 1 181 36 is_stmt 0 view .LVU110
+ 513 0050 0223     		movs	r3, #2
+ 514 0052 0D93     		str	r3, [sp, #52]
+ 182:Core/Src/main.c ****     RCC_OscInitStruct.PLL.PLLM = 8;
+ 515              		.loc 1 182 5 is_stmt 1 view .LVU111
+ 182:Core/Src/main.c ****     RCC_OscInitStruct.PLL.PLLM = 8;
+ 516              		.loc 1 182 37 is_stmt 0 view .LVU112
+ 517 0054 4FF48002 		mov	r2, #4194304
+ 518 0058 0E92     		str	r2, [sp, #56]
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 32
+
+
+ 183:Core/Src/main.c ****     RCC_OscInitStruct.PLL.PLLN = 336;
+ 519              		.loc 1 183 5 is_stmt 1 view .LVU113
+ 183:Core/Src/main.c ****     RCC_OscInitStruct.PLL.PLLN = 336;
+ 520              		.loc 1 183 32 is_stmt 0 view .LVU114
+ 521 005a 0822     		movs	r2, #8
+ 522 005c 0F92     		str	r2, [sp, #60]
+ 184:Core/Src/main.c ****     RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+ 523              		.loc 1 184 5 is_stmt 1 view .LVU115
+ 184:Core/Src/main.c ****     RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+ 524              		.loc 1 184 32 is_stmt 0 view .LVU116
+ 525 005e 4FF4A872 		mov	r2, #336
+ 526 0062 1092     		str	r2, [sp, #64]
+ 185:Core/Src/main.c ****     RCC_OscInitStruct.PLL.PLLQ = 7;
+ 527              		.loc 1 185 5 is_stmt 1 view .LVU117
+ 185:Core/Src/main.c ****     RCC_OscInitStruct.PLL.PLLQ = 7;
+ 528              		.loc 1 185 32 is_stmt 0 view .LVU118
+ 529 0064 1193     		str	r3, [sp, #68]
+ 186:Core/Src/main.c ****     if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) Error_Handler();
+ 530              		.loc 1 186 5 is_stmt 1 view .LVU119
+ 186:Core/Src/main.c ****     if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) Error_Handler();
+ 531              		.loc 1 186 32 is_stmt 0 view .LVU120
+ 532 0066 0723     		movs	r3, #7
+ 533 0068 1293     		str	r3, [sp, #72]
+ 187:Core/Src/main.c **** 
+ 534              		.loc 1 187 5 is_stmt 1 view .LVU121
+ 187:Core/Src/main.c **** 
+ 535              		.loc 1 187 9 is_stmt 0 view .LVU122
+ 536 006a 07A8     		add	r0, sp, #28
+ 537 006c FFF7FEFF 		bl	HAL_RCC_OscConfig
+ 538              	.LVL41:
+ 187:Core/Src/main.c **** 
+ 539              		.loc 1 187 8 discriminator 1 view .LVU123
+ 540 0070 98B9     		cbnz	r0, .L24
+ 190:Core/Src/main.c ****                                   RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+ 541              		.loc 1 190 5 is_stmt 1 view .LVU124
+ 190:Core/Src/main.c ****                                   RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+ 542              		.loc 1 190 33 is_stmt 0 view .LVU125
+ 543 0072 0F23     		movs	r3, #15
+ 544 0074 0293     		str	r3, [sp, #8]
+ 192:Core/Src/main.c ****     RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+ 545              		.loc 1 192 5 is_stmt 1 view .LVU126
+ 192:Core/Src/main.c ****     RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+ 546              		.loc 1 192 36 is_stmt 0 view .LVU127
+ 547 0076 0223     		movs	r3, #2
+ 548 0078 0393     		str	r3, [sp, #12]
+ 193:Core/Src/main.c ****     RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+ 549              		.loc 1 193 5 is_stmt 1 view .LVU128
+ 193:Core/Src/main.c ****     RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+ 550              		.loc 1 193 37 is_stmt 0 view .LVU129
+ 551 007a 0023     		movs	r3, #0
+ 552 007c 0493     		str	r3, [sp, #16]
+ 194:Core/Src/main.c ****     RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+ 553              		.loc 1 194 5 is_stmt 1 view .LVU130
+ 194:Core/Src/main.c ****     RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+ 554              		.loc 1 194 38 is_stmt 0 view .LVU131
+ 555 007e 4FF4A053 		mov	r3, #5120
+ 556 0082 0593     		str	r3, [sp, #20]
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 33
+
+
+ 195:Core/Src/main.c ****     if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK) Error_Handler();
+ 557              		.loc 1 195 5 is_stmt 1 view .LVU132
+ 195:Core/Src/main.c ****     if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK) Error_Handler();
+ 558              		.loc 1 195 38 is_stmt 0 view .LVU133
+ 559 0084 4FF48053 		mov	r3, #4096
+ 560 0088 0693     		str	r3, [sp, #24]
+ 196:Core/Src/main.c **** }
+ 561              		.loc 1 196 5 is_stmt 1 view .LVU134
+ 196:Core/Src/main.c **** }
+ 562              		.loc 1 196 9 is_stmt 0 view .LVU135
+ 563 008a 0521     		movs	r1, #5
+ 564 008c 02A8     		add	r0, sp, #8
+ 565 008e FFF7FEFF 		bl	HAL_RCC_ClockConfig
+ 566              	.LVL42:
+ 196:Core/Src/main.c **** }
+ 567              		.loc 1 196 8 discriminator 1 view .LVU136
+ 568 0092 20B9     		cbnz	r0, .L25
+ 197:Core/Src/main.c **** 
+ 569              		.loc 1 197 1 view .LVU137
+ 570 0094 15B0     		add	sp, sp, #84
+ 571              	.LCFI8:
+ 572              		.cfi_remember_state
+ 573              		.cfi_def_cfa_offset 4
+ 574              		@ sp needed
+ 575 0096 5DF804FB 		ldr	pc, [sp], #4
+ 576              	.L24:
+ 577              	.LCFI9:
+ 578              		.cfi_restore_state
+ 187:Core/Src/main.c **** 
+ 579              		.loc 1 187 58 is_stmt 1 discriminator 1 view .LVU138
+ 580 009a FFF7FEFF 		bl	Error_Handler
+ 581              	.LVL43:
+ 582              	.L25:
+ 196:Core/Src/main.c **** }
+ 583              		.loc 1 196 77 discriminator 1 view .LVU139
+ 584 009e FFF7FEFF 		bl	Error_Handler
+ 585              	.LVL44:
+ 586              	.L27:
+ 587 00a2 00BF     		.align	2
+ 588              	.L26:
+ 589 00a4 00380240 		.word	1073887232
+ 590 00a8 00700040 		.word	1073770496
+ 591              		.cfi_endproc
+ 592              	.LFE141:
+ 594              		.global	__aeabi_uldivmod
+ 595              		.section	.rodata.main.str1.4,"aMS",%progbits,1
+ 596              		.align	2
+ 597              	.LC0:
+ 598 0000 496D6167 		.ascii	"Image Size: %dx%d\012\000"
+ 598      65205369 
+ 598      7A653A20 
+ 598      25647825 
+ 598      640A00
+ 599 0013 00       		.align	2
+ 600              	.LC1:
+ 601 0014 43686563 		.ascii	"Checksum = %llu\012\000"
+ 601      6B73756D 
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 34
+
+
+ 601      203D2025 
+ 601      6C6C750A 
+ 601      00
+ 602 0025 000000   		.align	2
+ 603              	.LC2:
+ 604 0028 57616C6C 		.ascii	"Wall-clock time = %lu ms\012\000"
+ 604      2D636C6F 
+ 604      636B2074 
+ 604      696D6520 
+ 604      3D20256C 
+ 605 0042 0000     		.align	2
+ 606              	.LC3:
+ 607 0044 43505520 		.ascii	"CPU cycles = %lu\012\000"
+ 607      6379636C 
+ 607      6573203D 
+ 607      20256C75 
+ 607      0A00
+ 608 0056 0000     		.align	2
+ 609              	.LC4:
+ 610 0058 5468726F 		.ascii	"Throughput = %llu pixels/s\012\012\000"
+ 610      75676870 
+ 610      7574203D 
+ 610      20256C6C 
+ 610      75207069 
+ 611              		.section	.text.main,"ax",%progbits
+ 612              		.align	1
+ 613              		.global	main
+ 614              		.syntax unified
+ 615              		.thumb
+ 616              		.thumb_func
+ 618              	main:
+ 619              	.LFB137:
+  43:Core/Src/main.c ****     volatile uint32_t elapsed_Time;
+ 620              		.loc 1 43 1 view -0
+ 621              		.cfi_startproc
+ 622              		@ args = 0, pretend = 0, frame = 8
+ 623              		@ frame_needed = 0, uses_anonymous_args = 0
+ 624 0000 2DE9F047 		push	{r4, r5, r6, r7, r8, r9, r10, lr}
+ 625              	.LCFI10:
+ 626              		.cfi_def_cfa_offset 32
+ 627              		.cfi_offset 4, -32
+ 628              		.cfi_offset 5, -28
+ 629              		.cfi_offset 6, -24
+ 630              		.cfi_offset 7, -20
+ 631              		.cfi_offset 8, -16
+ 632              		.cfi_offset 9, -12
+ 633              		.cfi_offset 10, -8
+ 634              		.cfi_offset 14, -4
+ 635 0004 82B0     		sub	sp, sp, #8
+ 636              	.LCFI11:
+ 637              		.cfi_def_cfa_offset 40
+  44:Core/Src/main.c ****     volatile uint32_t elapsed_Cycles;
+ 638              		.loc 1 44 5 view .LVU141
+  45:Core/Src/main.c **** 
+ 639              		.loc 1 45 5 view .LVU142
+  48:Core/Src/main.c **** 
+ 640              		.loc 1 48 5 view .LVU143
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 35
+
+
+ 641 0006 FFF7FEFF 		bl	HAL_Init
+ 642              	.LVL45:
+  51:Core/Src/main.c **** 
+ 643              		.loc 1 51 5 view .LVU144
+ 644 000a FFF7FEFF 		bl	SystemClock_Config
+ 645              	.LVL46:
+  54:Core/Src/main.c **** 
+ 646              		.loc 1 54 5 view .LVU145
+ 647 000e FFF7FEFF 		bl	MX_GPIO_Init
+ 648              	.LVL47:
+  57:Core/Src/main.c ****     HAL_Delay(2000);
+ 649              		.loc 1 57 5 view .LVU146
+ 650 0012 0122     		movs	r2, #1
+ 651 0014 1146     		mov	r1, r2
+ 652 0016 4C48     		ldr	r0, .L36
+ 653 0018 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 654              	.LVL48:
+  58:Core/Src/main.c **** 
+ 655              		.loc 1 58 5 view .LVU147
+ 656 001c 4FF4FA60 		mov	r0, #2000
+ 657 0020 FFF7FEFF 		bl	HAL_Delay
+ 658              	.LVL49:
+  61:Core/Src/main.c **** 
+ 659              		.loc 1 61 5 view .LVU148
+ 660              	.LBB20:
+ 661              	.LBI20:
+ 137:Core/Src/main.c **** {
+ 662              		.loc 1 137 20 view .LVU149
+ 663              	.LBB21:
+ 139:Core/Src/main.c ****     #if defined(DWT_LAR)
+ 664              		.loc 1 139 5 view .LVU150
+ 139:Core/Src/main.c ****     #if defined(DWT_LAR)
+ 665              		.loc 1 139 14 is_stmt 0 view .LVU151
+ 666 0024 494A     		ldr	r2, .L36+4
+ 667 0026 D2F8FC30 		ldr	r3, [r2, #252]
+ 139:Core/Src/main.c ****     #if defined(DWT_LAR)
+ 668              		.loc 1 139 22 view .LVU152
+ 669 002a 43F08073 		orr	r3, r3, #16777216
+ 670 002e C2F8FC30 		str	r3, [r2, #252]
+ 143:Core/Src/main.c ****     DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+ 671              		.loc 1 143 5 is_stmt 1 view .LVU153
+ 143:Core/Src/main.c ****     DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+ 672              		.loc 1 143 17 is_stmt 0 view .LVU154
+ 673 0032 474B     		ldr	r3, .L36+8
+ 674 0034 0025     		movs	r5, #0
+ 675 0036 5D60     		str	r5, [r3, #4]
+ 144:Core/Src/main.c **** }
+ 676              		.loc 1 144 5 is_stmt 1 view .LVU155
+ 144:Core/Src/main.c **** }
+ 677              		.loc 1 144 8 is_stmt 0 view .LVU156
+ 678 0038 1A68     		ldr	r2, [r3]
+ 144:Core/Src/main.c **** }
+ 679              		.loc 1 144 15 view .LVU157
+ 680 003a 42F00102 		orr	r2, r2, #1
+ 681 003e 1A60     		str	r2, [r3]
+ 682              	.LBE21:
+ 683              	.LBE20:
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 36
+
+
+  64:Core/Src/main.c ****         int size = sizes[i];
+ 684              		.loc 1 64 5 is_stmt 1 view .LVU158
+ 685              	.LBB22:
+  64:Core/Src/main.c ****         int size = sizes[i];
+ 686              		.loc 1 64 10 view .LVU159
+ 687              	.LVL50:
+  64:Core/Src/main.c ****         int size = sizes[i];
+ 688              		.loc 1 64 5 is_stmt 0 view .LVU160
+ 689 0040 1DE0     		b	.L29
+ 690              	.LVL51:
+ 691              	.L33:
+ 692              	.LBB23:
+  81:Core/Src/main.c ****         if (elapsed_Time > 0) {
+ 693              		.loc 1 81 18 view .LVU161
+ 694 0042 4FF00009 		mov	r9, #0
+ 695              	.LVL52:
+  81:Core/Src/main.c ****         if (elapsed_Time > 0) {
+ 696              		.loc 1 81 18 view .LVU162
+ 697 0046 C846     		mov	r8, r9
+ 698              	.LVL53:
+ 699              	.L30:
+  87:Core/Src/main.c ****         printf("Checksum = %llu\n", (unsigned long long)checksum);
+ 700              		.loc 1 87 9 is_stmt 1 view .LVU163
+ 701 0048 2246     		mov	r2, r4
+ 702 004a 2146     		mov	r1, r4
+ 703 004c 4148     		ldr	r0, .L36+12
+ 704 004e FFF7FEFF 		bl	printf
+ 705              	.LVL54:
+  88:Core/Src/main.c ****         printf("Wall-clock time = %lu ms\n", (unsigned long)elapsed_Time);
+ 706              		.loc 1 88 9 view .LVU164
+ 707 0052 3A46     		mov	r2, r7
+ 708 0054 3346     		mov	r3, r6
+ 709 0056 4048     		ldr	r0, .L36+16
+ 710 0058 FFF7FEFF 		bl	printf
+ 711              	.LVL55:
+  89:Core/Src/main.c ****         printf("CPU cycles = %lu\n", (unsigned long)elapsed_Cycles);
+ 712              		.loc 1 89 9 view .LVU165
+ 713 005c 0199     		ldr	r1, [sp, #4]
+ 714 005e 3F48     		ldr	r0, .L36+20
+ 715 0060 FFF7FEFF 		bl	printf
+ 716              	.LVL56:
+  90:Core/Src/main.c ****         printf("Throughput = %llu pixels/s\n\n", (unsigned long long)throughput);
+ 717              		.loc 1 90 9 view .LVU166
+ 718 0064 0099     		ldr	r1, [sp]
+ 719 0066 3E48     		ldr	r0, .L36+24
+ 720 0068 FFF7FEFF 		bl	printf
+ 721              	.LVL57:
+  91:Core/Src/main.c **** 
+ 722              		.loc 1 91 9 view .LVU167
+ 723 006c 4A46     		mov	r2, r9
+ 724 006e 4346     		mov	r3, r8
+ 725 0070 3C48     		ldr	r0, .L36+28
+ 726 0072 FFF7FEFF 		bl	printf
+ 727              	.LVL58:
+  93:Core/Src/main.c ****     }
+ 728              		.loc 1 93 9 view .LVU168
+ 729 0076 C820     		movs	r0, #200
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 37
+
+
+ 730 0078 FFF7FEFF 		bl	HAL_Delay
+ 731              	.LVL59:
+ 732              	.LBE23:
+  64:Core/Src/main.c ****         int size = sizes[i];
+ 733              		.loc 1 64 36 discriminator 2 view .LVU169
+ 734 007c 0135     		adds	r5, r5, #1
+ 735              	.LVL60:
+ 736              	.L29:
+  64:Core/Src/main.c ****         int size = sizes[i];
+ 737              		.loc 1 64 23 discriminator 1 view .LVU170
+ 738 007e 3A4B     		ldr	r3, .L36+32
+ 739 0080 1B68     		ldr	r3, [r3]
+ 740 0082 AB42     		cmp	r3, r5
+ 741 0084 47DD     		ble	.L35
+ 742              	.LBB24:
+  65:Core/Src/main.c **** 
+ 743              		.loc 1 65 9 view .LVU171
+  65:Core/Src/main.c **** 
+ 744              		.loc 1 65 13 is_stmt 0 view .LVU172
+ 745 0086 394B     		ldr	r3, .L36+36
+ 746 0088 53F82540 		ldr	r4, [r3, r5, lsl #2]
+ 747              	.LVL61:
+  68:Core/Src/main.c ****         uint32_t startCycle = DWT->CYCCNT;
+ 748              		.loc 1 68 9 is_stmt 1 view .LVU173
+  68:Core/Src/main.c ****         uint32_t startCycle = DWT->CYCCNT;
+ 749              		.loc 1 68 21 is_stmt 0 view .LVU174
+ 750 008c DFF8C0A0 		ldr	r10, .L36+8
+ 751 0090 0023     		movs	r3, #0
+ 752 0092 CAF80430 		str	r3, [r10, #4]
+  69:Core/Src/main.c ****         uint32_t startTime = HAL_GetTick();
+ 753              		.loc 1 69 9 is_stmt 1 view .LVU175
+  69:Core/Src/main.c ****         uint32_t startTime = HAL_GetTick();
+ 754              		.loc 1 69 18 is_stmt 0 view .LVU176
+ 755 0096 DAF80480 		ldr	r8, [r10, #4]
+ 756              	.LVL62:
+  70:Core/Src/main.c **** 
+ 757              		.loc 1 70 9 is_stmt 1 view .LVU177
+  70:Core/Src/main.c **** 
+ 758              		.loc 1 70 30 is_stmt 0 view .LVU178
+ 759 009a FFF7FEFF 		bl	HAL_GetTick
+ 760              	.LVL63:
+ 761 009e 8146     		mov	r9, r0
+ 762              	.LVL64:
+  72:Core/Src/main.c **** 
+ 763              		.loc 1 72 9 is_stmt 1 view .LVU179
+  72:Core/Src/main.c **** 
+ 764              		.loc 1 72 29 is_stmt 0 view .LVU180
+ 765 00a0 334B     		ldr	r3, .L36+40
+ 766 00a2 1A68     		ldr	r2, [r3]
+ 767 00a4 2146     		mov	r1, r4
+ 768 00a6 2046     		mov	r0, r4
+ 769              	.LVL65:
+  72:Core/Src/main.c **** 
+ 770              		.loc 1 72 29 view .LVU181
+ 771 00a8 FFF7FEFF 		bl	Calculate_double_Mandelbrot
+ 772              	.LVL66:
+ 773 00ac 0746     		mov	r7, r0
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 38
+
+
+ 774 00ae 0E46     		mov	r6, r1
+ 775              	.LVL67:
+  74:Core/Src/main.c ****         uint32_t endCycle = DWT->CYCCNT;
+ 776              		.loc 1 74 9 is_stmt 1 view .LVU182
+  74:Core/Src/main.c ****         uint32_t endCycle = DWT->CYCCNT;
+ 777              		.loc 1 74 28 is_stmt 0 view .LVU183
+ 778 00b0 FFF7FEFF 		bl	HAL_GetTick
+ 779              	.LVL68:
+  75:Core/Src/main.c **** 
+ 780              		.loc 1 75 9 is_stmt 1 view .LVU184
+  75:Core/Src/main.c **** 
+ 781              		.loc 1 75 18 is_stmt 0 view .LVU185
+ 782 00b4 DAF80430 		ldr	r3, [r10, #4]
+ 783              	.LVL69:
+  77:Core/Src/main.c ****         elapsed_Cycles = endCycle - startCycle;
+ 784              		.loc 1 77 9 is_stmt 1 view .LVU186
+  77:Core/Src/main.c ****         elapsed_Cycles = endCycle - startCycle;
+ 785              		.loc 1 77 32 is_stmt 0 view .LVU187
+ 786 00b8 A0EB0900 		sub	r0, r0, r9
+ 787              	.LVL70:
+  77:Core/Src/main.c ****         elapsed_Cycles = endCycle - startCycle;
+ 788              		.loc 1 77 22 view .LVU188
+ 789 00bc 0190     		str	r0, [sp, #4]
+  78:Core/Src/main.c **** 
+ 790              		.loc 1 78 9 is_stmt 1 view .LVU189
+  78:Core/Src/main.c **** 
+ 791              		.loc 1 78 35 is_stmt 0 view .LVU190
+ 792 00be A3EB0803 		sub	r3, r3, r8
+ 793              	.LVL71:
+  78:Core/Src/main.c **** 
+ 794              		.loc 1 78 24 view .LVU191
+ 795 00c2 0093     		str	r3, [sp]
+  80:Core/Src/main.c ****         uint64_t throughput = 0;
+ 796              		.loc 1 80 9 is_stmt 1 view .LVU192
+  80:Core/Src/main.c ****         uint64_t throughput = 0;
+ 797              		.loc 1 80 32 is_stmt 0 view .LVU193
+ 798 00c4 E317     		asrs	r3, r4, #31
+  80:Core/Src/main.c ****         uint64_t throughput = 0;
+ 799              		.loc 1 80 18 view .LVU194
+ 800 00c6 04FB03F3 		mul	r3, r4, r3
+ 801 00ca A4FB042C 		umull	r2, ip, r4, r4
+ 802 00ce 0CEB430C 		add	ip, ip, r3, lsl #1
+ 803              	.LVL72:
+  81:Core/Src/main.c ****         if (elapsed_Time > 0) {
+ 804              		.loc 1 81 9 is_stmt 1 view .LVU195
+  82:Core/Src/main.c ****             throughput = (totalPixels * 1000ULL) / elapsed_Time; // pixels per second
+ 805              		.loc 1 82 9 view .LVU196
+  82:Core/Src/main.c ****             throughput = (totalPixels * 1000ULL) / elapsed_Time; // pixels per second
+ 806              		.loc 1 82 26 is_stmt 0 view .LVU197
+ 807 00d2 019B     		ldr	r3, [sp, #4]
+  82:Core/Src/main.c ****             throughput = (totalPixels * 1000ULL) / elapsed_Time; // pixels per second
+ 808              		.loc 1 82 12 view .LVU198
+ 809 00d4 002B     		cmp	r3, #0
+ 810 00d6 B4D0     		beq	.L33
+  83:Core/Src/main.c ****         }
+ 811              		.loc 1 83 13 is_stmt 1 view .LVU199
+  83:Core/Src/main.c ****         }
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 39
+
+
+ 812              		.loc 1 83 39 is_stmt 0 view .LVU200
+ 813 00d8 4FEA4C13 		lsl	r3, ip, #5
+ 814 00dc 43EAD263 		orr	r3, r3, r2, lsr #27
+ 815 00e0 4FEA421E 		lsl	lr, r2, #5
+ 816 00e4 BEEB020E 		subs	lr, lr, r2
+ 817 00e8 63EB0C03 		sbc	r3, r3, ip
+ 818 00ec 9B00     		lsls	r3, r3, #2
+ 819 00ee 43EA9E73 		orr	r3, r3, lr, lsr #30
+ 820 00f2 4FEA8E0E 		lsl	lr, lr, #2
+ 821 00f6 1EEB0201 		adds	r1, lr, r2
+ 822 00fa 4CEB030C 		adc	ip, ip, r3
+ 823              	.LVL73:
+  83:Core/Src/main.c ****         }
+ 824              		.loc 1 83 39 view .LVU201
+ 825 00fe 4FEACC0C 		lsl	ip, ip, #3
+  83:Core/Src/main.c ****         }
+ 826              		.loc 1 83 50 view .LVU202
+ 827 0102 019A     		ldr	r2, [sp, #4]
+ 828              	.LVL74:
+  83:Core/Src/main.c ****         }
+ 829              		.loc 1 83 24 view .LVU203
+ 830 0104 0023     		movs	r3, #0
+ 831 0106 C800     		lsls	r0, r1, #3
+ 832 0108 4CEA5171 		orr	r1, ip, r1, lsr #29
+ 833 010c FFF7FEFF 		bl	__aeabi_uldivmod
+ 834              	.LVL75:
+ 835 0110 8146     		mov	r9, r0
+ 836              	.LVL76:
+  83:Core/Src/main.c ****         }
+ 837              		.loc 1 83 24 view .LVU204
+ 838 0112 8846     		mov	r8, r1
+ 839              	.LVL77:
+  83:Core/Src/main.c ****         }
+ 840              		.loc 1 83 24 view .LVU205
+ 841 0114 98E7     		b	.L30
+ 842              	.LVL78:
+ 843              	.L35:
+  83:Core/Src/main.c ****         }
+ 844              		.loc 1 83 24 view .LVU206
+ 845              	.LBE24:
+ 846              	.LBE22:
+  97:Core/Src/main.c ****     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
+ 847              		.loc 1 97 5 is_stmt 1 view .LVU207
+ 848 0116 0C4C     		ldr	r4, .L36
+ 849 0118 0022     		movs	r2, #0
+ 850 011a 0121     		movs	r1, #1
+ 851 011c 2046     		mov	r0, r4
+ 852 011e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 853              	.LVL79:
+  98:Core/Src/main.c ****     HAL_Delay(3000);
+ 854              		.loc 1 98 5 view .LVU208
+ 855 0122 0122     		movs	r2, #1
+ 856 0124 0221     		movs	r1, #2
+ 857 0126 2046     		mov	r0, r4
+ 858 0128 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 859              	.LVL80:
+  99:Core/Src/main.c ****     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 40
+
+
+ 860              		.loc 1 99 5 view .LVU209
+ 861 012c 40F6B830 		movw	r0, #3000
+ 862 0130 FFF7FEFF 		bl	HAL_Delay
+ 863              	.LVL81:
+ 100:Core/Src/main.c ****     HAL_Delay(2000);
+ 864              		.loc 1 100 5 view .LVU210
+ 865 0134 0022     		movs	r2, #0
+ 866 0136 0221     		movs	r1, #2
+ 867 0138 2046     		mov	r0, r4
+ 868 013a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 869              	.LVL82:
+ 101:Core/Src/main.c **** 
+ 870              		.loc 1 101 5 view .LVU211
+ 871 013e 4FF4FA60 		mov	r0, #2000
+ 872 0142 FFF7FEFF 		bl	HAL_Delay
+ 873              	.LVL83:
+ 874              	.L32:
+ 104:Core/Src/main.c ****         // Optional idle code
+ 875              		.loc 1 104 5 view .LVU212
+ 106:Core/Src/main.c **** }
+ 876              		.loc 1 106 5 view .LVU213
+ 104:Core/Src/main.c ****         // Optional idle code
+ 877              		.loc 1 104 11 view .LVU214
+ 878 0146 FEE7     		b	.L32
+ 879              	.L37:
+ 880              		.align	2
+ 881              	.L36:
+ 882 0148 00040240 		.word	1073873920
+ 883 014c 00ED00E0 		.word	-536810240
+ 884 0150 001000E0 		.word	-536866816
+ 885 0154 00000000 		.word	.LC0
+ 886 0158 14000000 		.word	.LC1
+ 887 015c 28000000 		.word	.LC2
+ 888 0160 44000000 		.word	.LC3
+ 889 0164 58000000 		.word	.LC4
+ 890 0168 00000000 		.word	numSizes
+ 891 016c 00000000 		.word	sizes
+ 892 0170 00000000 		.word	maxIter
+ 893              		.cfi_endproc
+ 894              	.LFE137:
+ 896              		.global	maxIter
+ 897              		.section	.data.maxIter,"aw"
+ 898              		.align	2
+ 901              	maxIter:
+ 902 0000 64000000 		.word	100
+ 903              		.global	numSizes
+ 904              		.section	.data.numSizes,"aw"
+ 905              		.align	2
+ 908              	numSizes:
+ 909 0000 05000000 		.word	5
+ 910              		.global	sizes
+ 911              		.section	.data.sizes,"aw"
+ 912              		.align	2
+ 915              	sizes:
+ 916 0000 80000000 		.word	128
+ 917 0004 A0000000 		.word	160
+ 918 0008 C0000000 		.word	192
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 41
+
+
+ 919 000c E0000000 		.word	224
+ 920 0010 00010000 		.word	256
+ 921              		.text
+ 922              	.Letext0:
+ 923              		.file 3 "C:\\ST\\STM32CubeIDE_1.19.0\\STM32CubeIDE\\plugins\\com.st.stm32cube.ide.mcu.externaltool
+ 924              		.file 4 "C:\\ST\\STM32CubeIDE_1.19.0\\STM32CubeIDE\\plugins\\com.st.stm32cube.ide.mcu.externaltool
+ 925              		.file 5 "Drivers/CMSIS/Include/core_cm4.h"
+ 926              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f446xx.h"
+ 927              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 928              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc_ex.h"
+ 929              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h"
+ 930              		.file 10 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ 931              		.file 11 "C:\\ST\\STM32CubeIDE_1.19.0\\STM32CubeIDE\\plugins\\com.st.stm32cube.ide.mcu.externaltoo
+ 932              		.file 12 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 933              		.file 13 "<built-in>"
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s 			page 42
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s:21     .text.MX_GPIO_Init:00000000 $t
+C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s:26     .text.MX_GPIO_Init:00000000 MX_GPIO_Init
+C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s:98     .text.MX_GPIO_Init:00000048 $d
+C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s:110    .text.Calculate_double_Mandelbrot:00000000 $t
+C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s:116    .text.Calculate_double_Mandelbrot:00000000 Calculate_double_Mandelbrot
+C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s:389    .text.Calculate_double_Mandelbrot:00000158 $d
+C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s:397    .text.Error_Handler:00000000 $t
+C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s:403    .text.Error_Handler:00000000 Error_Handler
+C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s:435    .text.SystemClock_Config:00000000 $t
+C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s:441    .text.SystemClock_Config:00000000 SystemClock_Config
+C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s:589    .text.SystemClock_Config:000000a4 $d
+C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s:596    .rodata.main.str1.4:00000000 $d
+C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s:612    .text.main:00000000 $t
+C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s:618    .text.main:00000000 main
+C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s:882    .text.main:00000148 $d
+C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s:908    .data.numSizes:00000000 numSizes
+C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s:915    .data.sizes:00000000 sizes
+C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s:901    .data.maxIter:00000000 maxIter
+C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s:898    .data.maxIter:00000000 $d
+C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s:905    .data.numSizes:00000000 $d
+C:\Users\Tadala\AppData\Local\Temp\cc3lV48p.s:912    .data.sizes:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_GPIO_Init
+HAL_GPIO_WritePin
+__aeabi_i2d
+__aeabi_ddiv
+__aeabi_dmul
+__aeabi_dsub
+__aeabi_dadd
+__aeabi_dcmple
+memset
+HAL_RCC_OscConfig
+HAL_RCC_ClockConfig
+__aeabi_uldivmod
+HAL_Init
+HAL_Delay
+printf
+HAL_GetTick

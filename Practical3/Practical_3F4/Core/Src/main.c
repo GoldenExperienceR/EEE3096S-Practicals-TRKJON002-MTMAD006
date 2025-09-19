@@ -53,7 +53,10 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
 //TODO: Define any function prototypes you might need such as the calculate Mandelbrot function among others
-
+void LED_ON(void);
+uint64_t Calculate_fixed_Mandelbrot(int width, int height,int maxInter );
+uint64_t Calculate_double_Mandelbrot(double width, double height,double maxInter );
+static inline void DWT_init(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -69,6 +72,10 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
+	int sizes[] = {128};// 160, 192,224, 256
+	int maxIter = 100;
+	volatile uint64_t elapsed_Cycles;
+	volatile uint64_t elapsed_Time;
 
   /* USER CODE END 1 */
 
@@ -92,6 +99,47 @@ int main(void)
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
 
+
+  // turning on LED 0 to signal start
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET); // CONFIGURE LED 0 ON
+  	  	HAL_Delay(2000); // remove once perfomance test are implmented
+
+  // intiating testing
+  	  	//for (int i = 0; i < 5; i++){
+  	  	int size = 128;
+
+  	  	DWT_init();// intializing DWT counter
+
+  	  	uint64_t startCycle = DWT->CYCCNT;
+  	  	uint64_t startTime = HAL_GetTick();
+
+  	  	int checksum = Calculate_fixed_Mandelbrot(size, size, maxIter );
+
+  	  	uint64_t endCycle = DWT->CYCCNT;
+  	  	uint64_t endTime = HAL_GetTick();
+
+  	  	elapsed_Cycles = endCycle - startCycle;
+  	  	elapsed_Time = endTime - startTime;
+  	  	uint64_t throughPut = (size*size)/(elapsed_Time/1000);
+
+  	  //printf("Image Size: %dx%d\n", size, size);
+  	          printf("Checksum = %d\n", checksum);
+  	          //printf("Wall-clock time = %lu ms\n", elapsed_ms);
+  	          //printf("CPU cycles = %lu\n", elapsed_cycles);
+  	         // printf("Throughput = %.2f pixels/s\n\n", throughPut);
+
+
+ // 	  	}
+
+  // turing on LED 1 to signal end of test
+  	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+  	  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
+  	HAL_Delay(3000);
+  // reset LED
+
+  		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+  		  HAL_Delay(2000);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -106,13 +154,12 @@ int main(void)
 
 	  //TODO: Benchmark and Profile Performance
 
-
 	  //TODO: Visual indicator: Turn on LED1 to signal processing start
 
 
 	  //TODO: Keep the LEDs ON for 2s
+	  			  //TODO: Turn OFF LEDs
 
-	  //TODO: Turn OFF LEDs
   }
   /* USER CODE END 3 */
 }
@@ -200,6 +247,84 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 //TODO: Function signatures you defined previously , implement them here
+void LED_ON(void)
+{
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET); // CONFIGURE LED 0 ON
+	HAL_Delay(2000);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET); // CONFIGURE LED 0 OFF
+}
+uint64_t Calculate_fixed_Mandelbrot(int width, int height,int maxInter )
+{
+	uint64_t checksum = 0;
+	// scaling factor S
+	const int S = 1000000;
+	height = height *S;
+	width = width *S;
+
+	for(int y = 0; (y < height-1*S); y = y +1*S)
+	{
+		for(int x = 0;(x < width-1*S); x = x + 1*S )
+		{
+			int x0,y0,xi,yi;
+			int iteration = 0;
+			x0 = (((x/width)*S)*3500000)/S - 2500000;
+			y0 = (((y/height)*S)*2000000)/S - 1000000;
+			xi = 0, yi = 0;
+			while (iteration < maxInter && ((xi*xi)/S + (yi*yi)/S) <= 4*S)
+			{
+				int temp = (xi*xi)/S + (yi*yi)/S;
+				yi = 2*xi*yi/S + y0;
+				xi = temp + x0;
+				iteration ++;
+
+			}
+			checksum = checksum + iteration;
+
+		}
+	}
+	return checksum;
+}
+
+uint64_t Calculate_double_Mandelbrot(double width, double height,double maxInter )
+{
+	uint64_t checksum = 0;
+
+	for(int y = 0; (y < (int)height-1); y = y +1)
+	{
+		for(int x = 0;(x < (int)width-1); x = x + 1)
+		{
+			double x0,y0,xi,yi;
+			uint64_t iteration = 0;
+			x0 = ((double)x/width) * 3.5 - 2.5;
+			y0 = ((double)y/height) * 2.0 - 1.0;
+			xi = 0.0, yi = 0.0;
+			while (iteration < maxInter && ((xi*xi) + (yi*yi)) <= 4.0)
+			{
+				double temp = (xi*xi) - (yi*yi);
+				yi = 2*xi*yi + y0;
+				xi = temp + x0;
+				iteration ++;
+
+			}
+			checksum = checksum + iteration;
+
+		}
+	}
+	return checksum;
+}
+
+static inline void DWT_init(void)
+{
+		CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+		// Only write to LAR if it exists
+		#ifdef DWT_LAR
+		    DWT->LAR = 0xC5ACCE55;  // Unlock access (for M7/M33)
+		#endif
+
+		DWT ->CYCCNT = 0;
+		DWT ->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+}
 
 /* USER CODE END 4 */
 
@@ -233,3 +358,4 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
+

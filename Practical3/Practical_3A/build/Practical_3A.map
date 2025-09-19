@@ -1353,18 +1353,18 @@ LOAD C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
  .debug_line    0x000041bf      0x372 build/system_stm32f4xx.o
  .debug_line    0x00004531       0x73 build/startup_stm32f446xx.o
 
-.debug_str      0x00000000     0x1a2e
- .debug_str     0x00000000     0x1a2e build/main.o
-                                0x5d5 (size before relaxing)
- .debug_str     0x00001a2e      0x264 build/stm32f4xx_it.o
- .debug_str     0x00001a2e      0x315 build/stm32f4xx_hal_msp.o
- .debug_str     0x00001a2e      0x765 build/stm32f4xx_hal_rcc.o
- .debug_str     0x00001a2e      0x84c build/stm32f4xx_hal_rcc_ex.o
- .debug_str     0x00001a2e      0x53a build/stm32f4xx_hal_gpio.o
- .debug_str     0x00001a2e      0xca2 build/stm32f4xx_hal_cortex.o
- .debug_str     0x00001a2e      0xbff build/stm32f4xx_hal.o
- .debug_str     0x00001a2e      0x3cf build/system_stm32f4xx.o
- .debug_str     0x00001a2e       0xb7 build/startup_stm32f446xx.o
+.debug_str      0x00000000     0x1a94
+ .debug_str     0x00000000     0x1a94 build/main.o
+                                0x5b6 (size before relaxing)
+ .debug_str     0x00001a94      0x264 build/stm32f4xx_it.o
+ .debug_str     0x00001a94      0x315 build/stm32f4xx_hal_msp.o
+ .debug_str     0x00001a94      0x765 build/stm32f4xx_hal_rcc.o
+ .debug_str     0x00001a94      0x84c build/stm32f4xx_hal_rcc_ex.o
+ .debug_str     0x00001a94      0x53a build/stm32f4xx_hal_gpio.o
+ .debug_str     0x00001a94      0xca2 build/stm32f4xx_hal_cortex.o
+ .debug_str     0x00001a94      0xbff build/stm32f4xx_hal.o
+ .debug_str     0x00001a94      0x3cf build/system_stm32f4xx.o
+ .debug_str     0x00001a94       0xb7 build/startup_stm32f446xx.o
 
 .comment        0x00000000       0x43
  .comment       0x00000000       0x43 build/main.o
