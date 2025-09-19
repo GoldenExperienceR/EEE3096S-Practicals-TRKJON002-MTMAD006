@@ -58,6 +58,15 @@ int imageSize[5] = {128,160,192,224,256};
 int max_iter = 100;
 double x = 0;
 
+// test of resolutions
+int resolutions[][2] = {
+    {128, 128},
+    {320, 240},
+    {640, 480},
+    {1280, 720},
+    {1920, 1080}
+};
+int num_resolutions = sizeof(resolutions) / sizeof(resolutions[0]);
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -85,12 +94,12 @@ int main(void)
   /* USER CODE BEGIN 1 */
 
 	  // image dimesnisons
-	  int height, width;
+	 // int height, width;
 	  //width = height = imageSize[0];
 	  //width = height = imageSize[1];
 	  //width = height = imageSize[2];
 	  //width = height = imageSize[3];
-	   width = height = imageSize[4];
+	 // width = height = imageSize[4];
 
 
 
@@ -115,14 +124,17 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
+ // for (int i = 0; i < num_resolutions; i++) {
+      int width = resolutions[1][0];
+      int height = resolutions[1][1];
 
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET); // CONFIGURE LED 0 ON
   // Record the start time and cycles
   	  start_time = HAL_GetTick();
   	  start_cycle = DWT->CYCCNT;
   	  //Call the Mandelbrot Function and store the output in the checksum variable defined initially
-  	  checksum = calculate_mandelbrot_fixed_point_arithmetic(width, height, max_iter);
-  	  //checksum = calculate_mandelbrot_double(width, height, max_iter);
+  	  //checksum = calculate_mandelbrot_fixed_point_arithmetic(width, height, max_iter);
+  	  checksum = calculate_mandelbrot_double(width, height, max_iter);
   	  // Record the end time
   	  end_time = HAL_GetTick();
   	  end_cycle = DWT->CYCCNT;
@@ -142,6 +154,7 @@ int main(void)
   	  // Turn off the LEDs
   	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
   	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+ // }
   /* USER CODE END 2 */
 
   /* Infinite loop */
