@@ -125,16 +125,16 @@ int main(void)
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
  // for (int i = 0; i < num_resolutions; i++) {
-      int width = resolutions[1][0];
-      int height = resolutions[1][1];
+      int width = resolutions[4][0];
+      int height = resolutions[4][1];
 
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET); // CONFIGURE LED 0 ON
   // Record the start time and cycles
   	  start_time = HAL_GetTick();
   	  start_cycle = DWT->CYCCNT;
   	  //Call the Mandelbrot Function and store the output in the checksum variable defined initially
-  	  //checksum = calculate_mandelbrot_fixed_point_arithmetic(width, height, max_iter);
-  	  checksum = calculate_mandelbrot_double(width, height, max_iter);
+  	  checksum = calculate_mandelbrot_fixed_point_arithmetic(width, height, max_iter);
+  	  //checksum = calculate_mandelbrot_double(width, height, max_iter);
   	  // Record the end time
   	  end_time = HAL_GetTick();
   	  end_cycle = DWT->CYCCNT;
@@ -153,7 +153,7 @@ int main(void)
   	  HAL_Delay(2000);
   	  // Turn off the LEDs
   	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
-  	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+  //	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
  // }
   /* USER CODE END 2 */
 
