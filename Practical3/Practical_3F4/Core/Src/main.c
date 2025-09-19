@@ -1,4 +1,3 @@
-//TADALAS BRANCH - F4
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
@@ -19,6 +18,8 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "stdint.h"
+#include "stm32f4xx.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -45,6 +46,17 @@
 /* USER CODE BEGIN PV */
 //TODO: Define variables you think you might need
 // - Performance timing variables (e.g execution time, throughput, pixels per second, clock cycles)
+int start_time = 0;
+int end_time = 0;
+int wall_clock_time = 0;
+uint64_t checksum = 0;
+int start_cycle = 0;
+int end_cycle = 0;
+int elapsed_clock_cycles = 0;
+double through_put = 0;
+int imageSize[5] = {128,160,192,224,256};
+int max_iter = 100;
+double x = 0;
 
 /* USER CODE END PV */
 
@@ -53,9 +65,8 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
 //TODO: Define any function prototypes you might need such as the calculate Mandelbrot function among others
-void LED_ON(void);
-uint64_t Calculate_fixed_Mandelbrot(int width, int height,int maxInter );
-uint64_t Calculate_double_Mandelbrot(double width, double height,double maxInter );
+uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int max_iterations);
+uint64_t calculate_mandelbrot_double(double width, double height, double max_iterations);
 static inline void DWT_init(void);
 /* USER CODE END PFP */
 
@@ -72,10 +83,16 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-	int sizes[] = {128};// 160, 192,224, 256
-	int maxIter = 100;
-	volatile uint64_t elapsed_Cycles;
-	volatile uint64_t elapsed_Time;
+
+	  // image dimesnisons
+	  int height, width;
+	  //width = height = imageSize[0];
+	  //width = height = imageSize[1];
+	  //width = height = imageSize[2];
+	  //width = height = imageSize[3];
+	   width = height = imageSize[4];
+
+
 
   /* USER CODE END 1 */
 
@@ -85,7 +102,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
+  DWT_init();// Initializing DWT counter
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -99,47 +116,32 @@ int main(void)
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
 
-
-  // turning on LED 0 to signal start
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET); // CONFIGURE LED 0 ON
-  	  	HAL_Delay(2000); // remove once perfomance test are implmented
+  // Record the start time and cycles
+  	  start_time = HAL_GetTick();
+  	  start_cycle = DWT->CYCCNT;
+  	  //Call the Mandelbrot Function and store the output in the checksum variable defined initially
+  	  checksum = calculate_mandelbrot_fixed_point_arithmetic(width, height, max_iter);
+  	  //checksum = calculate_mandelbrot_double(width, height, max_iter);
+  	  // Record the end time
+  	  end_time = HAL_GetTick();
+  	  end_cycle = DWT->CYCCNT;
 
-  // intiating testing
-  	  	//for (int i = 0; i < 5; i++){
-  	  	int size = 128;
+  	  // Calculate the execution time and cycles and throughput
+    	wall_clock_time = end_time - start_time;
+    	elapsed_clock_cycles = end_cycle - start_cycle;
 
-  	  	DWT_init();// intializing DWT counter
-
-  	  	uint64_t startCycle = DWT->CYCCNT;
-  	  	uint64_t startTime = HAL_GetTick();
-
-  	  	int checksum = Calculate_fixed_Mandelbrot(size, size, maxIter );
-
-  	  	uint64_t endCycle = DWT->CYCCNT;
-  	  	uint64_t endTime = HAL_GetTick();
-
-  	  	elapsed_Cycles = endCycle - startCycle;
-  	  	elapsed_Time = endTime - startTime;
-  	  	uint64_t throughPut = (size*size)/(elapsed_Time/1000);
-
-  	  //printf("Image Size: %dx%d\n", size, size);
-  	          printf("Checksum = %d\n", checksum);
-  	          //printf("Wall-clock time = %lu ms\n", elapsed_ms);
-  	          //printf("CPU cycles = %lu\n", elapsed_cycles);
-  	         // printf("Throughput = %.2f pixels/s\n\n", throughPut);
+    	// calculation of pixels per second
+    	through_put = (width * height)*1000 / (wall_clock_time) ;
 
 
- // 	  	}
-
-  // turing on LED 1 to signal end of test
-  	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
-  	  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
-  	HAL_Delay(3000);
-  // reset LED
-
-  		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
-  		  HAL_Delay(2000);
-
+  	  // Turn on LED 1 to signify the end of the operation
+  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
+  	  // Hold the LEDs on for a 1s delay
+  	  HAL_Delay(2000);
+  	  // Turn off the LEDs
+  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+  	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -154,12 +156,13 @@ int main(void)
 
 	  //TODO: Benchmark and Profile Performance
 
+
 	  //TODO: Visual indicator: Turn on LED1 to signal processing start
 
 
 	  //TODO: Keep the LEDs ON for 2s
-	  			  //TODO: Turn OFF LEDs
 
+	  //TODO: Turn OFF LEDs
   }
   /* USER CODE END 3 */
 }
@@ -247,71 +250,52 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 //TODO: Function signatures you defined previously , implement them here
-void LED_ON(void)
-{
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET); // CONFIGURE LED 0 ON
-	HAL_Delay(2000);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
-		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET); // CONFIGURE LED 0 OFF
-}
-uint64_t Calculate_fixed_Mandelbrot(int width, int height,int maxInter )
-{
-	uint64_t checksum = 0;
-	// scaling factor S
+uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int max_iterations){
+	uint64_t mandelbrot_sum = 0;
+	//TODO: Complete the function implementation
+	int x0, y0, xi, yi, iteration, x, y, temp;
+	// Defining scaling factor
 	const int S = 1000000;
-	height = height *S;
-	width = width *S;
-
-	for(int y = 0; (y < height-1*S); y = y +1*S)
-	{
-		for(int x = 0;(x < width-1*S); x = x + 1*S )
-		{
-			int x0,y0,xi,yi;
-			int iteration = 0;
+	//Scaling height and width
+	height = height*S;
+	width = width*S;
+	for(y = 0; y < height - 1*S; y = y + 1*S){
+		for(x = 0; x < width - 1*S; x = x + 1*S){
 			x0 = (((x/width)*S)*3500000)/S - 2500000;
 			y0 = (((y/height)*S)*2000000)/S - 1000000;
-			xi = 0, yi = 0;
-			while (iteration < maxInter && ((xi*xi)/S + (yi*yi)/S) <= 4*S)
-			{
-				int temp = (xi*xi)/S + (yi*yi)/S;
-				yi = 2*xi*yi/S + y0;
+			xi = 0;
+			yi = 0;
+			iteration = 0;
+			while((iteration < max_iterations)&&((xi^2)/S + (yi^2)/S <= 4*S)){
+				temp = (xi^2)/S - (yi^2)/S;
+				yi = 2*xi*yi/S +y0;
 				xi = temp + x0;
-				iteration ++;
-
-			}
-			checksum = checksum + iteration;
-
-		}
-	}
-	return checksum;
+				iteration = iteration + 1;
+			};
+			mandelbrot_sum = mandelbrot_sum + iteration;
+		};
+	};
+	return mandelbrot_sum;
 }
 
-uint64_t Calculate_double_Mandelbrot(double width, double height,double maxInter )
-{
-	uint64_t checksum = 0;
-
-	for(int y = 0; (y < (int)height-1); y = y +1)
-	{
-		for(int x = 0;(x < (int)width-1); x = x + 1)
-		{
-			double x0,y0,xi,yi;
+uint64_t calculate_mandelbrot_double(double width, double height, double max_iterations) {
+	uint64_t mandelbrot_sum = 0;
+	for (int py = 0; py < (int)height; py++) {
+		for (int px = 0; px < (int)width; px++) {
+			double x0 = ((double)px / width) * 3.5 - 2.5;
+			double y0 = ((double)py / height) * 2.0 - 1.0;
+			double xi = 0.0, yi = 0.0;
 			uint64_t iteration = 0;
-			x0 = ((double)x/width) * 3.5 - 2.5;
-			y0 = ((double)y/height) * 2.0 - 1.0;
-			xi = 0.0, yi = 0.0;
-			while (iteration < maxInter && ((xi*xi) + (yi*yi)) <= 4.0)
-			{
-				double temp = (xi*xi) - (yi*yi);
-				yi = 2*xi*yi + y0;
+			while ((iteration < max_iterations) && ((xi * xi + yi * yi) <= 4.0)) {
+				double temp = xi * xi - yi * yi;
+				yi = 2.0 * xi * yi + y0;
 				xi = temp + x0;
-				iteration ++;
-
+				iteration++;
 			}
-			checksum = checksum + iteration;
-
+			mandelbrot_sum += iteration;
 		}
 	}
-	return checksum;
+	return mandelbrot_sum;
 }
 
 static inline void DWT_init(void)
@@ -325,6 +309,7 @@ static inline void DWT_init(void)
 		DWT ->CYCCNT = 0;
 		DWT ->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
 }
+
 
 /* USER CODE END 4 */
 
@@ -358,4 +343,3 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-
