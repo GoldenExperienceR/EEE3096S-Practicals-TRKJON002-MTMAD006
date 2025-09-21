@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
   29:Core/Src/main.c **** /* Private typedef -----------------------------------------------------------*/
   30:Core/Src/main.c **** /* USER CODE BEGIN PTD */
   31:Core/Src/main.c **** 
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 2
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 2
 
 
   32:Core/Src/main.c **** /* USER CODE END PTD */
@@ -89,192 +89,198 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
   57:Core/Src/main.c **** int imageSize[5] = {128,160,192,224,256};
   58:Core/Src/main.c **** int max_iter = 100;
   59:Core/Src/main.c **** double x = 0;
-  60:Core/Src/main.c **** 
-  61:Core/Src/main.c **** // test of resolutions
-  62:Core/Src/main.c **** int resolutions[][2] = {
-  63:Core/Src/main.c ****     {128, 128},
-  64:Core/Src/main.c ****     {320, 240},
-  65:Core/Src/main.c ****     {640, 480},
-  66:Core/Src/main.c ****     {1280, 720},
-  67:Core/Src/main.c ****     {1920, 1080}
-  68:Core/Src/main.c **** };
-  69:Core/Src/main.c **** int num_resolutions = sizeof(resolutions) / sizeof(resolutions[0]);
-  70:Core/Src/main.c **** /* USER CODE END PV */
-  71:Core/Src/main.c **** 
-  72:Core/Src/main.c **** /* Private function prototypes -----------------------------------------------*/
-  73:Core/Src/main.c **** void SystemClock_Config(void);
-  74:Core/Src/main.c **** static void MX_GPIO_Init(void);
-  75:Core/Src/main.c **** /* USER CODE BEGIN PFP */
-  76:Core/Src/main.c **** //TODO: Define any function prototypes you might need such as the calculate Mandelbrot function amo
-  77:Core/Src/main.c **** uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int max_iterations);
-  78:Core/Src/main.c **** uint64_t calculate_mandelbrot_double(double width, double height, double max_iterations);
-  79:Core/Src/main.c **** static inline void DWT_init(void);
-  80:Core/Src/main.c **** /* USER CODE END PFP */
-  81:Core/Src/main.c **** 
-  82:Core/Src/main.c **** /* Private user code ---------------------------------------------------------*/
-  83:Core/Src/main.c **** /* USER CODE BEGIN 0 */
-  84:Core/Src/main.c **** 
-  85:Core/Src/main.c **** /* USER CODE END 0 */
-  86:Core/Src/main.c **** 
-  87:Core/Src/main.c **** /**
-  88:Core/Src/main.c ****   * @brief  The application entry point.
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 3
+  60:Core/Src/main.c **** int cycles_per_pixel = 0;
+  61:Core/Src/main.c **** 
+  62:Core/Src/main.c **** // test of resolutions
+  63:Core/Src/main.c **** /*int resolutions[][2] = {
+  64:Core/Src/main.c ****     {128, 128},
+  65:Core/Src/main.c ****     {320, 240},
+  66:Core/Src/main.c ****     {640, 480},
+  67:Core/Src/main.c ****     {1280, 720},
+  68:Core/Src/main.c ****     {1920, 1080}
+  69:Core/Src/main.c **** };*/
+  70:Core/Src/main.c **** //int num_resolutions = sizeof(resolutions) / sizeof(resolutions[0]);
+  71:Core/Src/main.c **** /* USER CODE END PV */
+  72:Core/Src/main.c **** 
+  73:Core/Src/main.c **** /* Private function prototypes -----------------------------------------------*/
+  74:Core/Src/main.c **** void SystemClock_Config(void);
+  75:Core/Src/main.c **** static void MX_GPIO_Init(void);
+  76:Core/Src/main.c **** /* USER CODE BEGIN PFP */
+  77:Core/Src/main.c **** //TODO: Define any function prototypes you might need such as the calculate Mandelbrot function amo
+  78:Core/Src/main.c **** uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int max_iterations);
+  79:Core/Src/main.c **** uint64_t calculate_mandelbrot_double(double width, double height, double max_iterations);
+  80:Core/Src/main.c **** static inline void DWT_init(void);
+  81:Core/Src/main.c **** /* USER CODE END PFP */
+  82:Core/Src/main.c **** 
+  83:Core/Src/main.c **** /* Private user code ---------------------------------------------------------*/
+  84:Core/Src/main.c **** /* USER CODE BEGIN 0 */
+  85:Core/Src/main.c **** 
+  86:Core/Src/main.c **** /* USER CODE END 0 */
+  87:Core/Src/main.c **** 
+  88:Core/Src/main.c **** /**
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 3
 
 
-  89:Core/Src/main.c ****   * @retval int
-  90:Core/Src/main.c ****   */
-  91:Core/Src/main.c **** int main(void)
-  92:Core/Src/main.c **** {
-  93:Core/Src/main.c **** 
-  94:Core/Src/main.c ****   /* USER CODE BEGIN 1 */
-  95:Core/Src/main.c **** 
-  96:Core/Src/main.c **** 	  // image dimesnisons
-  97:Core/Src/main.c **** 	 // int height, width;
-  98:Core/Src/main.c **** 	  //width = height = imageSize[0];
-  99:Core/Src/main.c **** 	  //width = height = imageSize[1];
- 100:Core/Src/main.c **** 	  //width = height = imageSize[2];
- 101:Core/Src/main.c **** 	  //width = height = imageSize[3];
- 102:Core/Src/main.c **** 	 // width = height = imageSize[4];
- 103:Core/Src/main.c **** 
+  89:Core/Src/main.c ****   * @brief  The application entry point.
+  90:Core/Src/main.c ****   * @retval int
+  91:Core/Src/main.c ****   */
+  92:Core/Src/main.c **** int main(void)
+  93:Core/Src/main.c **** {
+  94:Core/Src/main.c **** 
+  95:Core/Src/main.c ****   /* USER CODE BEGIN 1 */
+  96:Core/Src/main.c **** 
+  97:Core/Src/main.c **** 	  // image dimesnisons
+  98:Core/Src/main.c **** 	  int height, width;
+  99:Core/Src/main.c **** 	  //width = height = imageSize[0];
+ 100:Core/Src/main.c **** 	  //width = height = imageSize[1];
+ 101:Core/Src/main.c **** 	  //width = height = imageSize[2];
+ 102:Core/Src/main.c **** 	  //width = height = imageSize[3];
+ 103:Core/Src/main.c **** 	  width = height = imageSize[4];
  104:Core/Src/main.c **** 
  105:Core/Src/main.c **** 
- 106:Core/Src/main.c ****   /* USER CODE END 1 */
- 107:Core/Src/main.c **** 
- 108:Core/Src/main.c ****   /* MCU Configuration--------------------------------------------------------*/
- 109:Core/Src/main.c **** 
- 110:Core/Src/main.c ****   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
- 111:Core/Src/main.c ****   HAL_Init();
- 112:Core/Src/main.c **** 
- 113:Core/Src/main.c ****   /* USER CODE BEGIN Init */
- 114:Core/Src/main.c ****   DWT_init();// Initializing DWT counter
- 115:Core/Src/main.c ****   /* USER CODE END Init */
- 116:Core/Src/main.c **** 
- 117:Core/Src/main.c ****   /* Configure the system clock */
- 118:Core/Src/main.c ****   SystemClock_Config();
- 119:Core/Src/main.c **** 
- 120:Core/Src/main.c ****   /* USER CODE BEGIN SysInit */
- 121:Core/Src/main.c **** 
- 122:Core/Src/main.c ****   /* USER CODE END SysInit */
- 123:Core/Src/main.c **** 
- 124:Core/Src/main.c ****   /* Initialize all configured peripherals */
- 125:Core/Src/main.c ****   MX_GPIO_Init();
- 126:Core/Src/main.c ****   /* USER CODE BEGIN 2 */
- 127:Core/Src/main.c ****  // for (int i = 0; i < num_resolutions; i++) {
- 128:Core/Src/main.c ****       int width = resolutions[4][0];
- 129:Core/Src/main.c ****       int height = resolutions[4][1];
- 130:Core/Src/main.c **** 
- 131:Core/Src/main.c ****   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET); // CONFIGURE LED 0 ON
- 132:Core/Src/main.c ****   // Record the start time and cycles
- 133:Core/Src/main.c ****   	  start_time = HAL_GetTick();
- 134:Core/Src/main.c ****   	  start_cycle = DWT->CYCCNT;
- 135:Core/Src/main.c ****   	  //Call the Mandelbrot Function and store the output in the checksum variable defined initially
- 136:Core/Src/main.c ****   	  checksum = calculate_mandelbrot_fixed_point_arithmetic(width, height, max_iter);
- 137:Core/Src/main.c ****   	  //checksum = calculate_mandelbrot_double(width, height, max_iter);
- 138:Core/Src/main.c ****   	  // Record the end time
- 139:Core/Src/main.c ****   	  end_time = HAL_GetTick();
- 140:Core/Src/main.c ****   	  end_cycle = DWT->CYCCNT;
- 141:Core/Src/main.c **** 
- 142:Core/Src/main.c ****   	  // Calculate the execution time and cycles and throughput
- 143:Core/Src/main.c ****     	wall_clock_time = end_time - start_time;
- 144:Core/Src/main.c ****     	elapsed_clock_cycles = end_cycle - start_cycle;
- 145:Core/Src/main.c **** 
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 4
+ 106:Core/Src/main.c **** 
+ 107:Core/Src/main.c ****   /* USER CODE END 1 */
+ 108:Core/Src/main.c **** 
+ 109:Core/Src/main.c ****   /* MCU Configuration--------------------------------------------------------*/
+ 110:Core/Src/main.c **** 
+ 111:Core/Src/main.c ****   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+ 112:Core/Src/main.c ****   HAL_Init();
+ 113:Core/Src/main.c **** 
+ 114:Core/Src/main.c ****   /* USER CODE BEGIN Init */
+ 115:Core/Src/main.c ****   DWT_init();// Initializing DWT counter
+ 116:Core/Src/main.c ****   /* USER CODE END Init */
+ 117:Core/Src/main.c **** 
+ 118:Core/Src/main.c ****   /* Configure the system clock */
+ 119:Core/Src/main.c ****   SystemClock_Config();
+ 120:Core/Src/main.c **** 
+ 121:Core/Src/main.c ****   /* USER CODE BEGIN SysInit */
+ 122:Core/Src/main.c **** 
+ 123:Core/Src/main.c ****   /* USER CODE END SysInit */
+ 124:Core/Src/main.c **** 
+ 125:Core/Src/main.c ****   /* Initialize all configured peripherals */
+ 126:Core/Src/main.c ****   MX_GPIO_Init();
+ 127:Core/Src/main.c ****   /* USER CODE BEGIN 2 */
+ 128:Core/Src/main.c ****  // for (int i = 0; i < num_resolutions; i++) {
+ 129:Core/Src/main.c ****      // int width = resolutions[4][0];
+ 130:Core/Src/main.c ****       // int height = resolutions[4][1];
+ 131:Core/Src/main.c **** 
+ 132:Core/Src/main.c ****   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET); // CONFIGURE LED 0 ON
+ 133:Core/Src/main.c ****   // Record the start time and cycles
+ 134:Core/Src/main.c ****   	  start_time = HAL_GetTick();
+ 135:Core/Src/main.c ****   	  start_cycle = DWT->CYCCNT;
+ 136:Core/Src/main.c **** 
+ 137:Core/Src/main.c ****   	  //Call the Mandelbrot Function and store the output in the checksum variable defined initially
+ 138:Core/Src/main.c **** 		  //checksum = calculate_mandelbrot_fixed_point_arithmetic(width, height, max_iter);
+ 139:Core/Src/main.c **** 		  checksum = calculate_mandelbrot_double(width, height, max_iter);
+ 140:Core/Src/main.c **** 
+ 141:Core/Src/main.c ****   	  // Record the end time
+ 142:Core/Src/main.c **** 		  end_time = HAL_GetTick();
+ 143:Core/Src/main.c **** 		  end_cycle = DWT->CYCCNT;
+ 144:Core/Src/main.c **** 
+ 145:Core/Src/main.c ****   	  // Calculate the execution time and cycles
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 4
 
 
- 146:Core/Src/main.c ****     	// calculation of pixels per second
- 147:Core/Src/main.c ****     	through_put = (width * height)*1000 / (wall_clock_time) ;
+ 146:Core/Src/main.c ****     	wall_clock_time = end_time - start_time;
+ 147:Core/Src/main.c ****     	elapsed_clock_cycles = end_cycle - start_cycle;
  148:Core/Src/main.c **** 
- 149:Core/Src/main.c **** 
- 150:Core/Src/main.c ****   	  // Turn on LED 1 to signify the end of the operation
- 151:Core/Src/main.c ****   	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
- 152:Core/Src/main.c ****   	  // Hold the LEDs on for a 1s delay
- 153:Core/Src/main.c ****   	  HAL_Delay(2000);
- 154:Core/Src/main.c ****   	  // Turn off the LEDs
- 155:Core/Src/main.c ****   	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
- 156:Core/Src/main.c ****   //	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
- 157:Core/Src/main.c ****  // }
- 158:Core/Src/main.c ****   /* USER CODE END 2 */
+ 149:Core/Src/main.c ****     	// calculation of through
+ 150:Core/Src/main.c ****     	cycles_per_pixel = elapsed_clock_cycles/(width*height);
+ 151:Core/Src/main.c ****     	through_put = 120000000 / cycles_per_pixel ;
+ 152:Core/Src/main.c **** 
+ 153:Core/Src/main.c **** 
+ 154:Core/Src/main.c ****   	  // Turn on LED 1 to signify the end of the operation
+ 155:Core/Src/main.c ****     	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
+ 156:Core/Src/main.c **** 
+ 157:Core/Src/main.c ****   	  // Hold the LEDs on for a 2s delay
+ 158:Core/Src/main.c ****     	HAL_Delay(667); // had originally used 2000 as recommended by HAL library but found LED didn't
  159:Core/Src/main.c **** 
- 160:Core/Src/main.c ****   /* Infinite loop */
- 161:Core/Src/main.c ****   /* USER CODE BEGIN WHILE */
- 162:Core/Src/main.c ****   while (1)
- 163:Core/Src/main.c ****   {
- 164:Core/Src/main.c ****     /* USER CODE END WHILE */
+ 160:Core/Src/main.c ****   	  // Turn off the LEDs
+ 161:Core/Src/main.c **** 		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+ 162:Core/Src/main.c **** 		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+ 163:Core/Src/main.c ****  // }
+ 164:Core/Src/main.c ****   /* USER CODE END 2 */
  165:Core/Src/main.c **** 
- 166:Core/Src/main.c ****     /* USER CODE BEGIN 3 */
- 167:Core/Src/main.c **** 	  //TODO: Visual indicator: Turn on LED0 to signal processing start
- 168:Core/Src/main.c **** 
- 169:Core/Src/main.c **** 
- 170:Core/Src/main.c **** 	  //TODO: Benchmark and Profile Performance
+ 166:Core/Src/main.c ****   /* Infinite loop */
+ 167:Core/Src/main.c ****   /* USER CODE BEGIN WHILE */
+ 168:Core/Src/main.c ****   while (1)
+ 169:Core/Src/main.c ****   {
+ 170:Core/Src/main.c ****     /* USER CODE END WHILE */
  171:Core/Src/main.c **** 
- 172:Core/Src/main.c **** 
- 173:Core/Src/main.c **** 	  //TODO: Visual indicator: Turn on LED1 to signal processing start
+ 172:Core/Src/main.c ****     /* USER CODE BEGIN 3 */
+ 173:Core/Src/main.c **** 	  //TODO: Visual indicator: Turn on LED0 to signal processing start
  174:Core/Src/main.c **** 
  175:Core/Src/main.c **** 
- 176:Core/Src/main.c **** 	  //TODO: Keep the LEDs ON for 2s
+ 176:Core/Src/main.c **** 	  //TODO: Benchmark and Profile Performance
  177:Core/Src/main.c **** 
- 178:Core/Src/main.c **** 	  //TODO: Turn OFF LEDs
- 179:Core/Src/main.c ****   }
- 180:Core/Src/main.c ****   /* USER CODE END 3 */
- 181:Core/Src/main.c **** }
- 182:Core/Src/main.c **** 
- 183:Core/Src/main.c **** /**
- 184:Core/Src/main.c ****   * @brief System Clock Configuration
- 185:Core/Src/main.c ****   * @retval None
- 186:Core/Src/main.c ****   */
- 187:Core/Src/main.c **** void SystemClock_Config(void)
- 188:Core/Src/main.c **** {
- 189:Core/Src/main.c ****   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
- 190:Core/Src/main.c ****   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
- 191:Core/Src/main.c **** 
- 192:Core/Src/main.c ****   /** Configure the main internal regulator output voltage
- 193:Core/Src/main.c ****   */
- 194:Core/Src/main.c ****   __HAL_RCC_PWR_CLK_ENABLE();
- 195:Core/Src/main.c ****   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
- 196:Core/Src/main.c **** 
- 197:Core/Src/main.c ****   /** Initializes the RCC Oscillators according to the specified parameters
- 198:Core/Src/main.c ****   * in the RCC_OscInitTypeDef structure.
+ 178:Core/Src/main.c **** 
+ 179:Core/Src/main.c **** 	  //TODO: Visual indicator: Turn on LED1 to signal processing start
+ 180:Core/Src/main.c **** 
+ 181:Core/Src/main.c **** 
+ 182:Core/Src/main.c **** 	  //TODO: Keep the LEDs ON for 2s
+ 183:Core/Src/main.c **** 
+ 184:Core/Src/main.c **** 	  //TODO: Turn OFF LEDs
+ 185:Core/Src/main.c ****   }
+ 186:Core/Src/main.c ****   /* USER CODE END 3 */
+ 187:Core/Src/main.c **** }
+ 188:Core/Src/main.c **** 
+ 189:Core/Src/main.c **** /**
+ 190:Core/Src/main.c ****   * @brief System Clock Configuration
+ 191:Core/Src/main.c ****   * @retval None
+ 192:Core/Src/main.c ****   */
+ 193:Core/Src/main.c **** void SystemClock_Config(void)
+ 194:Core/Src/main.c **** {
+ 195:Core/Src/main.c ****   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+ 196:Core/Src/main.c ****   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+ 197:Core/Src/main.c **** 
+ 198:Core/Src/main.c ****   /** Configure the main internal regulator output voltage
  199:Core/Src/main.c ****   */
- 200:Core/Src/main.c ****   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
- 201:Core/Src/main.c ****   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
- 202:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 5
+ 200:Core/Src/main.c ****   __HAL_RCC_PWR_CLK_ENABLE();
+ 201:Core/Src/main.c ****   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
+ 202:Core/Src/main.c **** 
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 5
 
 
- 203:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
- 204:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLM = 15;
- 205:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLN = 144;
- 206:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
- 207:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLQ = 2;
- 208:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLR = 2;
- 209:Core/Src/main.c ****   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
- 210:Core/Src/main.c ****   {
- 211:Core/Src/main.c ****     Error_Handler();
- 212:Core/Src/main.c ****   }
- 213:Core/Src/main.c **** 
- 214:Core/Src/main.c ****   /** Initializes the CPU, AHB and APB buses clocks
- 215:Core/Src/main.c ****   */
- 216:Core/Src/main.c ****   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
- 217:Core/Src/main.c ****                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
- 218:Core/Src/main.c ****   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
- 219:Core/Src/main.c ****   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
- 220:Core/Src/main.c ****   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
- 221:Core/Src/main.c ****   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
- 222:Core/Src/main.c **** 
- 223:Core/Src/main.c ****   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
- 224:Core/Src/main.c ****   {
- 225:Core/Src/main.c ****     Error_Handler();
- 226:Core/Src/main.c ****   }
- 227:Core/Src/main.c **** }
+ 203:Core/Src/main.c ****   /** Initializes the RCC Oscillators according to the specified parameters
+ 204:Core/Src/main.c ****   * in the RCC_OscInitTypeDef structure.
+ 205:Core/Src/main.c ****   */
+ 206:Core/Src/main.c ****   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+ 207:Core/Src/main.c ****   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+ 208:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+ 209:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+ 210:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLM = 15;
+ 211:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLN = 144;
+ 212:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+ 213:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLQ = 2;
+ 214:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLR = 2;
+ 215:Core/Src/main.c ****   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+ 216:Core/Src/main.c ****   {
+ 217:Core/Src/main.c ****     Error_Handler();
+ 218:Core/Src/main.c ****   }
+ 219:Core/Src/main.c **** 
+ 220:Core/Src/main.c ****   /** Initializes the CPU, AHB and APB buses clocks
+ 221:Core/Src/main.c ****   */
+ 222:Core/Src/main.c ****   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+ 223:Core/Src/main.c ****                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+ 224:Core/Src/main.c ****   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+ 225:Core/Src/main.c ****   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+ 226:Core/Src/main.c ****   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+ 227:Core/Src/main.c ****   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
  228:Core/Src/main.c **** 
- 229:Core/Src/main.c **** /**
- 230:Core/Src/main.c ****   * @brief GPIO Initialization Function
- 231:Core/Src/main.c ****   * @param None
- 232:Core/Src/main.c ****   * @retval None
- 233:Core/Src/main.c ****   */
- 234:Core/Src/main.c **** static void MX_GPIO_Init(void)
- 235:Core/Src/main.c **** {
-  28              		.loc 1 235 1 view -0
+ 229:Core/Src/main.c ****   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
+ 230:Core/Src/main.c ****   {
+ 231:Core/Src/main.c ****     Error_Handler();
+ 232:Core/Src/main.c ****   }
+ 233:Core/Src/main.c **** }
+ 234:Core/Src/main.c **** 
+ 235:Core/Src/main.c **** /**
+ 236:Core/Src/main.c ****   * @brief GPIO Initialization Function
+ 237:Core/Src/main.c ****   * @param None
+ 238:Core/Src/main.c ****   * @retval None
+ 239:Core/Src/main.c ****   */
+ 240:Core/Src/main.c **** static void MX_GPIO_Init(void)
+ 241:Core/Src/main.c **** {
+  28              		.loc 1 241 1 view -0
   29              		.cfi_startproc
   30              		@ args = 0, pretend = 0, frame = 32
   31              		@ frame_needed = 0, uses_anonymous_args = 0
@@ -287,123 +293,123 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
   38 0002 89B0     		sub	sp, sp, #36
   39              	.LCFI1:
   40              		.cfi_def_cfa_offset 48
- 236:Core/Src/main.c ****   GPIO_InitTypeDef GPIO_InitStruct = {0};
-  41              		.loc 1 236 3 view .LVU1
-  42              		.loc 1 236 20 is_stmt 0 view .LVU2
+ 242:Core/Src/main.c ****   GPIO_InitTypeDef GPIO_InitStruct = {0};
+  41              		.loc 1 242 3 view .LVU1
+  42              		.loc 1 242 20 is_stmt 0 view .LVU2
   43 0004 0024     		movs	r4, #0
   44 0006 0394     		str	r4, [sp, #12]
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 6
+
+
   45 0008 0494     		str	r4, [sp, #16]
   46 000a 0594     		str	r4, [sp, #20]
   47 000c 0694     		str	r4, [sp, #24]
   48 000e 0794     		str	r4, [sp, #28]
- 237:Core/Src/main.c ****   /* USER CODE BEGIN MX_GPIO_Init_1 */
- 238:Core/Src/main.c **** 
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 6
-
-
- 239:Core/Src/main.c ****   /* USER CODE END MX_GPIO_Init_1 */
- 240:Core/Src/main.c **** 
- 241:Core/Src/main.c ****   /* GPIO Ports Clock Enable */
- 242:Core/Src/main.c ****   __HAL_RCC_GPIOC_CLK_ENABLE();
-  49              		.loc 1 242 3 is_stmt 1 view .LVU3
+ 243:Core/Src/main.c ****   /* USER CODE BEGIN MX_GPIO_Init_1 */
+ 244:Core/Src/main.c **** 
+ 245:Core/Src/main.c ****   /* USER CODE END MX_GPIO_Init_1 */
+ 246:Core/Src/main.c **** 
+ 247:Core/Src/main.c ****   /* GPIO Ports Clock Enable */
+ 248:Core/Src/main.c ****   __HAL_RCC_GPIOC_CLK_ENABLE();
+  49              		.loc 1 248 3 is_stmt 1 view .LVU3
   50              	.LBB6:
-  51              		.loc 1 242 3 view .LVU4
+  51              		.loc 1 248 3 view .LVU4
   52 0010 0094     		str	r4, [sp]
-  53              		.loc 1 242 3 view .LVU5
+  53              		.loc 1 248 3 view .LVU5
   54 0012 184B     		ldr	r3, .L3
   55 0014 1A6B     		ldr	r2, [r3, #48]
   56 0016 42F00402 		orr	r2, r2, #4
   57 001a 1A63     		str	r2, [r3, #48]
-  58              		.loc 1 242 3 view .LVU6
+  58              		.loc 1 248 3 view .LVU6
   59 001c 1A6B     		ldr	r2, [r3, #48]
   60 001e 02F00402 		and	r2, r2, #4
   61 0022 0092     		str	r2, [sp]
-  62              		.loc 1 242 3 view .LVU7
+  62              		.loc 1 248 3 view .LVU7
   63 0024 009A     		ldr	r2, [sp]
   64              	.LBE6:
-  65              		.loc 1 242 3 view .LVU8
- 243:Core/Src/main.c ****   __HAL_RCC_GPIOH_CLK_ENABLE();
-  66              		.loc 1 243 3 view .LVU9
+  65              		.loc 1 248 3 view .LVU8
+ 249:Core/Src/main.c ****   __HAL_RCC_GPIOH_CLK_ENABLE();
+  66              		.loc 1 249 3 view .LVU9
   67              	.LBB7:
-  68              		.loc 1 243 3 view .LVU10
+  68              		.loc 1 249 3 view .LVU10
   69 0026 0194     		str	r4, [sp, #4]
-  70              		.loc 1 243 3 view .LVU11
+  70              		.loc 1 249 3 view .LVU11
   71 0028 1A6B     		ldr	r2, [r3, #48]
   72 002a 42F08002 		orr	r2, r2, #128
   73 002e 1A63     		str	r2, [r3, #48]
-  74              		.loc 1 243 3 view .LVU12
+  74              		.loc 1 249 3 view .LVU12
   75 0030 1A6B     		ldr	r2, [r3, #48]
   76 0032 02F08002 		and	r2, r2, #128
   77 0036 0192     		str	r2, [sp, #4]
-  78              		.loc 1 243 3 view .LVU13
+  78              		.loc 1 249 3 view .LVU13
   79 0038 019A     		ldr	r2, [sp, #4]
   80              	.LBE7:
-  81              		.loc 1 243 3 view .LVU14
- 244:Core/Src/main.c ****   __HAL_RCC_GPIOB_CLK_ENABLE();
-  82              		.loc 1 244 3 view .LVU15
+  81              		.loc 1 249 3 view .LVU14
+ 250:Core/Src/main.c ****   __HAL_RCC_GPIOB_CLK_ENABLE();
+  82              		.loc 1 250 3 view .LVU15
   83              	.LBB8:
-  84              		.loc 1 244 3 view .LVU16
+  84              		.loc 1 250 3 view .LVU16
   85 003a 0294     		str	r4, [sp, #8]
-  86              		.loc 1 244 3 view .LVU17
+  86              		.loc 1 250 3 view .LVU17
   87 003c 1A6B     		ldr	r2, [r3, #48]
   88 003e 42F00202 		orr	r2, r2, #2
   89 0042 1A63     		str	r2, [r3, #48]
-  90              		.loc 1 244 3 view .LVU18
+  90              		.loc 1 250 3 view .LVU18
   91 0044 1B6B     		ldr	r3, [r3, #48]
   92 0046 03F00203 		and	r3, r3, #2
   93 004a 0293     		str	r3, [sp, #8]
-  94              		.loc 1 244 3 view .LVU19
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 7
+
+
+  94              		.loc 1 250 3 view .LVU19
   95 004c 029B     		ldr	r3, [sp, #8]
   96              	.LBE8:
-  97              		.loc 1 244 3 view .LVU20
- 245:Core/Src/main.c **** 
- 246:Core/Src/main.c ****   /*Configure GPIO pin Output Level */
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 7
-
-
- 247:Core/Src/main.c ****   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3
-  98              		.loc 1 247 3 view .LVU21
+  97              		.loc 1 250 3 view .LVU20
+ 251:Core/Src/main.c **** 
+ 252:Core/Src/main.c ****   /*Configure GPIO pin Output Level */
+ 253:Core/Src/main.c ****   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3
+  98              		.loc 1 253 3 view .LVU21
   99 004e 0A4D     		ldr	r5, .L3+4
  100 0050 2246     		mov	r2, r4
  101 0052 FF21     		movs	r1, #255
  102 0054 2846     		mov	r0, r5
  103 0056 FFF7FEFF 		bl	HAL_GPIO_WritePin
  104              	.LVL0:
- 248:Core/Src/main.c ****                           |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7, GPIO_PIN_RESET);
- 249:Core/Src/main.c **** 
- 250:Core/Src/main.c ****   /*Configure GPIO pins : PB0 PB1 PB2 PB3
- 251:Core/Src/main.c ****                            PB4 PB5 PB6 PB7 */
- 252:Core/Src/main.c ****   GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3
- 105              		.loc 1 252 3 view .LVU22
- 106              		.loc 1 252 23 is_stmt 0 view .LVU23
+ 254:Core/Src/main.c ****                           |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7, GPIO_PIN_RESET);
+ 255:Core/Src/main.c **** 
+ 256:Core/Src/main.c ****   /*Configure GPIO pins : PB0 PB1 PB2 PB3
+ 257:Core/Src/main.c ****                            PB4 PB5 PB6 PB7 */
+ 258:Core/Src/main.c ****   GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3
+ 105              		.loc 1 258 3 view .LVU22
+ 106              		.loc 1 258 23 is_stmt 0 view .LVU23
  107 005a FF23     		movs	r3, #255
  108 005c 0393     		str	r3, [sp, #12]
- 253:Core/Src/main.c ****                           |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7;
- 254:Core/Src/main.c ****   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
- 109              		.loc 1 254 3 is_stmt 1 view .LVU24
- 110              		.loc 1 254 24 is_stmt 0 view .LVU25
+ 259:Core/Src/main.c ****                           |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7;
+ 260:Core/Src/main.c ****   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+ 109              		.loc 1 260 3 is_stmt 1 view .LVU24
+ 110              		.loc 1 260 24 is_stmt 0 view .LVU25
  111 005e 0123     		movs	r3, #1
  112 0060 0493     		str	r3, [sp, #16]
- 255:Core/Src/main.c ****   GPIO_InitStruct.Pull = GPIO_NOPULL;
- 113              		.loc 1 255 3 is_stmt 1 view .LVU26
- 114              		.loc 1 255 24 is_stmt 0 view .LVU27
+ 261:Core/Src/main.c ****   GPIO_InitStruct.Pull = GPIO_NOPULL;
+ 113              		.loc 1 261 3 is_stmt 1 view .LVU26
+ 114              		.loc 1 261 24 is_stmt 0 view .LVU27
  115 0062 0594     		str	r4, [sp, #20]
- 256:Core/Src/main.c ****   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
- 116              		.loc 1 256 3 is_stmt 1 view .LVU28
- 117              		.loc 1 256 25 is_stmt 0 view .LVU29
+ 262:Core/Src/main.c ****   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+ 116              		.loc 1 262 3 is_stmt 1 view .LVU28
+ 117              		.loc 1 262 25 is_stmt 0 view .LVU29
  118 0064 0694     		str	r4, [sp, #24]
- 257:Core/Src/main.c ****   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
- 119              		.loc 1 257 3 is_stmt 1 view .LVU30
+ 263:Core/Src/main.c ****   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+ 119              		.loc 1 263 3 is_stmt 1 view .LVU30
  120 0066 03A9     		add	r1, sp, #12
  121 0068 2846     		mov	r0, r5
  122 006a FFF7FEFF 		bl	HAL_GPIO_Init
  123              	.LVL1:
- 258:Core/Src/main.c **** 
- 259:Core/Src/main.c ****   /* USER CODE BEGIN MX_GPIO_Init_2 */
- 260:Core/Src/main.c **** 
- 261:Core/Src/main.c ****   /* USER CODE END MX_GPIO_Init_2 */
- 262:Core/Src/main.c **** }
- 124              		.loc 1 262 1 is_stmt 0 view .LVU31
+ 264:Core/Src/main.c **** 
+ 265:Core/Src/main.c ****   /* USER CODE BEGIN MX_GPIO_Init_2 */
+ 266:Core/Src/main.c **** 
+ 267:Core/Src/main.c ****   /* USER CODE END MX_GPIO_Init_2 */
+ 268:Core/Src/main.c **** }
+ 124              		.loc 1 268 1 is_stmt 0 view .LVU31
  125 006e 09B0     		add	sp, sp, #36
  126              	.LCFI2:
  127              		.cfi_def_cfa_offset 12
@@ -412,15 +418,15 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  130              	.L4:
  131 0072 00BF     		.align	2
  132              	.L3:
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 8
+
+
  133 0074 00380240 		.word	1073887232
  134 0078 00040240 		.word	1073873920
  135              		.cfi_endproc
  136              	.LFE136:
  138              		.section	.text.calculate_mandelbrot_fixed_point_arithmetic,"ax",%progbits
  139              		.align	1
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 8
-
-
  140              		.global	calculate_mandelbrot_fixed_point_arithmetic
  141              		.syntax unified
  142              		.thumb
@@ -428,15 +434,16 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  145              	calculate_mandelbrot_fixed_point_arithmetic:
  146              	.LVL2:
  147              	.LFB137:
- 263:Core/Src/main.c **** 
- 264:Core/Src/main.c **** /* USER CODE BEGIN 4 */
- 265:Core/Src/main.c **** //TODO: Function signatures you defined previously , implement them here
- 266:Core/Src/main.c **** uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int max_iterations){
- 148              		.loc 1 266 96 is_stmt 1 view -0
+ 269:Core/Src/main.c **** 
+ 270:Core/Src/main.c **** /* USER CODE BEGIN 4 */
+ 271:Core/Src/main.c **** //TODO: Function signatures you defined previously , implement them here
+ 272:Core/Src/main.c **** 
+ 273:Core/Src/main.c **** uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int max_iterations){
+ 148              		.loc 1 273 96 is_stmt 1 view -0
  149              		.cfi_startproc
  150              		@ args = 0, pretend = 0, frame = 8
  151              		@ frame_needed = 0, uses_anonymous_args = 0
- 152              		.loc 1 266 96 is_stmt 0 view .LVU33
+ 152              		.loc 1 273 96 is_stmt 0 view .LVU33
  153 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
  154              	.LCFI3:
  155              		.cfi_def_cfa_offset 36
@@ -453,250 +460,251 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  166              	.LCFI4:
  167              		.cfi_def_cfa_offset 48
  168 0006 1646     		mov	r6, r2
- 267:Core/Src/main.c **** 	uint64_t mandelbrot_sum = 0;
- 169              		.loc 1 267 2 is_stmt 1 view .LVU34
+ 274:Core/Src/main.c **** 	uint64_t mandelbrot_sum = 0;
+ 169              		.loc 1 274 2 is_stmt 1 view .LVU34
  170              	.LVL3:
- 268:Core/Src/main.c **** 	//TODO: Complete the function implementation
- 269:Core/Src/main.c **** 	int x0, y0, xi, yi, iteration, x, y, temp;
- 171              		.loc 1 269 2 view .LVU35
- 270:Core/Src/main.c **** 	// Defining scaling factor
- 271:Core/Src/main.c **** 	const int S = 1000000;
- 172              		.loc 1 271 2 view .LVU36
- 272:Core/Src/main.c **** 	//Scaling height and width
- 273:Core/Src/main.c **** 	height = height*S;
- 173              		.loc 1 273 2 view .LVU37
- 174              		.loc 1 273 9 is_stmt 0 view .LVU38
+ 275:Core/Src/main.c **** 
+ 276:Core/Src/main.c **** 	//TODO: Complete the function implementation
+ 277:Core/Src/main.c **** 	int x0, y0, xi, yi, iteration, x, y, temp;
+ 171              		.loc 1 277 2 view .LVU35
+ 278:Core/Src/main.c **** 	// Defining scaling factor
+ 279:Core/Src/main.c **** 	const int S = 1000000;
+ 172              		.loc 1 279 2 view .LVU36
+ 280:Core/Src/main.c **** 	//Scaling height and width
+ 281:Core/Src/main.c **** 	height = height*S;
+ 173              		.loc 1 281 2 view .LVU37
+ 174              		.loc 1 281 9 is_stmt 0 view .LVU38
  175 0008 3A4B     		ldr	r3, .L16
  176 000a 03FB01F2 		mul	r2, r3, r1
  177              	.LVL4:
- 274:Core/Src/main.c **** 	width = width*S;
- 178              		.loc 1 274 2 is_stmt 1 view .LVU39
- 179              		.loc 1 274 8 is_stmt 0 view .LVU40
+ 282:Core/Src/main.c **** 	width = width*S;
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 9
+
+
+ 178              		.loc 1 282 2 is_stmt 1 view .LVU39
+ 179              		.loc 1 282 8 is_stmt 0 view .LVU40
  180 000e 03FB00F8 		mul	r8, r3, r0
  181              	.LVL5:
- 275:Core/Src/main.c **** 	for(y = 0; y < height - 1*S; y = y + 1*S){
- 182              		.loc 1 275 2 is_stmt 1 view .LVU41
- 183              		.loc 1 275 8 is_stmt 0 view .LVU42
+ 283:Core/Src/main.c **** 	for(y = 0; y < height - 1*S; y = y + 1*S){
+ 182              		.loc 1 283 2 is_stmt 1 view .LVU41
+ 183              		.loc 1 283 8 is_stmt 0 view .LVU42
  184 0012 4FF0000A 		mov	r10, #0
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 9
-
-
- 267:Core/Src/main.c **** 	//TODO: Complete the function implementation
- 185              		.loc 1 267 11 view .LVU43
+ 274:Core/Src/main.c **** 
+ 185              		.loc 1 274 11 view .LVU43
  186 0016 D346     		mov	fp, r10
  187 0018 D146     		mov	r9, r10
  188 001a B446     		mov	ip, r6
- 189              		.loc 1 275 2 view .LVU44
+ 189              		.loc 1 283 2 view .LVU44
  190 001c 59E0     		b	.L6
  191              	.LVL6:
  192              	.L8:
- 276:Core/Src/main.c **** 		for(x = 0; x < width - 1*S; x = x + 1*S){
- 277:Core/Src/main.c **** 			x0 = (((x/width)*S)*3500000)/S - 2500000;
- 278:Core/Src/main.c **** 			y0 = (((y/height)*S)*2000000)/S - 1000000;
- 279:Core/Src/main.c **** 			xi = 0;
- 280:Core/Src/main.c **** 			yi = 0;
- 281:Core/Src/main.c **** 			iteration = 0;
- 282:Core/Src/main.c **** 			while((iteration < max_iterations)&&((xi^2)/S + (yi^2)/S <= 4*S)){
- 283:Core/Src/main.c **** 				temp = (xi^2)/S - (yi^2)/S;
- 284:Core/Src/main.c **** 				yi = 2*xi*yi/S +y0;
- 285:Core/Src/main.c **** 				xi = temp + x0;
- 286:Core/Src/main.c **** 				iteration = iteration + 1;
- 287:Core/Src/main.c **** 			};
- 288:Core/Src/main.c **** 			mandelbrot_sum = mandelbrot_sum + iteration;
- 193              		.loc 1 288 19 view .LVU45
+ 284:Core/Src/main.c **** 		for(x = 0; x < width - 1*S; x = x + 1*S){
+ 285:Core/Src/main.c **** 			x0 = (((x/width)*S)*3500000)/S - 2500000;
+ 286:Core/Src/main.c **** 			y0 = (((y/height)*S)*2000000)/S - 1000000;
+ 287:Core/Src/main.c **** 			xi = 0;
+ 288:Core/Src/main.c **** 			yi = 0;
+ 289:Core/Src/main.c **** 			iteration = 0;
+ 290:Core/Src/main.c **** 			while((iteration < max_iterations)&&((xi^2)/S + (yi^2)/S <= 4*S)){
+ 291:Core/Src/main.c **** 				temp = (xi^2)/S - (yi^2)/S;
+ 292:Core/Src/main.c **** 				yi = 2*xi*yi/S +y0;
+ 293:Core/Src/main.c **** 				xi = temp + x0;
+ 294:Core/Src/main.c **** 				iteration = iteration + 1;
+ 295:Core/Src/main.c **** 			};
+ 296:Core/Src/main.c **** 			mandelbrot_sum = mandelbrot_sum + iteration;
+ 193              		.loc 1 296 19 view .LVU45
  194 001e DDF800E0 		ldr	lr, [sp]
- 287:Core/Src/main.c **** 			mandelbrot_sum = mandelbrot_sum + iteration;
- 195              		.loc 1 287 5 is_stmt 1 view .LVU46
- 196              		.loc 1 288 4 view .LVU47
- 197              		.loc 1 288 19 is_stmt 0 view .LVU48
+ 295:Core/Src/main.c **** 			mandelbrot_sum = mandelbrot_sum + iteration;
+ 195              		.loc 1 295 5 is_stmt 1 view .LVU46
+ 196              		.loc 1 296 4 view .LVU47
+ 197              		.loc 1 296 19 is_stmt 0 view .LVU48
  198 0022 14EB0B0B 		adds	fp, r4, fp
  199              	.LVL7:
- 200              		.loc 1 288 19 view .LVU49
+ 200              		.loc 1 296 19 view .LVU49
  201 0026 49EBE479 		adc	r9, r9, r4, asr #31
  202              	.LVL8:
- 276:Core/Src/main.c **** 		for(x = 0; x < width - 1*S; x = x + 1*S){
- 203              		.loc 1 276 33 is_stmt 1 discriminator 2 view .LVU50
+ 284:Core/Src/main.c **** 		for(x = 0; x < width - 1*S; x = x + 1*S){
+ 203              		.loc 1 284 33 is_stmt 1 discriminator 2 view .LVU50
  204 002a 0EF5742E 		add	lr, lr, #999424
  205 002e 0EF5107E 		add	lr, lr, #576
  206              	.LVL9:
  207              	.L11:
- 276:Core/Src/main.c **** 		for(x = 0; x < width - 1*S; x = x + 1*S){
- 208              		.loc 1 276 16 discriminator 1 view .LVU51
- 276:Core/Src/main.c **** 		for(x = 0; x < width - 1*S; x = x + 1*S){
- 209              		.loc 1 276 24 is_stmt 0 discriminator 1 view .LVU52
+ 284:Core/Src/main.c **** 		for(x = 0; x < width - 1*S; x = x + 1*S){
+ 208              		.loc 1 284 16 discriminator 1 view .LVU51
+ 284:Core/Src/main.c **** 		for(x = 0; x < width - 1*S; x = x + 1*S){
+ 209              		.loc 1 284 24 is_stmt 0 discriminator 1 view .LVU52
  210 0032 A8F57423 		sub	r3, r8, #999424
  211 0036 A3F51073 		sub	r3, r3, #576
- 276:Core/Src/main.c **** 		for(x = 0; x < width - 1*S; x = x + 1*S){
- 212              		.loc 1 276 16 discriminator 1 view .LVU53
+ 284:Core/Src/main.c **** 		for(x = 0; x < width - 1*S; x = x + 1*S){
+ 212              		.loc 1 284 16 discriminator 1 view .LVU53
  213 003a 7345     		cmp	r3, lr
  214 003c 43DD     		ble	.L14
- 277:Core/Src/main.c **** 			y0 = (((y/height)*S)*2000000)/S - 1000000;
- 215              		.loc 1 277 4 is_stmt 1 view .LVU54
- 277:Core/Src/main.c **** 			y0 = (((y/height)*S)*2000000)/S - 1000000;
- 216              		.loc 1 277 13 is_stmt 0 view .LVU55
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 10
+
+
+ 285:Core/Src/main.c **** 			y0 = (((y/height)*S)*2000000)/S - 1000000;
+ 215              		.loc 1 285 4 is_stmt 1 view .LVU54
+ 285:Core/Src/main.c **** 			y0 = (((y/height)*S)*2000000)/S - 1000000;
+ 216              		.loc 1 285 13 is_stmt 0 view .LVU55
  217 003e 9EFBF8F3 		sdiv	r3, lr, r8
- 277:Core/Src/main.c **** 			y0 = (((y/height)*S)*2000000)/S - 1000000;
- 218              		.loc 1 277 20 view .LVU56
+ 285:Core/Src/main.c **** 			y0 = (((y/height)*S)*2000000)/S - 1000000;
+ 218              		.loc 1 285 20 view .LVU56
  219 0042 2C49     		ldr	r1, .L16
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 10
-
-
  220 0044 01FB03F3 		mul	r3, r1, r3
- 277:Core/Src/main.c **** 			y0 = (((y/height)*S)*2000000)/S - 1000000;
- 221              		.loc 1 277 23 view .LVU57
+ 285:Core/Src/main.c **** 			y0 = (((y/height)*S)*2000000)/S - 1000000;
+ 221              		.loc 1 285 23 view .LVU57
  222 0048 2B49     		ldr	r1, .L16+4
  223 004a 01FB03F3 		mul	r3, r1, r3
- 277:Core/Src/main.c **** 			y0 = (((y/height)*S)*2000000)/S - 1000000;
- 224              		.loc 1 277 32 view .LVU58
+ 285:Core/Src/main.c **** 			y0 = (((y/height)*S)*2000000)/S - 1000000;
+ 224              		.loc 1 285 32 view .LVU58
  225 004e 01F18641 		add	r1, r1, #1124073472
  226 0052 A1F5CC11 		sub	r1, r1, #1671168
  227 0056 A1F65D11 		subw	r1, r1, #2397
  228 005a 81FB0301 		smull	r0, r1, r1, r3
  229 005e DB17     		asrs	r3, r3, #31
  230 0060 C3EBA143 		rsb	r3, r3, r1, asr #18
- 277:Core/Src/main.c **** 			y0 = (((y/height)*S)*2000000)/S - 1000000;
- 231              		.loc 1 277 7 view .LVU59
+ 285:Core/Src/main.c **** 			y0 = (((y/height)*S)*2000000)/S - 1000000;
+ 231              		.loc 1 285 7 view .LVU59
  232 0064 254F     		ldr	r7, .L16+8
  233 0066 1F44     		add	r7, r7, r3
  234              	.LVL10:
- 278:Core/Src/main.c **** 			xi = 0;
- 235              		.loc 1 278 4 is_stmt 1 view .LVU60
- 278:Core/Src/main.c **** 			xi = 0;
- 236              		.loc 1 278 13 is_stmt 0 view .LVU61
+ 286:Core/Src/main.c **** 			xi = 0;
+ 235              		.loc 1 286 4 is_stmt 1 view .LVU60
+ 286:Core/Src/main.c **** 			xi = 0;
+ 236              		.loc 1 286 13 is_stmt 0 view .LVU61
  237 0068 019B     		ldr	r3, [sp, #4]
  238 006a 93FBF2F6 		sdiv	r6, r3, r2
- 278:Core/Src/main.c **** 			xi = 0;
- 239              		.loc 1 278 33 view .LVU62
+ 286:Core/Src/main.c **** 			xi = 0;
+ 239              		.loc 1 286 33 view .LVU62
  240 006e 244B     		ldr	r3, .L16+12
  241 0070 03FB06F6 		mul	r6, r3, r6
- 278:Core/Src/main.c **** 			xi = 0;
- 242              		.loc 1 278 7 view .LVU63
+ 286:Core/Src/main.c **** 			xi = 0;
+ 242              		.loc 1 286 7 view .LVU63
  243 0074 A6F57426 		sub	r6, r6, #999424
  244 0078 A6F51076 		sub	r6, r6, #576
  245              	.LVL11:
- 279:Core/Src/main.c **** 			yi = 0;
- 246              		.loc 1 279 4 is_stmt 1 view .LVU64
- 280:Core/Src/main.c **** 			iteration = 0;
- 247              		.loc 1 280 4 view .LVU65
- 281:Core/Src/main.c **** 			while((iteration < max_iterations)&&((xi^2)/S + (yi^2)/S <= 4*S)){
- 248              		.loc 1 281 4 view .LVU66
- 282:Core/Src/main.c **** 				temp = (xi^2)/S - (yi^2)/S;
- 249              		.loc 1 282 4 view .LVU67
- 281:Core/Src/main.c **** 			while((iteration < max_iterations)&&((xi^2)/S + (yi^2)/S <= 4*S)){
- 250              		.loc 1 281 14 is_stmt 0 view .LVU68
+ 287:Core/Src/main.c **** 			yi = 0;
+ 246              		.loc 1 287 4 is_stmt 1 view .LVU64
+ 288:Core/Src/main.c **** 			iteration = 0;
+ 247              		.loc 1 288 4 view .LVU65
+ 289:Core/Src/main.c **** 			while((iteration < max_iterations)&&((xi^2)/S + (yi^2)/S <= 4*S)){
+ 248              		.loc 1 289 4 view .LVU66
+ 290:Core/Src/main.c **** 				temp = (xi^2)/S - (yi^2)/S;
+ 249              		.loc 1 290 4 view .LVU67
+ 289:Core/Src/main.c **** 			while((iteration < max_iterations)&&((xi^2)/S + (yi^2)/S <= 4*S)){
+ 250              		.loc 1 289 14 is_stmt 0 view .LVU68
  251 007c 0024     		movs	r4, #0
- 280:Core/Src/main.c **** 			iteration = 0;
- 252              		.loc 1 280 7 view .LVU69
+ 288:Core/Src/main.c **** 			iteration = 0;
+ 252              		.loc 1 288 7 view .LVU69
  253 007e 2546     		mov	r5, r4
- 279:Core/Src/main.c **** 			yi = 0;
- 254              		.loc 1 279 7 view .LVU70
+ 287:Core/Src/main.c **** 			yi = 0;
+ 254              		.loc 1 287 7 view .LVU70
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 11
+
+
  255 0080 2346     		mov	r3, r4
  256 0082 CDF800E0 		str	lr, [sp]
  257              	.LVL12:
  258              	.L7:
- 282:Core/Src/main.c **** 				temp = (xi^2)/S - (yi^2)/S;
- 259              		.loc 1 282 38 is_stmt 1 view .LVU71
+ 290:Core/Src/main.c **** 				temp = (xi^2)/S - (yi^2)/S;
+ 259              		.loc 1 290 38 is_stmt 1 view .LVU71
  260 0086 6445     		cmp	r4, ip
  261 0088 C9DA     		bge	.L8
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 11
-
-
- 282:Core/Src/main.c **** 				temp = (xi^2)/S - (yi^2)/S;
- 262              		.loc 1 282 44 is_stmt 0 discriminator 1 view .LVU72
+ 290:Core/Src/main.c **** 				temp = (xi^2)/S - (yi^2)/S;
+ 262              		.loc 1 290 44 is_stmt 0 discriminator 1 view .LVU72
  263 008a 83F00200 		eor	r0, r3, #2
- 282:Core/Src/main.c **** 				temp = (xi^2)/S - (yi^2)/S;
- 264              		.loc 1 282 47 discriminator 1 view .LVU73
+ 290:Core/Src/main.c **** 				temp = (xi^2)/S - (yi^2)/S;
+ 264              		.loc 1 290 47 discriminator 1 view .LVU73
  265 008e 1D49     		ldr	r1, .L16+16
  266 0090 81FB00AE 		smull	r10, lr, r1, r0
  267 0094 C017     		asrs	r0, r0, #31
  268 0096 C0EBAE40 		rsb	r0, r0, lr, asr #18
- 282:Core/Src/main.c **** 				temp = (xi^2)/S - (yi^2)/S;
- 269              		.loc 1 282 55 discriminator 1 view .LVU74
+ 290:Core/Src/main.c **** 				temp = (xi^2)/S - (yi^2)/S;
+ 269              		.loc 1 290 55 discriminator 1 view .LVU74
  270 009a 85F0020E 		eor	lr, r5, #2
- 282:Core/Src/main.c **** 				temp = (xi^2)/S - (yi^2)/S;
- 271              		.loc 1 282 58 discriminator 1 view .LVU75
+ 290:Core/Src/main.c **** 				temp = (xi^2)/S - (yi^2)/S;
+ 271              		.loc 1 290 58 discriminator 1 view .LVU75
  272 009e 81FB0EA1 		smull	r10, r1, r1, lr
  273 00a2 4FEAEE7E 		asr	lr, lr, #31
  274 00a6 CEEBA14E 		rsb	lr, lr, r1, asr #18
- 283:Core/Src/main.c **** 				yi = 2*xi*yi/S +y0;
- 275              		.loc 1 283 5 is_stmt 1 view .LVU76
+ 291:Core/Src/main.c **** 				yi = 2*xi*yi/S +y0;
+ 275              		.loc 1 291 5 is_stmt 1 view .LVU76
  276              	.LVL13:
- 284:Core/Src/main.c **** 				xi = temp + x0;
- 277              		.loc 1 284 5 view .LVU77
- 284:Core/Src/main.c **** 				xi = temp + x0;
- 278              		.loc 1 284 14 is_stmt 0 view .LVU78
+ 292:Core/Src/main.c **** 				xi = temp + x0;
+ 277              		.loc 1 292 5 view .LVU77
+ 292:Core/Src/main.c **** 				xi = temp + x0;
+ 278              		.loc 1 292 14 is_stmt 0 view .LVU78
  279 00aa 05FB03F3 		mul	r3, r5, r3
  280              	.LVL14:
- 284:Core/Src/main.c **** 				xi = temp + x0;
- 281              		.loc 1 284 17 view .LVU79
+ 292:Core/Src/main.c **** 				xi = temp + x0;
+ 281              		.loc 1 292 17 view .LVU79
  282 00ae 1549     		ldr	r1, .L16+16
  283 00b0 81FB0315 		smull	r1, r5, r1, r3
  284              	.LVL15:
- 284:Core/Src/main.c **** 				xi = temp + x0;
- 285              		.loc 1 284 17 view .LVU80
+ 292:Core/Src/main.c **** 				xi = temp + x0;
+ 285              		.loc 1 292 17 view .LVU80
  286 00b4 DB17     		asrs	r3, r3, #31
  287 00b6 C3EB6543 		rsb	r3, r3, r5, asr #17
- 284:Core/Src/main.c **** 				xi = temp + x0;
- 288              		.loc 1 284 8 view .LVU81
+ 292:Core/Src/main.c **** 				xi = temp + x0;
+ 288              		.loc 1 292 8 view .LVU81
  289 00ba 9D19     		adds	r5, r3, r6
  290              	.LVL16:
- 285:Core/Src/main.c **** 				iteration = iteration + 1;
- 291              		.loc 1 285 5 is_stmt 1 view .LVU82
- 285:Core/Src/main.c **** 				iteration = iteration + 1;
- 292              		.loc 1 285 8 is_stmt 0 view .LVU83
+ 293:Core/Src/main.c **** 				iteration = iteration + 1;
+ 291              		.loc 1 293 5 is_stmt 1 view .LVU82
+ 293:Core/Src/main.c **** 				iteration = iteration + 1;
+ 292              		.loc 1 293 8 is_stmt 0 view .LVU83
  293 00bc A0EB0E00 		sub	r0, r0, lr
  294              	.LVL17:
- 285:Core/Src/main.c **** 				iteration = iteration + 1;
- 295              		.loc 1 285 8 view .LVU84
+ 293:Core/Src/main.c **** 				iteration = iteration + 1;
+ 295              		.loc 1 293 8 view .LVU84
  296 00c0 C319     		adds	r3, r0, r7
  297              	.LVL18:
- 286:Core/Src/main.c **** 			};
- 298              		.loc 1 286 5 is_stmt 1 view .LVU85
- 286:Core/Src/main.c **** 			};
- 299              		.loc 1 286 15 is_stmt 0 view .LVU86
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 12
+
+
+ 294:Core/Src/main.c **** 			};
+ 298              		.loc 1 294 5 is_stmt 1 view .LVU85
+ 294:Core/Src/main.c **** 			};
+ 299              		.loc 1 294 15 is_stmt 0 view .LVU86
  300 00c2 0134     		adds	r4, r4, #1
  301              	.LVL19:
- 286:Core/Src/main.c **** 			};
- 302              		.loc 1 286 15 view .LVU87
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 12
-
-
+ 294:Core/Src/main.c **** 			};
+ 302              		.loc 1 294 15 view .LVU87
  303 00c4 DFE7     		b	.L7
  304              	.LVL20:
  305              	.L14:
- 275:Core/Src/main.c **** 		for(x = 0; x < width - 1*S; x = x + 1*S){
- 306              		.loc 1 275 33 discriminator 2 view .LVU88
+ 283:Core/Src/main.c **** 		for(x = 0; x < width - 1*S; x = x + 1*S){
+ 306              		.loc 1 283 33 discriminator 2 view .LVU88
  307 00c6 DDF804A0 		ldr	r10, [sp, #4]
- 289:Core/Src/main.c **** 		};
- 308              		.loc 1 289 4 is_stmt 1 view .LVU89
- 275:Core/Src/main.c **** 		for(x = 0; x < width - 1*S; x = x + 1*S){
- 309              		.loc 1 275 33 discriminator 2 view .LVU90
+ 297:Core/Src/main.c **** 		};
+ 308              		.loc 1 297 4 is_stmt 1 view .LVU89
+ 283:Core/Src/main.c **** 		for(x = 0; x < width - 1*S; x = x + 1*S){
+ 309              		.loc 1 283 33 discriminator 2 view .LVU90
  310 00ca 0AF5742A 		add	r10, r10, #999424
  311 00ce 0AF5107A 		add	r10, r10, #576
  312              	.LVL21:
  313              	.L6:
- 275:Core/Src/main.c **** 		for(x = 0; x < width - 1*S; x = x + 1*S){
- 314              		.loc 1 275 15 discriminator 1 view .LVU91
- 275:Core/Src/main.c **** 		for(x = 0; x < width - 1*S; x = x + 1*S){
- 315              		.loc 1 275 24 is_stmt 0 discriminator 1 view .LVU92
+ 283:Core/Src/main.c **** 		for(x = 0; x < width - 1*S; x = x + 1*S){
+ 314              		.loc 1 283 15 discriminator 1 view .LVU91
+ 283:Core/Src/main.c **** 		for(x = 0; x < width - 1*S; x = x + 1*S){
+ 315              		.loc 1 283 24 is_stmt 0 discriminator 1 view .LVU92
  316 00d2 A2F57423 		sub	r3, r2, #999424
  317 00d6 A3F51073 		sub	r3, r3, #576
- 275:Core/Src/main.c **** 		for(x = 0; x < width - 1*S; x = x + 1*S){
- 318              		.loc 1 275 15 discriminator 1 view .LVU93
+ 283:Core/Src/main.c **** 		for(x = 0; x < width - 1*S; x = x + 1*S){
+ 318              		.loc 1 283 15 discriminator 1 view .LVU93
  319 00da 5345     		cmp	r3, r10
  320 00dc 04DD     		ble	.L15
- 276:Core/Src/main.c **** 			x0 = (((x/width)*S)*3500000)/S - 2500000;
- 321              		.loc 1 276 9 view .LVU94
+ 284:Core/Src/main.c **** 			x0 = (((x/width)*S)*3500000)/S - 2500000;
+ 321              		.loc 1 284 9 view .LVU94
  322 00de 4FF0000E 		mov	lr, #0
  323 00e2 CDF804A0 		str	r10, [sp, #4]
  324 00e6 A4E7     		b	.L11
  325              	.L15:
- 290:Core/Src/main.c **** 	};
- 326              		.loc 1 290 3 is_stmt 1 view .LVU95
- 291:Core/Src/main.c **** 	return mandelbrot_sum;
- 327              		.loc 1 291 2 view .LVU96
- 292:Core/Src/main.c **** }
- 328              		.loc 1 292 1 is_stmt 0 view .LVU97
+ 298:Core/Src/main.c **** 	};
+ 326              		.loc 1 298 3 is_stmt 1 view .LVU95
+ 299:Core/Src/main.c **** 	return mandelbrot_sum;
+ 327              		.loc 1 299 2 view .LVU96
+ 300:Core/Src/main.c **** }
+ 328              		.loc 1 300 1 is_stmt 0 view .LVU97
  329 00e8 5846     		mov	r0, fp
  330 00ea 4946     		mov	r1, r9
  331 00ec 03B0     		add	sp, sp, #12
@@ -706,10 +714,13 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  335 00ee BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
  336              	.LVL22:
  337              	.L17:
- 338              		.loc 1 292 1 view .LVU98
+ 338              		.loc 1 300 1 view .LVU98
  339 00f2 00BF     		.align	2
  340              	.L16:
  341 00f4 40420F00 		.word	1000000
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 13
+
+
  342 00f8 E0673500 		.word	3500000
  343 00fc 60DAD9FF 		.word	-2500000
  344 0100 80841E00 		.word	2000000
@@ -718,9 +729,6 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  347              	.LFE137:
  349              		.global	__aeabi_i2d
  350              		.global	__aeabi_ddiv
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 13
-
-
  351              		.global	__aeabi_dmul
  352              		.global	__aeabi_dsub
  353              		.global	__aeabi_dadd
@@ -737,13 +745,13 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  365              	calculate_mandelbrot_double:
  366              	.LVL23:
  367              	.LFB138:
- 293:Core/Src/main.c **** 
- 294:Core/Src/main.c **** uint64_t calculate_mandelbrot_double(double width, double height, double max_iterations) {
- 368              		.loc 1 294 90 is_stmt 1 view -0
+ 301:Core/Src/main.c **** 
+ 302:Core/Src/main.c **** uint64_t calculate_mandelbrot_double(double width, double height, double max_iterations) {
+ 368              		.loc 1 302 90 is_stmt 1 view -0
  369              		.cfi_startproc
  370              		@ args = 0, pretend = 0, frame = 64
  371              		@ frame_needed = 0, uses_anonymous_args = 0
- 372              		.loc 1 294 90 is_stmt 0 view .LVU100
+ 372              		.loc 1 302 90 is_stmt 0 view .LVU100
  373 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
  374              	.LCFI6:
  375              		.cfi_def_cfa_offset 36
@@ -762,41 +770,41 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  388 0006 8DED080B 		vstr.64	d0, [sp, #32]
  389 000a 8DED0E1B 		vstr.64	d1, [sp, #56]
  390 000e 8DED022B 		vstr.64	d2, [sp, #8]
- 295:Core/Src/main.c **** 	uint64_t mandelbrot_sum = 0;
- 391              		.loc 1 295 2 is_stmt 1 view .LVU101
+ 303:Core/Src/main.c **** 	uint64_t mandelbrot_sum = 0;
+ 391              		.loc 1 303 2 is_stmt 1 view .LVU101
  392              	.LVL24:
- 296:Core/Src/main.c **** 	for (int py = 0; py < (int)height; py++) {
- 393              		.loc 1 296 2 view .LVU102
+ 304:Core/Src/main.c **** 	for (int py = 0; py < (int)height; py++) {
+ 393              		.loc 1 304 2 view .LVU102
  394              	.LBB9:
- 395              		.loc 1 296 7 view .LVU103
- 396              		.loc 1 296 11 is_stmt 0 view .LVU104
+ 395              		.loc 1 304 7 view .LVU103
+ 396              		.loc 1 304 11 is_stmt 0 view .LVU104
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 14
+
+
  397 0012 0023     		movs	r3, #0
  398              	.LBE9:
- 295:Core/Src/main.c **** 	uint64_t mandelbrot_sum = 0;
- 399              		.loc 1 295 11 view .LVU105
+ 303:Core/Src/main.c **** 	uint64_t mandelbrot_sum = 0;
+ 399              		.loc 1 303 11 view .LVU105
  400 0014 0B93     		str	r3, [sp, #44]
  401 0016 9846     		mov	r8, r3
  402 0018 0C93     		str	r3, [sp, #48]
  403              	.LBB15:
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 14
-
-
- 404              		.loc 1 296 2 view .LVU106
+ 404              		.loc 1 304 2 view .LVU106
  405 001a 89E0     		b	.L19
  406              	.LVL25:
  407              	.L23:
  408              	.LBB10:
  409              	.LBB11:
  410              	.LBB12:
- 297:Core/Src/main.c **** 		for (int px = 0; px < (int)width; px++) {
- 298:Core/Src/main.c **** 			double x0 = ((double)px / width) * 3.5 - 2.5;
- 299:Core/Src/main.c **** 			double y0 = ((double)py / height) * 2.0 - 1.0;
- 300:Core/Src/main.c **** 			double xi = 0.0, yi = 0.0;
- 301:Core/Src/main.c **** 			uint64_t iteration = 0;
- 302:Core/Src/main.c **** 			while ((iteration < max_iterations) && ((xi * xi + yi * yi) <= 4.0)) {
- 303:Core/Src/main.c **** 				double temp = xi * xi - yi * yi;
- 411              		.loc 1 303 5 is_stmt 1 view .LVU107
- 412              		.loc 1 303 12 is_stmt 0 view .LVU108
+ 305:Core/Src/main.c **** 		for (int px = 0; px < (int)width; px++) {
+ 306:Core/Src/main.c **** 			double x0 = ((double)px / width) * 3.5 - 2.5;
+ 307:Core/Src/main.c **** 			double y0 = ((double)py / height) * 2.0 - 1.0;
+ 308:Core/Src/main.c **** 			double xi = 0.0, yi = 0.0;
+ 309:Core/Src/main.c **** 			uint64_t iteration = 0;
+ 310:Core/Src/main.c **** 			while ((iteration < max_iterations) && ((xi * xi + yi * yi) <= 4.0)) {
+ 311:Core/Src/main.c **** 				double temp = xi * xi - yi * yi;
+ 411              		.loc 1 311 5 is_stmt 1 view .LVU107
+ 412              		.loc 1 311 12 is_stmt 0 view .LVU108
  413 001c DDE90023 		ldrd	r2, [sp]
  414 0020 2046     		mov	r0, r4
  415 0022 2946     		mov	r1, r5
@@ -805,32 +813,35 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  418 0028 0446     		mov	r4, r0
  419 002a 0D46     		mov	r5, r1
  420              	.LVL27:
- 304:Core/Src/main.c **** 				yi = 2.0 * xi * yi + y0;
- 421              		.loc 1 304 5 is_stmt 1 view .LVU109
- 422              		.loc 1 304 14 is_stmt 0 view .LVU110
+ 312:Core/Src/main.c **** 				yi = 2.0 * xi * yi + y0;
+ 421              		.loc 1 312 5 is_stmt 1 view .LVU109
+ 422              		.loc 1 312 14 is_stmt 0 view .LVU110
  423 002c 5246     		mov	r2, r10
  424 002e 5B46     		mov	r3, fp
  425 0030 5046     		mov	r0, r10
  426 0032 5946     		mov	r1, fp
  427 0034 FFF7FEFF 		bl	__aeabi_dadd
  428              	.LVL28:
- 429              		.loc 1 304 19 view .LVU111
+ 429              		.loc 1 312 19 view .LVU111
  430 0038 4246     		mov	r2, r8
  431 003a 4B46     		mov	r3, r9
  432 003c FFF7FEFF 		bl	__aeabi_dmul
  433              	.LVL29:
- 434              		.loc 1 304 8 view .LVU112
+ 434              		.loc 1 312 8 view .LVU112
  435 0040 DDE90623 		ldrd	r2, [sp, #24]
  436 0044 FFF7FEFF 		bl	__aeabi_dadd
  437              	.LVL30:
  438 0048 8046     		mov	r8, r0
  439              	.LVL31:
- 440              		.loc 1 304 8 view .LVU113
+ 440              		.loc 1 312 8 view .LVU113
  441 004a 8946     		mov	r9, r1
  442              	.LVL32:
- 305:Core/Src/main.c **** 				xi = temp + x0;
- 443              		.loc 1 305 5 is_stmt 1 view .LVU114
- 444              		.loc 1 305 8 is_stmt 0 view .LVU115
+ 313:Core/Src/main.c **** 				xi = temp + x0;
+ 443              		.loc 1 313 5 is_stmt 1 view .LVU114
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 15
+
+
+ 444              		.loc 1 313 8 is_stmt 0 view .LVU115
  445 004c 2246     		mov	r2, r4
  446 004e 2B46     		mov	r3, r5
  447 0050 DDE90401 		ldrd	r0, [sp, #16]
@@ -838,40 +849,37 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  449              	.LVL33:
  450 0058 8246     		mov	r10, r0
  451              	.LVL34:
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 15
-
-
- 452              		.loc 1 305 8 view .LVU116
+ 452              		.loc 1 313 8 view .LVU116
  453 005a 8B46     		mov	fp, r1
  454              	.LVL35:
- 306:Core/Src/main.c **** 				iteration++;
- 455              		.loc 1 306 5 is_stmt 1 view .LVU117
- 456              		.loc 1 306 14 is_stmt 0 view .LVU118
+ 314:Core/Src/main.c **** 				iteration++;
+ 455              		.loc 1 314 5 is_stmt 1 view .LVU117
+ 456              		.loc 1 314 14 is_stmt 0 view .LVU118
  457 005c 731C     		adds	r3, r6, #1
  458 005e 1E46     		mov	r6, r3
  459              	.LVL36:
- 460              		.loc 1 306 14 view .LVU119
+ 460              		.loc 1 314 14 view .LVU119
  461 0060 47F10007 		adc	r7, r7, #0
  462              	.LVL37:
  463              	.L20:
- 464              		.loc 1 306 14 view .LVU120
+ 464              		.loc 1 314 14 view .LVU120
  465              	.LBE12:
- 302:Core/Src/main.c **** 				double temp = xi * xi - yi * yi;
- 466              		.loc 1 302 40 is_stmt 1 view .LVU121
- 302:Core/Src/main.c **** 				double temp = xi * xi - yi * yi;
- 467              		.loc 1 302 22 is_stmt 0 view .LVU122
+ 310:Core/Src/main.c **** 				double temp = xi * xi - yi * yi;
+ 466              		.loc 1 310 40 is_stmt 1 view .LVU121
+ 310:Core/Src/main.c **** 				double temp = xi * xi - yi * yi;
+ 467              		.loc 1 310 22 is_stmt 0 view .LVU122
  468 0064 3046     		mov	r0, r6
  469 0066 3946     		mov	r1, r7
  470 0068 FFF7FEFF 		bl	__aeabi_ul2d
  471              	.LVL38:
- 302:Core/Src/main.c **** 				double temp = xi * xi - yi * yi;
- 472              		.loc 1 302 40 view .LVU123
+ 310:Core/Src/main.c **** 				double temp = xi * xi - yi * yi;
+ 472              		.loc 1 310 40 view .LVU123
  473 006c DDE90223 		ldrd	r2, [sp, #8]
  474 0070 FFF7FEFF 		bl	__aeabi_dcmplt
  475              	.LVL39:
  476 0074 D8B1     		cbz	r0, .L21
- 302:Core/Src/main.c **** 				double temp = xi * xi - yi * yi;
- 477              		.loc 1 302 48 discriminator 1 view .LVU124
+ 310:Core/Src/main.c **** 				double temp = xi * xi - yi * yi;
+ 477              		.loc 1 310 48 discriminator 1 view .LVU124
  478 0076 5246     		mov	r2, r10
  479 0078 5B46     		mov	r3, fp
  480 007a 5046     		mov	r0, r10
@@ -880,8 +888,8 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  483              	.LVL40:
  484 0082 0446     		mov	r4, r0
  485 0084 0D46     		mov	r5, r1
- 302:Core/Src/main.c **** 				double temp = xi * xi - yi * yi;
- 486              		.loc 1 302 58 discriminator 1 view .LVU125
+ 310:Core/Src/main.c **** 				double temp = xi * xi - yi * yi;
+ 486              		.loc 1 310 58 discriminator 1 view .LVU125
  487 0086 4246     		mov	r2, r8
  488 0088 4B46     		mov	r3, r9
  489 008a 4046     		mov	r0, r8
@@ -890,18 +898,18 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  492              	.LVL41:
  493 0092 0246     		mov	r2, r0
  494 0094 0B46     		mov	r3, r1
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 16
+
+
  495 0096 CDE90023 		strd	r2, [sp]
- 302:Core/Src/main.c **** 				double temp = xi * xi - yi * yi;
- 496              		.loc 1 302 53 discriminator 1 view .LVU126
+ 310:Core/Src/main.c **** 				double temp = xi * xi - yi * yi;
+ 496              		.loc 1 310 53 discriminator 1 view .LVU126
  497 009a 2046     		mov	r0, r4
  498 009c 2946     		mov	r1, r5
  499 009e FFF7FEFF 		bl	__aeabi_dadd
  500              	.LVL42:
- 302:Core/Src/main.c **** 				double temp = xi * xi - yi * yi;
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 16
-
-
- 501              		.loc 1 302 40 discriminator 1 view .LVU127
+ 310:Core/Src/main.c **** 				double temp = xi * xi - yi * yi;
+ 501              		.loc 1 310 40 discriminator 1 view .LVU127
  502 00a2 0022     		movs	r2, #0
  503 00a4 2C4B     		ldr	r3, .L31
  504 00a6 FFF7FEFF 		bl	__aeabi_dcmple
@@ -909,183 +917,183 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  506 00aa 0028     		cmp	r0, #0
  507 00ac B6D1     		bne	.L23
  508              	.L21:
- 307:Core/Src/main.c **** 			}
- 308:Core/Src/main.c **** 			mandelbrot_sum += iteration;
- 509              		.loc 1 308 4 is_stmt 1 view .LVU128
- 510              		.loc 1 308 19 is_stmt 0 view .LVU129
+ 315:Core/Src/main.c **** 			}
+ 316:Core/Src/main.c **** 			mandelbrot_sum += iteration;
+ 509              		.loc 1 316 4 is_stmt 1 view .LVU128
+ 510              		.loc 1 316 19 is_stmt 0 view .LVU129
  511 00ae 0B9B     		ldr	r3, [sp, #44]
  512 00b0 9C19     		adds	r4, r3, r6
  513 00b2 0B94     		str	r4, [sp, #44]
  514              	.LVL44:
- 515              		.loc 1 308 19 view .LVU130
+ 515              		.loc 1 316 19 view .LVU130
  516 00b4 0C9B     		ldr	r3, [sp, #48]
  517 00b6 47EB0303 		adc	r3, r7, r3
  518 00ba 0C93     		str	r3, [sp, #48]
- 519              		.loc 1 308 19 view .LVU131
+ 519              		.loc 1 316 19 view .LVU131
  520              	.LBE11:
- 297:Core/Src/main.c **** 			double x0 = ((double)px / width) * 3.5 - 2.5;
- 521              		.loc 1 297 39 is_stmt 1 discriminator 2 view .LVU132
+ 305:Core/Src/main.c **** 			double x0 = ((double)px / width) * 3.5 - 2.5;
+ 521              		.loc 1 305 39 is_stmt 1 discriminator 2 view .LVU132
  522 00bc 0A9B     		ldr	r3, [sp, #40]
  523 00be 0133     		adds	r3, r3, #1
  524 00c0 0A93     		str	r3, [sp, #40]
  525              	.LVL45:
  526              	.L25:
- 297:Core/Src/main.c **** 			double x0 = ((double)px / width) * 3.5 - 2.5;
- 527              		.loc 1 297 23 discriminator 1 view .LVU133
- 297:Core/Src/main.c **** 			double x0 = ((double)px / width) * 3.5 - 2.5;
- 528              		.loc 1 297 25 is_stmt 0 discriminator 1 view .LVU134
+ 305:Core/Src/main.c **** 			double x0 = ((double)px / width) * 3.5 - 2.5;
+ 527              		.loc 1 305 23 discriminator 1 view .LVU133
+ 305:Core/Src/main.c **** 			double x0 = ((double)px / width) * 3.5 - 2.5;
+ 528              		.loc 1 305 25 is_stmt 0 discriminator 1 view .LVU134
  529 00c2 DDE90801 		ldrd	r0, [sp, #32]
  530 00c6 FFF7FEFF 		bl	__aeabi_d2iz
  531              	.LVL46:
- 297:Core/Src/main.c **** 			double x0 = ((double)px / width) * 3.5 - 2.5;
- 532              		.loc 1 297 23 discriminator 1 view .LVU135
+ 305:Core/Src/main.c **** 			double x0 = ((double)px / width) * 3.5 - 2.5;
+ 532              		.loc 1 305 23 discriminator 1 view .LVU135
  533 00ca 0A9B     		ldr	r3, [sp, #40]
  534 00cc 9842     		cmp	r0, r3
  535 00ce 2BDD     		ble	.L29
  536              	.LBB13:
- 298:Core/Src/main.c **** 			double y0 = ((double)py / height) * 2.0 - 1.0;
- 537              		.loc 1 298 4 is_stmt 1 view .LVU136
- 298:Core/Src/main.c **** 			double y0 = ((double)py / height) * 2.0 - 1.0;
- 538              		.loc 1 298 17 is_stmt 0 view .LVU137
+ 306:Core/Src/main.c **** 			double y0 = ((double)py / height) * 2.0 - 1.0;
+ 537              		.loc 1 306 4 is_stmt 1 view .LVU136
+ 306:Core/Src/main.c **** 			double y0 = ((double)py / height) * 2.0 - 1.0;
+ 538              		.loc 1 306 17 is_stmt 0 view .LVU137
  539 00d0 0A98     		ldr	r0, [sp, #40]
  540 00d2 FFF7FEFF 		bl	__aeabi_i2d
  541              	.LVL47:
- 298:Core/Src/main.c **** 			double y0 = ((double)py / height) * 2.0 - 1.0;
- 542              		.loc 1 298 28 view .LVU138
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 17
+
+
+ 306:Core/Src/main.c **** 			double y0 = ((double)py / height) * 2.0 - 1.0;
+ 542              		.loc 1 306 28 view .LVU138
  543 00d6 DDE90823 		ldrd	r2, [sp, #32]
  544 00da FFF7FEFF 		bl	__aeabi_ddiv
  545              	.LVL48:
- 298:Core/Src/main.c **** 			double y0 = ((double)py / height) * 2.0 - 1.0;
- 546              		.loc 1 298 37 view .LVU139
+ 306:Core/Src/main.c **** 			double y0 = ((double)py / height) * 2.0 - 1.0;
+ 546              		.loc 1 306 37 view .LVU139
  547 00de 0022     		movs	r2, #0
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 17
-
-
  548 00e0 1E4B     		ldr	r3, .L31+4
  549 00e2 FFF7FEFF 		bl	__aeabi_dmul
  550              	.LVL49:
- 298:Core/Src/main.c **** 			double y0 = ((double)py / height) * 2.0 - 1.0;
- 551              		.loc 1 298 11 view .LVU140
+ 306:Core/Src/main.c **** 			double y0 = ((double)py / height) * 2.0 - 1.0;
+ 551              		.loc 1 306 11 view .LVU140
  552 00e6 0022     		movs	r2, #0
  553 00e8 1D4B     		ldr	r3, .L31+8
  554 00ea FFF7FEFF 		bl	__aeabi_dsub
  555              	.LVL50:
  556 00ee CDE90401 		strd	r0, [sp, #16]
  557              	.LVL51:
- 299:Core/Src/main.c **** 			double xi = 0.0, yi = 0.0;
- 558              		.loc 1 299 4 is_stmt 1 view .LVU141
- 299:Core/Src/main.c **** 			double xi = 0.0, yi = 0.0;
- 559              		.loc 1 299 17 is_stmt 0 view .LVU142
+ 307:Core/Src/main.c **** 			double xi = 0.0, yi = 0.0;
+ 558              		.loc 1 307 4 is_stmt 1 view .LVU141
+ 307:Core/Src/main.c **** 			double xi = 0.0, yi = 0.0;
+ 559              		.loc 1 307 17 is_stmt 0 view .LVU142
  560 00f2 0D98     		ldr	r0, [sp, #52]
  561              	.LVL52:
- 299:Core/Src/main.c **** 			double xi = 0.0, yi = 0.0;
- 562              		.loc 1 299 17 view .LVU143
+ 307:Core/Src/main.c **** 			double xi = 0.0, yi = 0.0;
+ 562              		.loc 1 307 17 view .LVU143
  563 00f4 FFF7FEFF 		bl	__aeabi_i2d
  564              	.LVL53:
- 299:Core/Src/main.c **** 			double xi = 0.0, yi = 0.0;
- 565              		.loc 1 299 28 view .LVU144
+ 307:Core/Src/main.c **** 			double xi = 0.0, yi = 0.0;
+ 565              		.loc 1 307 28 view .LVU144
  566 00f8 DDE90E23 		ldrd	r2, [sp, #56]
  567 00fc FFF7FEFF 		bl	__aeabi_ddiv
  568              	.LVL54:
  569 0100 0246     		mov	r2, r0
  570 0102 0B46     		mov	r3, r1
- 299:Core/Src/main.c **** 			double xi = 0.0, yi = 0.0;
- 571              		.loc 1 299 38 view .LVU145
+ 307:Core/Src/main.c **** 			double xi = 0.0, yi = 0.0;
+ 571              		.loc 1 307 38 view .LVU145
  572 0104 FFF7FEFF 		bl	__aeabi_dadd
  573              	.LVL55:
- 299:Core/Src/main.c **** 			double xi = 0.0, yi = 0.0;
- 574              		.loc 1 299 11 view .LVU146
+ 307:Core/Src/main.c **** 			double xi = 0.0, yi = 0.0;
+ 574              		.loc 1 307 11 view .LVU146
  575 0108 0022     		movs	r2, #0
  576 010a 164B     		ldr	r3, .L31+12
  577 010c FFF7FEFF 		bl	__aeabi_dsub
  578              	.LVL56:
  579 0110 CDE90601 		strd	r0, [sp, #24]
  580              	.LVL57:
- 300:Core/Src/main.c **** 			uint64_t iteration = 0;
- 581              		.loc 1 300 4 is_stmt 1 view .LVU147
- 301:Core/Src/main.c **** 			while ((iteration < max_iterations) && ((xi * xi + yi * yi) <= 4.0)) {
- 582              		.loc 1 301 4 view .LVU148
- 302:Core/Src/main.c **** 				double temp = xi * xi - yi * yi;
- 583              		.loc 1 302 4 view .LVU149
- 301:Core/Src/main.c **** 			while ((iteration < max_iterations) && ((xi * xi + yi * yi) <= 4.0)) {
- 584              		.loc 1 301 13 is_stmt 0 view .LVU150
+ 308:Core/Src/main.c **** 			uint64_t iteration = 0;
+ 581              		.loc 1 308 4 is_stmt 1 view .LVU147
+ 309:Core/Src/main.c **** 			while ((iteration < max_iterations) && ((xi * xi + yi * yi) <= 4.0)) {
+ 582              		.loc 1 309 4 view .LVU148
+ 310:Core/Src/main.c **** 				double temp = xi * xi - yi * yi;
+ 583              		.loc 1 310 4 view .LVU149
+ 309:Core/Src/main.c **** 			while ((iteration < max_iterations) && ((xi * xi + yi * yi) <= 4.0)) {
+ 584              		.loc 1 309 13 is_stmt 0 view .LVU150
  585 0114 0024     		movs	r4, #0
- 300:Core/Src/main.c **** 			uint64_t iteration = 0;
- 586              		.loc 1 300 21 view .LVU151
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 18
+
+
+ 308:Core/Src/main.c **** 			uint64_t iteration = 0;
+ 586              		.loc 1 308 21 view .LVU151
  587 0116 4FF00008 		mov	r8, #0
  588 011a 4FF00009 		mov	r9, #0
- 300:Core/Src/main.c **** 			uint64_t iteration = 0;
- 589              		.loc 1 300 11 view .LVU152
+ 308:Core/Src/main.c **** 			uint64_t iteration = 0;
+ 589              		.loc 1 308 11 view .LVU152
  590 011e C246     		mov	r10, r8
  591 0120 CB46     		mov	fp, r9
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 18
-
-
  592 0122 2646     		mov	r6, r4
  593 0124 2746     		mov	r7, r4
- 302:Core/Src/main.c **** 				double temp = xi * xi - yi * yi;
- 594              		.loc 1 302 10 view .LVU153
+ 310:Core/Src/main.c **** 				double temp = xi * xi - yi * yi;
+ 594              		.loc 1 310 10 view .LVU153
  595 0126 9DE7     		b	.L20
  596              	.LVL58:
  597              	.L29:
- 302:Core/Src/main.c **** 				double temp = xi * xi - yi * yi;
- 598              		.loc 1 302 10 view .LVU154
+ 310:Core/Src/main.c **** 				double temp = xi * xi - yi * yi;
+ 598              		.loc 1 310 10 view .LVU154
  599              	.LBE13:
  600              	.LBE10:
- 296:Core/Src/main.c **** 		for (int px = 0; px < (int)width; px++) {
- 601              		.loc 1 296 39 discriminator 2 view .LVU155
+ 304:Core/Src/main.c **** 		for (int px = 0; px < (int)width; px++) {
+ 601              		.loc 1 304 39 discriminator 2 view .LVU155
  602 0128 DDF83480 		ldr	r8, [sp, #52]
- 296:Core/Src/main.c **** 		for (int px = 0; px < (int)width; px++) {
- 603              		.loc 1 296 39 is_stmt 1 discriminator 2 view .LVU156
+ 304:Core/Src/main.c **** 		for (int px = 0; px < (int)width; px++) {
+ 603              		.loc 1 304 39 is_stmt 1 discriminator 2 view .LVU156
  604 012c 08F10108 		add	r8, r8, #1
  605              	.LVL59:
  606              	.L19:
- 296:Core/Src/main.c **** 		for (int px = 0; px < (int)width; px++) {
- 607              		.loc 1 296 22 discriminator 1 view .LVU157
- 296:Core/Src/main.c **** 		for (int px = 0; px < (int)width; px++) {
- 608              		.loc 1 296 24 is_stmt 0 discriminator 1 view .LVU158
+ 304:Core/Src/main.c **** 		for (int px = 0; px < (int)width; px++) {
+ 607              		.loc 1 304 22 discriminator 1 view .LVU157
+ 304:Core/Src/main.c **** 		for (int px = 0; px < (int)width; px++) {
+ 608              		.loc 1 304 24 is_stmt 0 discriminator 1 view .LVU158
  609 0130 DDE90E01 		ldrd	r0, [sp, #56]
  610 0134 FFF7FEFF 		bl	__aeabi_d2iz
  611              	.LVL60:
- 296:Core/Src/main.c **** 		for (int px = 0; px < (int)width; px++) {
- 612              		.loc 1 296 22 discriminator 1 view .LVU159
+ 304:Core/Src/main.c **** 		for (int px = 0; px < (int)width; px++) {
+ 612              		.loc 1 304 22 discriminator 1 view .LVU159
  613 0138 4045     		cmp	r0, r8
  614 013a 06DD     		ble	.L30
  615              	.LBB14:
- 297:Core/Src/main.c **** 			double x0 = ((double)px / width) * 3.5 - 2.5;
- 616              		.loc 1 297 12 view .LVU160
+ 305:Core/Src/main.c **** 			double x0 = ((double)px / width) * 3.5 - 2.5;
+ 616              		.loc 1 305 12 view .LVU160
  617 013c 4FF00009 		mov	r9, #0
  618 0140 CDF83480 		str	r8, [sp, #52]
  619 0144 CDF82890 		str	r9, [sp, #40]
  620 0148 BBE7     		b	.L25
  621              	.L30:
- 297:Core/Src/main.c **** 			double x0 = ((double)px / width) * 3.5 - 2.5;
- 622              		.loc 1 297 12 view .LVU161
+ 305:Core/Src/main.c **** 			double x0 = ((double)px / width) * 3.5 - 2.5;
+ 622              		.loc 1 305 12 view .LVU161
  623              	.LBE14:
  624              	.LBE15:
- 309:Core/Src/main.c **** 		}
- 310:Core/Src/main.c **** 	}
- 311:Core/Src/main.c **** 	return mandelbrot_sum;
- 312:Core/Src/main.c **** }
- 625              		.loc 1 312 1 view .LVU162
+ 317:Core/Src/main.c **** 		}
+ 318:Core/Src/main.c **** 	}
+ 319:Core/Src/main.c **** 	return mandelbrot_sum;
+ 320:Core/Src/main.c **** }
+ 625              		.loc 1 320 1 view .LVU162
  626 014a DDF83080 		ldr	r8, [sp, #48]
  627              	.LVL61:
- 311:Core/Src/main.c **** }
- 628              		.loc 1 311 2 is_stmt 1 view .LVU163
- 629              		.loc 1 312 1 is_stmt 0 view .LVU164
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 19
+
+
+ 319:Core/Src/main.c **** }
+ 628              		.loc 1 319 2 is_stmt 1 view .LVU163
+ 629              		.loc 1 320 1 is_stmt 0 view .LVU164
  630 014e 0B98     		ldr	r0, [sp, #44]
  631 0150 4146     		mov	r1, r8
  632 0152 11B0     		add	sp, sp, #68
  633              	.LCFI8:
  634              		.cfi_def_cfa_offset 36
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 19
-
-
  635              		@ sp needed
  636 0154 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
  637              	.LVL62:
  638              	.L32:
- 639              		.loc 1 312 1 view .LVU165
+ 639              		.loc 1 320 1 view .LVU165
  640              		.align	2
  641              	.L31:
  642 0158 00001040 		.word	1074790400
@@ -1102,45 +1110,45 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  654              		.thumb_func
  656              	Error_Handler:
  657              	.LFB140:
- 313:Core/Src/main.c **** 
- 314:Core/Src/main.c **** static inline void DWT_init(void)
- 315:Core/Src/main.c **** {
- 316:Core/Src/main.c **** 		CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
- 317:Core/Src/main.c **** 		// Only write to LAR if it exists
- 318:Core/Src/main.c **** 		#ifdef DWT_LAR
- 319:Core/Src/main.c **** 		    DWT->LAR = 0xC5ACCE55;  // Unlock access (for M7/M33)
- 320:Core/Src/main.c **** 		#endif
  321:Core/Src/main.c **** 
- 322:Core/Src/main.c **** 		DWT ->CYCCNT = 0;
- 323:Core/Src/main.c **** 		DWT ->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
- 324:Core/Src/main.c **** }
- 325:Core/Src/main.c **** 
- 326:Core/Src/main.c **** 
- 327:Core/Src/main.c **** /* USER CODE END 4 */
- 328:Core/Src/main.c **** 
- 329:Core/Src/main.c **** /**
- 330:Core/Src/main.c ****   * @brief  This function is executed in case of error occurrence.
- 331:Core/Src/main.c ****   * @retval None
- 332:Core/Src/main.c ****   */
- 333:Core/Src/main.c **** void Error_Handler(void)
- 334:Core/Src/main.c **** {
- 658              		.loc 1 334 1 is_stmt 1 view -0
+ 322:Core/Src/main.c **** static inline void DWT_init(void)
+ 323:Core/Src/main.c **** {
+ 324:Core/Src/main.c **** 		CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+ 325:Core/Src/main.c **** 		// Only write to LAR if it exists
+ 326:Core/Src/main.c **** 		#ifdef DWT_LAR
+ 327:Core/Src/main.c **** 		    DWT->LAR = 0xC5ACCE55;  // Unlock access (for M7/M33)
+ 328:Core/Src/main.c **** 		#endif
+ 329:Core/Src/main.c **** 
+ 330:Core/Src/main.c **** 		DWT ->CYCCNT = 0;
+ 331:Core/Src/main.c **** 		DWT ->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+ 332:Core/Src/main.c **** }
+ 333:Core/Src/main.c **** 
+ 334:Core/Src/main.c **** 
+ 335:Core/Src/main.c **** /* USER CODE END 4 */
+ 336:Core/Src/main.c **** 
+ 337:Core/Src/main.c **** /**
+ 338:Core/Src/main.c ****   * @brief  This function is executed in case of error occurrence.
+ 339:Core/Src/main.c ****   * @retval None
+ 340:Core/Src/main.c ****   */
+ 341:Core/Src/main.c **** void Error_Handler(void)
+ 342:Core/Src/main.c **** {
+ 658              		.loc 1 342 1 is_stmt 1 view -0
  659              		.cfi_startproc
  660              		@ Volatile: function does not return.
  661              		@ args = 0, pretend = 0, frame = 0
  662              		@ frame_needed = 0, uses_anonymous_args = 0
  663              		@ link register save eliminated.
- 335:Core/Src/main.c ****   /* USER CODE BEGIN Error_Handler_Debug */
- 336:Core/Src/main.c ****   /* User can add his own implementation to report the HAL error return state */
- 337:Core/Src/main.c ****   __disable_irq();
- 664              		.loc 1 337 3 view .LVU167
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 20
+
+
+ 343:Core/Src/main.c ****   /* USER CODE BEGIN Error_Handler_Debug */
+ 344:Core/Src/main.c ****   /* User can add his own implementation to report the HAL error return state */
+ 345:Core/Src/main.c ****   __disable_irq();
+ 664              		.loc 1 345 3 view .LVU167
  665              	.LBB16:
  666              	.LBI16:
  667              		.file 2 "Drivers/CMSIS/Include/cmsis_gcc.h"
    1:Drivers/CMSIS/Include/cmsis_gcc.h **** /**************************************************************************//**
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 20
-
-
    2:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @file     cmsis_gcc.h
    3:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @brief    CMSIS compiler GCC header file
    4:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @version  V5.4.1
@@ -1190,6 +1198,9 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
   48:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
   49:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __STATIC_FORCEINLINE
   50:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __STATIC_FORCEINLINE                   __attribute__((always_inline)) static inline
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 21
+
+
   51:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
   52:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __NO_RETURN
   53:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __NO_RETURN                            __attribute__((__noreturn__))
@@ -1198,9 +1209,6 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
   56:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __USED                                 __attribute__((used))
   57:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
   58:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __WEAK
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 21
-
-
   59:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __WEAK                                 __attribute__((weak))
   60:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
   61:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __PACKED
@@ -1250,6 +1258,9 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  105:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
  106:Drivers/CMSIS/Include/cmsis_gcc.h ****   __PACKED_STRUCT T_UINT32_READ { uint32_t v; };
  107:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 22
+
+
  108:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT32_READ(addr)          (((const struct T_UINT32_READ *)(const void *)(add
  109:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
  110:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __ALIGNED
@@ -1258,9 +1269,6 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  113:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __RESTRICT
  114:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __RESTRICT                             __restrict
  115:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 22
-
-
  116:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __COMPILER_BARRIER
  117:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __COMPILER_BARRIER()                   __ASM volatile("":::"memory")
  118:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
@@ -1310,6 +1318,9 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  162:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  163:Drivers/CMSIS/Include/cmsis_gcc.h ****   _start();
  164:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 23
+
+
  165:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  166:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __PROGRAM_START           __cmsis_start
  167:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
@@ -1318,9 +1329,6 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  170:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __INITIAL_SP              __StackTop
  171:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
  172:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 23
-
-
  173:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __STACK_LIMIT
  174:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __STACK_LIMIT             __StackLimit
  175:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
@@ -1370,6 +1378,9 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  219:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_OUT_REG(r) "=r" (r)
  220:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_RW_REG(r) "+r" (r)
  221:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_USE_REG(r) "r" (r)
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 24
+
+
  222:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
  223:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  224:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
@@ -1378,9 +1389,6 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  227:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  228:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __NOP()                             __ASM volatile ("nop")
  229:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 24
-
-
  230:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  231:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Wait For Interrupt
  232:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Wait For Interrupt is a hint instruction that suspends execution until one of a number o
@@ -1430,6 +1438,9 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  276:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Data Memory Barrier
  277:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Ensures the apparent order of the explicit memory operations before
  278:Drivers/CMSIS/Include/cmsis_gcc.h ****            and after the instruction, without ensuring their completion.
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 25
+
+
  279:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  280:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __DMB(void)
  281:Drivers/CMSIS/Include/cmsis_gcc.h **** {
@@ -1438,9 +1449,6 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  284:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  285:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  286:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 25
-
-
  287:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Reverse byte order (32 bit)
  288:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Reverses the byte order in unsigned integer value. For example, 0x12345678 becomes 0x785
  289:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    value  Value to reverse
@@ -1490,6 +1498,9 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  333:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM ("revsh %0, %1" : __CMSIS_GCC_OUT_REG (result) : __CMSIS_GCC_USE_REG (value) );
  334:Drivers/CMSIS/Include/cmsis_gcc.h ****   return result;
  335:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 26
+
+
  336:Drivers/CMSIS/Include/cmsis_gcc.h **** }
  337:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  338:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -1498,9 +1509,6 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  341:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Rotate Right (immediate) provides the value of the contents of a register rotated by a v
  342:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    op1  Value to rotate
  343:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    op2  Number of Bits to rotate
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 26
-
-
  344:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return               Rotated value
  345:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  346:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __ROR(uint32_t op1, uint32_t op2)
@@ -1550,6 +1558,9 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  390:Drivers/CMSIS/Include/cmsis_gcc.h ****   }
  391:Drivers/CMSIS/Include/cmsis_gcc.h ****   result <<= s;                        /* shift when v's highest bits are zero */
  392:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 27
+
+
  393:Drivers/CMSIS/Include/cmsis_gcc.h ****   return result;
  394:Drivers/CMSIS/Include/cmsis_gcc.h **** }
  395:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -1558,9 +1569,6 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  398:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Count leading zeros
  399:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Counts the number of leading zeros of a data value.
  400:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to count the leading zeros
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 27
-
-
  401:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return             number of leading zeros in value
  402:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  403:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint8_t __CLZ(uint32_t value)
@@ -1610,6 +1618,9 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  447:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  448:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  449:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   LDR Exclusive (16 bit)
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 28
+
+
  450:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a exclusive LDR instruction for 16 bit values.
  451:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to data
  452:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return        value of type uint16_t at (*ptr)
@@ -1618,9 +1629,6 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  455:Drivers/CMSIS/Include/cmsis_gcc.h **** {
  456:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t result;
  457:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 28
-
-
  458:Drivers/CMSIS/Include/cmsis_gcc.h **** #if (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)
  459:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldrexh %0, %1" : "=r" (result) : "Q" (*addr) );
  460:Drivers/CMSIS/Include/cmsis_gcc.h **** #else
@@ -1670,6 +1678,9 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  504:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a exclusive STR instruction for 16 bit values.
  505:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to store
  506:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to location
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 29
+
+
  507:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return          0  Function succeeded
  508:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return          1  Function failed
  509:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
@@ -1678,9 +1689,6 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  512:Drivers/CMSIS/Include/cmsis_gcc.h ****    uint32_t result;
  513:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  514:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("strexh %0, %2, %1" : "=&r" (result), "=Q" (*addr) : "r" ((uint32_t)value) );
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 29
-
-
  515:Drivers/CMSIS/Include/cmsis_gcc.h ****    return(result);
  516:Drivers/CMSIS/Include/cmsis_gcc.h **** }
  517:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -1730,6 +1738,9 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  561:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __SSAT(ARG1, ARG2) \
  562:Drivers/CMSIS/Include/cmsis_gcc.h **** __extension__ \
  563:Drivers/CMSIS/Include/cmsis_gcc.h **** ({                          \
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 30
+
+
  564:Drivers/CMSIS/Include/cmsis_gcc.h ****   int32_t __RES, __ARG1 = (ARG1); \
  565:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("ssat %0, %1, %2" : "=r" (__RES) :  "I" (ARG2), "r" (__ARG1) : "cc" ); \
  566:Drivers/CMSIS/Include/cmsis_gcc.h ****   __RES; \
@@ -1738,9 +1749,6 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  569:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  570:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  571:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Unsigned Saturate
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 30
-
-
  572:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Saturates an unsigned value.
  573:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  ARG1  Value to be saturated
  574:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  ARG2  Bit position to saturate to (0..31)
@@ -1790,6 +1798,9 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  618:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldrbt %0, [%1]" : "=r" (result) : "r" (ptr) : "memory" );
  619:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
  620:Drivers/CMSIS/Include/cmsis_gcc.h ****    return ((uint8_t) result);    /* Add explicit type cast here */
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 31
+
+
  621:Drivers/CMSIS/Include/cmsis_gcc.h **** }
  622:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  623:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -1798,9 +1809,6 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  626:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a Unprivileged LDRT instruction for 16 bit values.
  627:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to data
  628:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return        value of type uint16_t at (*ptr)
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 31
-
-
  629:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  630:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint16_t __LDRHT(volatile uint16_t *ptr)
  631:Drivers/CMSIS/Include/cmsis_gcc.h **** {
@@ -1850,6 +1858,9 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  675:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a Unprivileged STRT instruction for 16 bit values.
  676:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to store
  677:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to location
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 32
+
+
  678:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  679:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __STRHT(uint16_t value, volatile uint16_t *ptr)
  680:Drivers/CMSIS/Include/cmsis_gcc.h **** {
@@ -1858,9 +1869,6 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  683:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  684:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  685:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 32
-
-
  686:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   STRT Unprivileged (32 bit)
  687:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a Unprivileged STRT instruction for 32 bit values.
  688:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to store
@@ -1910,6 +1918,9 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  732:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __USAT(int32_t val, uint32_t sat)
  733:Drivers/CMSIS/Include/cmsis_gcc.h **** {
  734:Drivers/CMSIS/Include/cmsis_gcc.h ****   if (sat <= 31U)
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 33
+
+
  735:Drivers/CMSIS/Include/cmsis_gcc.h ****   {
  736:Drivers/CMSIS/Include/cmsis_gcc.h ****     const uint32_t max = ((1U << sat) - 1U);
  737:Drivers/CMSIS/Include/cmsis_gcc.h ****     if (val > (int32_t)max)
@@ -1918,9 +1929,6 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  740:Drivers/CMSIS/Include/cmsis_gcc.h ****     }
  741:Drivers/CMSIS/Include/cmsis_gcc.h ****     else if (val < 0)
  742:Drivers/CMSIS/Include/cmsis_gcc.h ****     {
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 33
-
-
  743:Drivers/CMSIS/Include/cmsis_gcc.h ****       return 0U;
  744:Drivers/CMSIS/Include/cmsis_gcc.h ****     }
  745:Drivers/CMSIS/Include/cmsis_gcc.h ****   }
@@ -1970,6 +1978,9 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  789:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to data
  790:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return        value of type uint32_t at (*ptr)
  791:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 34
+
+
  792:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __LDA(volatile uint32_t *ptr)
  793:Drivers/CMSIS/Include/cmsis_gcc.h **** {
  794:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t result;
@@ -1978,9 +1989,6 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  797:Drivers/CMSIS/Include/cmsis_gcc.h ****    return(result);
  798:Drivers/CMSIS/Include/cmsis_gcc.h **** }
  799:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 34
-
-
  800:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  801:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  802:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Store-Release (8 bit)
@@ -2030,6 +2038,9 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  846:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  847:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldaexb %0, %1" : "=r" (result) : "Q" (*ptr) : "memory" );
  848:Drivers/CMSIS/Include/cmsis_gcc.h ****    return ((uint8_t) result);
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 35
+
+
  849:Drivers/CMSIS/Include/cmsis_gcc.h **** }
  850:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  851:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -2038,9 +2049,6 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  854:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a LDAH exclusive instruction for 16 bit values.
  855:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to data
  856:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return        value of type uint16_t at (*ptr)
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 35
-
-
  857:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  858:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint16_t __LDAEXH(volatile uint16_t *ptr)
  859:Drivers/CMSIS/Include/cmsis_gcc.h **** {
@@ -2090,6 +2098,9 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  903:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to location
  904:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return          0  Function succeeded
  905:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return          1  Function failed
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 36
+
+
  906:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  907:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __STLEXH(uint16_t value, volatile uint16_t *ptr)
  908:Drivers/CMSIS/Include/cmsis_gcc.h **** {
@@ -2098,9 +2109,6 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  911:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("stlexh %0, %2, %1" : "=&r" (result), "=Q" (*ptr) : "r" ((uint32_t)value) : "mem
  912:Drivers/CMSIS/Include/cmsis_gcc.h ****    return(result);
  913:Drivers/CMSIS/Include/cmsis_gcc.h **** }
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 36
-
-
  914:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  915:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  916:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
@@ -2150,6 +2158,9 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  960:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __disable_irq(void)
  668              		.loc 2 960 27 view .LVU168
  669              	.LBB17:
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 37
+
+
  961:Drivers/CMSIS/Include/cmsis_gcc.h **** {
  962:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("cpsid i" : : : "memory");
  670              		.loc 2 962 3 view .LVU169
@@ -2158,20 +2169,17 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  673 0000 72B6     		cpsid i
  674              	@ 0 "" 2
  675              		.thumb
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 37
-
-
  676              		.syntax unified
  677              	.L34:
  678              	.LBE17:
  679              	.LBE16:
- 338:Core/Src/main.c ****   while (1)
- 680              		.loc 1 338 3 view .LVU170
- 339:Core/Src/main.c ****   {
- 340:Core/Src/main.c ****   }
- 681              		.loc 1 340 3 view .LVU171
- 338:Core/Src/main.c ****   while (1)
- 682              		.loc 1 338 9 view .LVU172
+ 346:Core/Src/main.c ****   while (1)
+ 680              		.loc 1 346 3 view .LVU170
+ 347:Core/Src/main.c ****   {
+ 348:Core/Src/main.c ****   }
+ 681              		.loc 1 348 3 view .LVU171
+ 346:Core/Src/main.c ****   while (1)
+ 682              		.loc 1 346 9 view .LVU172
  683 0002 FEE7     		b	.L34
  684              		.cfi_endproc
  685              	.LFE140:
@@ -2183,8 +2191,8 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  692              		.thumb_func
  694              	SystemClock_Config:
  695              	.LFB135:
- 188:Core/Src/main.c ****   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
- 696              		.loc 1 188 1 view -0
+ 194:Core/Src/main.c ****   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+ 696              		.loc 1 194 1 view -0
  697              		.cfi_startproc
  698              		@ args = 0, pretend = 0, frame = 80
  699              		@ frame_needed = 0, uses_anonymous_args = 0
@@ -2195,185 +2203,185 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  704 0002 95B0     		sub	sp, sp, #84
  705              	.LCFI10:
  706              		.cfi_def_cfa_offset 88
- 189:Core/Src/main.c ****   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
- 707              		.loc 1 189 3 view .LVU174
- 189:Core/Src/main.c ****   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
- 708              		.loc 1 189 22 is_stmt 0 view .LVU175
+ 195:Core/Src/main.c ****   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+ 707              		.loc 1 195 3 view .LVU174
+ 195:Core/Src/main.c ****   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+ 708              		.loc 1 195 22 is_stmt 0 view .LVU175
  709 0004 3422     		movs	r2, #52
  710 0006 0021     		movs	r1, #0
  711 0008 07A8     		add	r0, sp, #28
  712 000a FFF7FEFF 		bl	memset
  713              	.LVL63:
- 190:Core/Src/main.c **** 
- 714              		.loc 1 190 3 is_stmt 1 view .LVU176
- 190:Core/Src/main.c **** 
- 715              		.loc 1 190 22 is_stmt 0 view .LVU177
+ 196:Core/Src/main.c **** 
+ 714              		.loc 1 196 3 is_stmt 1 view .LVU176
+ 196:Core/Src/main.c **** 
+ 715              		.loc 1 196 22 is_stmt 0 view .LVU177
  716 000e 0023     		movs	r3, #0
  717 0010 0293     		str	r3, [sp, #8]
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 38
+
+
  718 0012 0393     		str	r3, [sp, #12]
  719 0014 0493     		str	r3, [sp, #16]
  720 0016 0593     		str	r3, [sp, #20]
  721 0018 0693     		str	r3, [sp, #24]
- 194:Core/Src/main.c ****   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
- 722              		.loc 1 194 3 is_stmt 1 view .LVU178
+ 200:Core/Src/main.c ****   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
+ 722              		.loc 1 200 3 is_stmt 1 view .LVU178
  723              	.LBB18:
- 194:Core/Src/main.c ****   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 38
-
-
- 724              		.loc 1 194 3 view .LVU179
+ 200:Core/Src/main.c ****   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
+ 724              		.loc 1 200 3 view .LVU179
  725 001a 0093     		str	r3, [sp]
- 194:Core/Src/main.c ****   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
- 726              		.loc 1 194 3 view .LVU180
+ 200:Core/Src/main.c ****   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
+ 726              		.loc 1 200 3 view .LVU180
  727 001c 214A     		ldr	r2, .L41
  728 001e 116C     		ldr	r1, [r2, #64]
  729 0020 41F08051 		orr	r1, r1, #268435456
  730 0024 1164     		str	r1, [r2, #64]
- 194:Core/Src/main.c ****   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
- 731              		.loc 1 194 3 view .LVU181
+ 200:Core/Src/main.c ****   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
+ 731              		.loc 1 200 3 view .LVU181
  732 0026 126C     		ldr	r2, [r2, #64]
  733 0028 02F08052 		and	r2, r2, #268435456
  734 002c 0092     		str	r2, [sp]
- 194:Core/Src/main.c ****   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
- 735              		.loc 1 194 3 view .LVU182
+ 200:Core/Src/main.c ****   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
+ 735              		.loc 1 200 3 view .LVU182
  736 002e 009A     		ldr	r2, [sp]
  737              	.LBE18:
- 194:Core/Src/main.c ****   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
- 738              		.loc 1 194 3 view .LVU183
- 195:Core/Src/main.c **** 
- 739              		.loc 1 195 3 view .LVU184
+ 200:Core/Src/main.c ****   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
+ 738              		.loc 1 200 3 view .LVU183
+ 201:Core/Src/main.c **** 
+ 739              		.loc 1 201 3 view .LVU184
  740              	.LBB19:
- 195:Core/Src/main.c **** 
- 741              		.loc 1 195 3 view .LVU185
+ 201:Core/Src/main.c **** 
+ 741              		.loc 1 201 3 view .LVU185
  742 0030 0193     		str	r3, [sp, #4]
- 195:Core/Src/main.c **** 
- 743              		.loc 1 195 3 view .LVU186
+ 201:Core/Src/main.c **** 
+ 743              		.loc 1 201 3 view .LVU186
  744 0032 1D4A     		ldr	r2, .L41+4
  745 0034 1368     		ldr	r3, [r2]
  746 0036 23F44043 		bic	r3, r3, #49152
  747 003a 43F48043 		orr	r3, r3, #16384
  748 003e 1360     		str	r3, [r2]
- 195:Core/Src/main.c **** 
- 749              		.loc 1 195 3 view .LVU187
+ 201:Core/Src/main.c **** 
+ 749              		.loc 1 201 3 view .LVU187
  750 0040 1368     		ldr	r3, [r2]
  751 0042 03F44043 		and	r3, r3, #49152
  752 0046 0193     		str	r3, [sp, #4]
- 195:Core/Src/main.c **** 
- 753              		.loc 1 195 3 view .LVU188
+ 201:Core/Src/main.c **** 
+ 753              		.loc 1 201 3 view .LVU188
  754 0048 019B     		ldr	r3, [sp, #4]
  755              	.LBE19:
- 195:Core/Src/main.c **** 
- 756              		.loc 1 195 3 view .LVU189
- 200:Core/Src/main.c ****   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
- 757              		.loc 1 200 3 view .LVU190
- 200:Core/Src/main.c ****   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
- 758              		.loc 1 200 36 is_stmt 0 view .LVU191
+ 201:Core/Src/main.c **** 
+ 756              		.loc 1 201 3 view .LVU189
+ 206:Core/Src/main.c ****   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+ 757              		.loc 1 206 3 view .LVU190
+ 206:Core/Src/main.c ****   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+ 758              		.loc 1 206 36 is_stmt 0 view .LVU191
  759 004a 0123     		movs	r3, #1
  760 004c 0793     		str	r3, [sp, #28]
- 201:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
- 761              		.loc 1 201 3 is_stmt 1 view .LVU192
- 201:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
- 762              		.loc 1 201 30 is_stmt 0 view .LVU193
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 39
+
+
+ 207:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+ 761              		.loc 1 207 3 is_stmt 1 view .LVU192
+ 207:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+ 762              		.loc 1 207 30 is_stmt 0 view .LVU193
  763 004e 4FF48033 		mov	r3, #65536
  764 0052 0893     		str	r3, [sp, #32]
- 202:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
- 765              		.loc 1 202 3 is_stmt 1 view .LVU194
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 39
-
-
- 202:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
- 766              		.loc 1 202 34 is_stmt 0 view .LVU195
+ 208:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+ 765              		.loc 1 208 3 is_stmt 1 view .LVU194
+ 208:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+ 766              		.loc 1 208 34 is_stmt 0 view .LVU195
  767 0054 0223     		movs	r3, #2
  768 0056 0D93     		str	r3, [sp, #52]
- 203:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLM = 15;
- 769              		.loc 1 203 3 is_stmt 1 view .LVU196
- 203:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLM = 15;
- 770              		.loc 1 203 35 is_stmt 0 view .LVU197
+ 209:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLM = 15;
+ 769              		.loc 1 209 3 is_stmt 1 view .LVU196
+ 209:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLM = 15;
+ 770              		.loc 1 209 35 is_stmt 0 view .LVU197
  771 0058 4FF48002 		mov	r2, #4194304
  772 005c 0E92     		str	r2, [sp, #56]
- 204:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLN = 144;
- 773              		.loc 1 204 3 is_stmt 1 view .LVU198
- 204:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLN = 144;
- 774              		.loc 1 204 30 is_stmt 0 view .LVU199
+ 210:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLN = 144;
+ 773              		.loc 1 210 3 is_stmt 1 view .LVU198
+ 210:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLN = 144;
+ 774              		.loc 1 210 30 is_stmt 0 view .LVU199
  775 005e 0F22     		movs	r2, #15
  776 0060 0F92     		str	r2, [sp, #60]
- 205:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
- 777              		.loc 1 205 3 is_stmt 1 view .LVU200
- 205:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
- 778              		.loc 1 205 30 is_stmt 0 view .LVU201
+ 211:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+ 777              		.loc 1 211 3 is_stmt 1 view .LVU200
+ 211:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+ 778              		.loc 1 211 30 is_stmt 0 view .LVU201
  779 0062 9022     		movs	r2, #144
  780 0064 1092     		str	r2, [sp, #64]
- 206:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLQ = 2;
- 781              		.loc 1 206 3 is_stmt 1 view .LVU202
- 206:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLQ = 2;
- 782              		.loc 1 206 30 is_stmt 0 view .LVU203
+ 212:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLQ = 2;
+ 781              		.loc 1 212 3 is_stmt 1 view .LVU202
+ 212:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLQ = 2;
+ 782              		.loc 1 212 30 is_stmt 0 view .LVU203
  783 0066 1193     		str	r3, [sp, #68]
- 207:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLR = 2;
- 784              		.loc 1 207 3 is_stmt 1 view .LVU204
- 207:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLR = 2;
- 785              		.loc 1 207 30 is_stmt 0 view .LVU205
+ 213:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLR = 2;
+ 784              		.loc 1 213 3 is_stmt 1 view .LVU204
+ 213:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLR = 2;
+ 785              		.loc 1 213 30 is_stmt 0 view .LVU205
  786 0068 1293     		str	r3, [sp, #72]
- 208:Core/Src/main.c ****   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
- 787              		.loc 1 208 3 is_stmt 1 view .LVU206
- 208:Core/Src/main.c ****   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
- 788              		.loc 1 208 30 is_stmt 0 view .LVU207
+ 214:Core/Src/main.c ****   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+ 787              		.loc 1 214 3 is_stmt 1 view .LVU206
+ 214:Core/Src/main.c ****   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+ 788              		.loc 1 214 30 is_stmt 0 view .LVU207
  789 006a 1393     		str	r3, [sp, #76]
- 209:Core/Src/main.c ****   {
- 790              		.loc 1 209 3 is_stmt 1 view .LVU208
- 209:Core/Src/main.c ****   {
- 791              		.loc 1 209 7 is_stmt 0 view .LVU209
+ 215:Core/Src/main.c ****   {
+ 790              		.loc 1 215 3 is_stmt 1 view .LVU208
+ 215:Core/Src/main.c ****   {
+ 791              		.loc 1 215 7 is_stmt 0 view .LVU209
  792 006c 07A8     		add	r0, sp, #28
  793 006e FFF7FEFF 		bl	HAL_RCC_OscConfig
  794              	.LVL64:
- 209:Core/Src/main.c ****   {
- 795              		.loc 1 209 6 discriminator 1 view .LVU210
+ 215:Core/Src/main.c ****   {
+ 795              		.loc 1 215 6 discriminator 1 view .LVU210
  796 0072 98B9     		cbnz	r0, .L39
- 216:Core/Src/main.c ****                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
- 797              		.loc 1 216 3 is_stmt 1 view .LVU211
- 216:Core/Src/main.c ****                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
- 798              		.loc 1 216 31 is_stmt 0 view .LVU212
+ 222:Core/Src/main.c ****                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+ 797              		.loc 1 222 3 is_stmt 1 view .LVU211
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 40
+
+
+ 222:Core/Src/main.c ****                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+ 798              		.loc 1 222 31 is_stmt 0 view .LVU212
  799 0074 0F23     		movs	r3, #15
  800 0076 0293     		str	r3, [sp, #8]
- 218:Core/Src/main.c ****   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
- 801              		.loc 1 218 3 is_stmt 1 view .LVU213
- 218:Core/Src/main.c ****   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
- 802              		.loc 1 218 34 is_stmt 0 view .LVU214
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 40
-
-
+ 224:Core/Src/main.c ****   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+ 801              		.loc 1 224 3 is_stmt 1 view .LVU213
+ 224:Core/Src/main.c ****   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+ 802              		.loc 1 224 34 is_stmt 0 view .LVU214
  803 0078 0223     		movs	r3, #2
  804 007a 0393     		str	r3, [sp, #12]
- 219:Core/Src/main.c ****   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
- 805              		.loc 1 219 3 is_stmt 1 view .LVU215
- 219:Core/Src/main.c ****   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
- 806              		.loc 1 219 35 is_stmt 0 view .LVU216
+ 225:Core/Src/main.c ****   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+ 805              		.loc 1 225 3 is_stmt 1 view .LVU215
+ 225:Core/Src/main.c ****   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+ 806              		.loc 1 225 35 is_stmt 0 view .LVU216
  807 007c 0023     		movs	r3, #0
  808 007e 0493     		str	r3, [sp, #16]
- 220:Core/Src/main.c ****   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
- 809              		.loc 1 220 3 is_stmt 1 view .LVU217
- 220:Core/Src/main.c ****   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
- 810              		.loc 1 220 36 is_stmt 0 view .LVU218
+ 226:Core/Src/main.c ****   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+ 809              		.loc 1 226 3 is_stmt 1 view .LVU217
+ 226:Core/Src/main.c ****   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+ 810              		.loc 1 226 36 is_stmt 0 view .LVU218
  811 0080 4FF4A053 		mov	r3, #5120
  812 0084 0593     		str	r3, [sp, #20]
- 221:Core/Src/main.c **** 
- 813              		.loc 1 221 3 is_stmt 1 view .LVU219
- 221:Core/Src/main.c **** 
- 814              		.loc 1 221 36 is_stmt 0 view .LVU220
+ 227:Core/Src/main.c **** 
+ 813              		.loc 1 227 3 is_stmt 1 view .LVU219
+ 227:Core/Src/main.c **** 
+ 814              		.loc 1 227 36 is_stmt 0 view .LVU220
  815 0086 4FF48053 		mov	r3, #4096
  816 008a 0693     		str	r3, [sp, #24]
- 223:Core/Src/main.c ****   {
- 817              		.loc 1 223 3 is_stmt 1 view .LVU221
- 223:Core/Src/main.c ****   {
- 818              		.loc 1 223 7 is_stmt 0 view .LVU222
+ 229:Core/Src/main.c ****   {
+ 817              		.loc 1 229 3 is_stmt 1 view .LVU221
+ 229:Core/Src/main.c ****   {
+ 818              		.loc 1 229 7 is_stmt 0 view .LVU222
  819 008c 0321     		movs	r1, #3
  820 008e 02A8     		add	r0, sp, #8
  821 0090 FFF7FEFF 		bl	HAL_RCC_ClockConfig
  822              	.LVL65:
- 223:Core/Src/main.c ****   {
- 823              		.loc 1 223 6 discriminator 1 view .LVU223
+ 229:Core/Src/main.c ****   {
+ 823              		.loc 1 229 6 discriminator 1 view .LVU223
  824 0094 20B9     		cbnz	r0, .L40
- 227:Core/Src/main.c **** 
- 825              		.loc 1 227 1 view .LVU224
+ 233:Core/Src/main.c **** 
+ 825              		.loc 1 233 1 view .LVU224
  826 0096 15B0     		add	sp, sp, #84
  827              	.LCFI11:
  828              		.cfi_remember_state
@@ -2383,13 +2391,16 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  832              	.L39:
  833              	.LCFI12:
  834              		.cfi_restore_state
- 211:Core/Src/main.c ****   }
- 835              		.loc 1 211 5 is_stmt 1 view .LVU225
+ 217:Core/Src/main.c ****   }
+ 835              		.loc 1 217 5 is_stmt 1 view .LVU225
  836 009c FFF7FEFF 		bl	Error_Handler
  837              	.LVL66:
  838              	.L40:
- 225:Core/Src/main.c ****   }
- 839              		.loc 1 225 5 view .LVU226
+ 231:Core/Src/main.c ****   }
+ 839              		.loc 1 231 5 view .LVU226
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 41
+
+
  840 00a0 FFF7FEFF 		bl	Error_Handler
  841              	.LVL67:
  842              	.L42:
@@ -2398,9 +2409,6 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  845 00a4 00380240 		.word	1073887232
  846 00a8 00700040 		.word	1073770496
  847              		.cfi_endproc
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 41
-
-
  848              	.LFE135:
  850              		.section	.text.main,"ax",%progbits
  851              		.align	1
@@ -2410,379 +2418,389 @@ ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 1
  855              		.thumb_func
  857              	main:
  858              	.LFB134:
-  92:Core/Src/main.c **** 
- 859              		.loc 1 92 1 view -0
+  93:Core/Src/main.c **** 
+ 859              		.loc 1 93 1 view -0
  860              		.cfi_startproc
  861              		@ args = 0, pretend = 0, frame = 0
  862              		@ frame_needed = 0, uses_anonymous_args = 0
- 863 0000 2DE9F047 		push	{r4, r5, r6, r7, r8, r9, r10, lr}
+ 863 0000 2DE9F843 		push	{r3, r4, r5, r6, r7, r8, r9, lr}
  864              	.LCFI13:
  865              		.cfi_def_cfa_offset 32
- 866              		.cfi_offset 4, -32
- 867              		.cfi_offset 5, -28
- 868              		.cfi_offset 6, -24
- 869              		.cfi_offset 7, -20
- 870              		.cfi_offset 8, -16
- 871              		.cfi_offset 9, -12
- 872              		.cfi_offset 10, -8
+ 866              		.cfi_offset 3, -32
+ 867              		.cfi_offset 4, -28
+ 868              		.cfi_offset 5, -24
+ 869              		.cfi_offset 6, -20
+ 870              		.cfi_offset 7, -16
+ 871              		.cfi_offset 8, -12
+ 872              		.cfi_offset 9, -8
  873              		.cfi_offset 14, -4
- 111:Core/Src/main.c **** 
- 874              		.loc 1 111 3 view .LVU228
- 875 0004 FFF7FEFF 		bl	HAL_Init
- 876              	.LVL68:
- 114:Core/Src/main.c ****   /* USER CODE END Init */
- 877              		.loc 1 114 3 view .LVU229
- 878              	.LBB20:
- 879              	.LBI20:
- 314:Core/Src/main.c **** {
- 880              		.loc 1 314 20 view .LVU230
- 881              	.LBB21:
- 316:Core/Src/main.c **** 		// Only write to LAR if it exists
- 882              		.loc 1 316 3 view .LVU231
- 316:Core/Src/main.c **** 		// Only write to LAR if it exists
- 883              		.loc 1 316 12 is_stmt 0 view .LVU232
- 884 0008 2E4A     		ldr	r2, .L46
- 885 000a D2F8FC30 		ldr	r3, [r2, #252]
- 316:Core/Src/main.c **** 		// Only write to LAR if it exists
- 886              		.loc 1 316 20 view .LVU233
- 887 000e 43F08073 		orr	r3, r3, #16777216
- 888 0012 C2F8FC30 		str	r3, [r2, #252]
- 322:Core/Src/main.c **** 		DWT ->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
- 889              		.loc 1 322 3 is_stmt 1 view .LVU234
- 322:Core/Src/main.c **** 		DWT ->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
- 890              		.loc 1 322 16 is_stmt 0 view .LVU235
- 891 0016 2C4D     		ldr	r5, .L46+4
- 892 0018 0027     		movs	r7, #0
- 893 001a 6F60     		str	r7, [r5, #4]
- 323:Core/Src/main.c **** }
- 894              		.loc 1 323 3 is_stmt 1 view .LVU236
- 323:Core/Src/main.c **** }
- 895              		.loc 1 323 7 is_stmt 0 view .LVU237
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 42
+ 874 0004 2DED028B 		vpush.64	{d8}
+ 875              	.LCFI14:
+ 876              		.cfi_def_cfa_offset 40
+ 877              		.cfi_offset 80, -40
+ 878              		.cfi_offset 81, -36
+  98:Core/Src/main.c **** 	  //width = height = imageSize[0];
+ 879              		.loc 1 98 4 view .LVU228
+ 103:Core/Src/main.c **** 
+ 880              		.loc 1 103 4 view .LVU229
+ 103:Core/Src/main.c **** 
+ 881              		.loc 1 103 19 is_stmt 0 view .LVU230
+ 882 0008 3A4B     		ldr	r3, .L46
+ 883 000a 1E69     		ldr	r6, [r3, #16]
+ 884              	.LVL68:
+ 112:Core/Src/main.c **** 
+ 885              		.loc 1 112 3 is_stmt 1 view .LVU231
+ 886 000c FFF7FEFF 		bl	HAL_Init
+ 887              	.LVL69:
+ 115:Core/Src/main.c ****   /* USER CODE END Init */
+ 888              		.loc 1 115 3 view .LVU232
+ 889              	.LBB20:
+ 890              	.LBI20:
+ 322:Core/Src/main.c **** {
+ 891              		.loc 1 322 20 view .LVU233
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 42
 
 
- 896 001c 2B68     		ldr	r3, [r5]
- 323:Core/Src/main.c **** }
- 897              		.loc 1 323 14 view .LVU238
- 898 001e 43F00103 		orr	r3, r3, #1
- 899 0022 2B60     		str	r3, [r5]
- 900              	.LBE21:
- 901              	.LBE20:
- 118:Core/Src/main.c **** 
- 902              		.loc 1 118 3 is_stmt 1 view .LVU239
- 903 0024 FFF7FEFF 		bl	SystemClock_Config
- 904              	.LVL69:
- 125:Core/Src/main.c ****   /* USER CODE BEGIN 2 */
- 905              		.loc 1 125 3 view .LVU240
- 906 0028 FFF7FEFF 		bl	MX_GPIO_Init
- 907              	.LVL70:
- 128:Core/Src/main.c ****       int height = resolutions[4][1];
- 908              		.loc 1 128 7 view .LVU241
- 128:Core/Src/main.c ****       int height = resolutions[4][1];
- 909              		.loc 1 128 11 is_stmt 0 view .LVU242
- 910 002c 274B     		ldr	r3, .L46+8
- 911 002e 1C6A     		ldr	r4, [r3, #32]
- 912              	.LVL71:
- 129:Core/Src/main.c **** 
- 913              		.loc 1 129 7 is_stmt 1 view .LVU243
- 129:Core/Src/main.c **** 
- 914              		.loc 1 129 11 is_stmt 0 view .LVU244
- 915 0030 D3F82480 		ldr	r8, [r3, #36]
- 916              	.LVL72:
- 131:Core/Src/main.c ****   // Record the start time and cycles
- 917              		.loc 1 131 3 is_stmt 1 view .LVU245
- 918 0034 264E     		ldr	r6, .L46+12
- 919 0036 0122     		movs	r2, #1
- 920 0038 1146     		mov	r1, r2
- 921 003a 3046     		mov	r0, r6
- 922 003c FFF7FEFF 		bl	HAL_GPIO_WritePin
- 923              	.LVL73:
- 133:Core/Src/main.c ****   	  start_cycle = DWT->CYCCNT;
- 924              		.loc 1 133 6 view .LVU246
- 133:Core/Src/main.c ****   	  start_cycle = DWT->CYCCNT;
- 925              		.loc 1 133 19 is_stmt 0 view .LVU247
- 926 0040 FFF7FEFF 		bl	HAL_GetTick
- 927              	.LVL74:
- 133:Core/Src/main.c ****   	  start_cycle = DWT->CYCCNT;
- 928              		.loc 1 133 17 discriminator 1 view .LVU248
- 929 0044 DFF8A8A0 		ldr	r10, .L46+44
- 930 0048 CAF80000 		str	r0, [r10]
- 134:Core/Src/main.c ****   	  //Call the Mandelbrot Function and store the output in the checksum variable defined initially
- 931              		.loc 1 134 6 is_stmt 1 view .LVU249
- 134:Core/Src/main.c ****   	  //Call the Mandelbrot Function and store the output in the checksum variable defined initially
- 932              		.loc 1 134 23 is_stmt 0 view .LVU250
- 933 004c 6B68     		ldr	r3, [r5, #4]
- 134:Core/Src/main.c ****   	  //Call the Mandelbrot Function and store the output in the checksum variable defined initially
- 934              		.loc 1 134 18 view .LVU251
- 935 004e DFF8A490 		ldr	r9, .L46+48
- 936 0052 C9F80030 		str	r3, [r9]
- 136:Core/Src/main.c ****   	  //checksum = calculate_mandelbrot_double(width, height, max_iter);
- 937              		.loc 1 136 6 is_stmt 1 view .LVU252
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 43
+ 892              	.LBB21:
+ 324:Core/Src/main.c **** 		// Only write to LAR if it exists
+ 893              		.loc 1 324 3 view .LVU234
+ 324:Core/Src/main.c **** 		// Only write to LAR if it exists
+ 894              		.loc 1 324 12 is_stmt 0 view .LVU235
+ 895 0010 394A     		ldr	r2, .L46+4
+ 896 0012 D2F8FC30 		ldr	r3, [r2, #252]
+ 324:Core/Src/main.c **** 		// Only write to LAR if it exists
+ 897              		.loc 1 324 20 view .LVU236
+ 898 0016 43F08073 		orr	r3, r3, #16777216
+ 899 001a C2F8FC30 		str	r3, [r2, #252]
+ 330:Core/Src/main.c **** 		DWT ->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+ 900              		.loc 1 330 3 is_stmt 1 view .LVU237
+ 330:Core/Src/main.c **** 		DWT ->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+ 901              		.loc 1 330 16 is_stmt 0 view .LVU238
+ 902 001e DFF80891 		ldr	r9, .L46+52
+ 903 0022 0025     		movs	r5, #0
+ 904 0024 C9F80450 		str	r5, [r9, #4]
+ 331:Core/Src/main.c **** }
+ 905              		.loc 1 331 3 is_stmt 1 view .LVU239
+ 331:Core/Src/main.c **** }
+ 906              		.loc 1 331 7 is_stmt 0 view .LVU240
+ 907 0028 D9F80030 		ldr	r3, [r9]
+ 331:Core/Src/main.c **** }
+ 908              		.loc 1 331 14 view .LVU241
+ 909 002c 43F00103 		orr	r3, r3, #1
+ 910 0030 C9F80030 		str	r3, [r9]
+ 911              	.LBE21:
+ 912              	.LBE20:
+ 119:Core/Src/main.c **** 
+ 913              		.loc 1 119 3 is_stmt 1 view .LVU242
+ 914 0034 FFF7FEFF 		bl	SystemClock_Config
+ 915              	.LVL70:
+ 126:Core/Src/main.c ****   /* USER CODE BEGIN 2 */
+ 916              		.loc 1 126 3 view .LVU243
+ 917 0038 FFF7FEFF 		bl	MX_GPIO_Init
+ 918              	.LVL71:
+ 132:Core/Src/main.c ****   // Record the start time and cycles
+ 919              		.loc 1 132 3 view .LVU244
+ 920 003c 2F4C     		ldr	r4, .L46+8
+ 921 003e 0122     		movs	r2, #1
+ 922 0040 1146     		mov	r1, r2
+ 923 0042 2046     		mov	r0, r4
+ 924 0044 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 925              	.LVL72:
+ 134:Core/Src/main.c ****   	  start_cycle = DWT->CYCCNT;
+ 926              		.loc 1 134 6 view .LVU245
+ 134:Core/Src/main.c ****   	  start_cycle = DWT->CYCCNT;
+ 927              		.loc 1 134 19 is_stmt 0 view .LVU246
+ 928 0048 FFF7FEFF 		bl	HAL_GetTick
+ 929              	.LVL73:
+ 134:Core/Src/main.c ****   	  start_cycle = DWT->CYCCNT;
+ 930              		.loc 1 134 17 discriminator 1 view .LVU247
+ 931 004c DFF8DC80 		ldr	r8, .L46+56
+ 932 0050 C8F80000 		str	r0, [r8]
+ 135:Core/Src/main.c **** 
+ 933              		.loc 1 135 6 is_stmt 1 view .LVU248
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 43
 
 
- 136:Core/Src/main.c ****   	  //checksum = calculate_mandelbrot_double(width, height, max_iter);
- 938              		.loc 1 136 17 is_stmt 0 view .LVU253
- 939 0056 1F4B     		ldr	r3, .L46+16
- 940 0058 1A68     		ldr	r2, [r3]
- 941 005a 4146     		mov	r1, r8
- 942 005c 2046     		mov	r0, r4
- 943 005e FFF7FEFF 		bl	calculate_mandelbrot_fixed_point_arithmetic
- 944              	.LVL75:
- 136:Core/Src/main.c ****   	  //checksum = calculate_mandelbrot_double(width, height, max_iter);
- 945              		.loc 1 136 15 discriminator 1 view .LVU254
- 946 0062 1D4B     		ldr	r3, .L46+20
- 947 0064 C3E90001 		strd	r0, [r3]
- 139:Core/Src/main.c ****   	  end_cycle = DWT->CYCCNT;
- 948              		.loc 1 139 6 is_stmt 1 view .LVU255
- 139:Core/Src/main.c ****   	  end_cycle = DWT->CYCCNT;
- 949              		.loc 1 139 17 is_stmt 0 view .LVU256
- 950 0068 FFF7FEFF 		bl	HAL_GetTick
- 951              	.LVL76:
- 139:Core/Src/main.c ****   	  end_cycle = DWT->CYCCNT;
- 952              		.loc 1 139 15 discriminator 1 view .LVU257
- 953 006c 1B4B     		ldr	r3, .L46+24
- 954 006e 1860     		str	r0, [r3]
- 140:Core/Src/main.c **** 
- 955              		.loc 1 140 6 is_stmt 1 view .LVU258
- 140:Core/Src/main.c **** 
- 956              		.loc 1 140 21 is_stmt 0 view .LVU259
- 957 0070 6A68     		ldr	r2, [r5, #4]
- 140:Core/Src/main.c **** 
- 958              		.loc 1 140 16 view .LVU260
- 959 0072 1B4B     		ldr	r3, .L46+28
- 960 0074 1A60     		str	r2, [r3]
- 143:Core/Src/main.c ****     	elapsed_clock_cycles = end_cycle - start_cycle;
- 961              		.loc 1 143 6 is_stmt 1 view .LVU261
- 143:Core/Src/main.c ****     	elapsed_clock_cycles = end_cycle - start_cycle;
- 962              		.loc 1 143 33 is_stmt 0 view .LVU262
- 963 0076 DAF80030 		ldr	r3, [r10]
- 964 007a C31A     		subs	r3, r0, r3
- 143:Core/Src/main.c ****     	elapsed_clock_cycles = end_cycle - start_cycle;
- 965              		.loc 1 143 22 view .LVU263
- 966 007c 1949     		ldr	r1, .L46+32
- 967 007e 0B60     		str	r3, [r1]
- 144:Core/Src/main.c **** 
- 968              		.loc 1 144 6 is_stmt 1 view .LVU264
- 144:Core/Src/main.c **** 
- 969              		.loc 1 144 39 is_stmt 0 view .LVU265
- 970 0080 D9F80010 		ldr	r1, [r9]
- 971 0084 521A     		subs	r2, r2, r1
- 144:Core/Src/main.c **** 
- 972              		.loc 1 144 27 view .LVU266
- 973 0086 1849     		ldr	r1, .L46+36
- 974 0088 0A60     		str	r2, [r1]
+ 135:Core/Src/main.c **** 
+ 934              		.loc 1 135 23 is_stmt 0 view .LVU249
+ 935 0054 D9F80430 		ldr	r3, [r9, #4]
+ 135:Core/Src/main.c **** 
+ 936              		.loc 1 135 18 view .LVU250
+ 937 0058 294F     		ldr	r7, .L46+12
+ 938 005a 3B60     		str	r3, [r7]
+ 139:Core/Src/main.c **** 
+ 939              		.loc 1 139 5 is_stmt 1 view .LVU251
+ 139:Core/Src/main.c **** 
+ 940              		.loc 1 139 16 is_stmt 0 view .LVU252
+ 941 005c 3046     		mov	r0, r6
+ 942 005e FFF7FEFF 		bl	__aeabi_i2d
+ 943              	.LVL74:
+ 944 0062 41EC180B 		vmov	d8, r0, r1
+ 945 0066 274B     		ldr	r3, .L46+16
+ 946 0068 1868     		ldr	r0, [r3]
+ 947 006a FFF7FEFF 		bl	__aeabi_i2d
+ 948              	.LVL75:
+ 949 006e 41EC120B 		vmov	d2, r0, r1
+ 950 0072 B0EE481A 		vmov.f32	s2, s16
+ 951 0076 F0EE681A 		vmov.f32	s3, s17
+ 952 007a B0EE480A 		vmov.f32	s0, s16
+ 953 007e F0EE680A 		vmov.f32	s1, s17
+ 954 0082 FFF7FEFF 		bl	calculate_mandelbrot_double
+ 955              	.LVL76:
+ 139:Core/Src/main.c **** 
+ 956              		.loc 1 139 14 discriminator 1 view .LVU253
+ 957 0086 204B     		ldr	r3, .L46+20
+ 958 0088 C3E90001 		strd	r0, [r3]
+ 142:Core/Src/main.c **** 		  end_cycle = DWT->CYCCNT;
+ 959              		.loc 1 142 5 is_stmt 1 view .LVU254
+ 142:Core/Src/main.c **** 		  end_cycle = DWT->CYCCNT;
+ 960              		.loc 1 142 16 is_stmt 0 view .LVU255
+ 961 008c FFF7FEFF 		bl	HAL_GetTick
+ 962              	.LVL77:
+ 142:Core/Src/main.c **** 		  end_cycle = DWT->CYCCNT;
+ 963              		.loc 1 142 14 discriminator 1 view .LVU256
+ 964 0090 1E4B     		ldr	r3, .L46+24
+ 965 0092 1860     		str	r0, [r3]
+ 143:Core/Src/main.c **** 
+ 966              		.loc 1 143 5 is_stmt 1 view .LVU257
+ 143:Core/Src/main.c **** 
+ 967              		.loc 1 143 20 is_stmt 0 view .LVU258
+ 968 0094 D9F80430 		ldr	r3, [r9, #4]
+ 143:Core/Src/main.c **** 
+ 969              		.loc 1 143 15 view .LVU259
+ 970 0098 1D4A     		ldr	r2, .L46+28
+ 971 009a 1360     		str	r3, [r2]
+ 146:Core/Src/main.c ****     	elapsed_clock_cycles = end_cycle - start_cycle;
+ 972              		.loc 1 146 6 is_stmt 1 view .LVU260
+ 146:Core/Src/main.c ****     	elapsed_clock_cycles = end_cycle - start_cycle;
+ 973              		.loc 1 146 33 is_stmt 0 view .LVU261
+ 974 009c D8F80020 		ldr	r2, [r8]
+ 975 00a0 801A     		subs	r0, r0, r2
+ 146:Core/Src/main.c ****     	elapsed_clock_cycles = end_cycle - start_cycle;
+ 976              		.loc 1 146 22 view .LVU262
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 44
+
+
+ 977 00a2 1C4A     		ldr	r2, .L46+32
+ 978 00a4 1060     		str	r0, [r2]
  147:Core/Src/main.c **** 
- 975              		.loc 1 147 6 is_stmt 1 view .LVU267
+ 979              		.loc 1 147 6 is_stmt 1 view .LVU263
  147:Core/Src/main.c **** 
- 976              		.loc 1 147 27 is_stmt 0 view .LVU268
- 977 008a 08FB04F0 		mul	r0, r8, r4
+ 980              		.loc 1 147 39 is_stmt 0 view .LVU264
+ 981 00a6 3A68     		ldr	r2, [r7]
+ 982 00a8 9B1A     		subs	r3, r3, r2
  147:Core/Src/main.c **** 
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 44
+ 983              		.loc 1 147 27 view .LVU265
+ 984 00aa 1B4A     		ldr	r2, .L46+36
+ 985 00ac 1360     		str	r3, [r2]
+ 150:Core/Src/main.c ****     	through_put = 120000000 / cycles_per_pixel ;
+ 986              		.loc 1 150 6 is_stmt 1 view .LVU266
+ 150:Core/Src/main.c ****     	through_put = 120000000 / cycles_per_pixel ;
+ 987              		.loc 1 150 52 is_stmt 0 view .LVU267
+ 988 00ae 06FB06F6 		mul	r6, r6, r6
+ 989              	.LVL78:
+ 150:Core/Src/main.c ****     	through_put = 120000000 / cycles_per_pixel ;
+ 990              		.loc 1 150 45 view .LVU268
+ 991 00b2 93FBF6F3 		sdiv	r3, r3, r6
+ 150:Core/Src/main.c ****     	through_put = 120000000 / cycles_per_pixel ;
+ 992              		.loc 1 150 23 view .LVU269
+ 993 00b6 194A     		ldr	r2, .L46+40
+ 994 00b8 1360     		str	r3, [r2]
+ 151:Core/Src/main.c **** 
+ 995              		.loc 1 151 6 is_stmt 1 view .LVU270
+ 151:Core/Src/main.c **** 
+ 996              		.loc 1 151 18 is_stmt 0 view .LVU271
+ 997 00ba 1948     		ldr	r0, .L46+44
+ 998 00bc 90FBF3F0 		sdiv	r0, r0, r3
+ 999 00c0 FFF7FEFF 		bl	__aeabi_i2d
+ 1000              	.LVL79:
+ 1001 00c4 174B     		ldr	r3, .L46+48
+ 1002 00c6 C3E90001 		strd	r0, [r3]
+ 155:Core/Src/main.c **** 
+ 1003              		.loc 1 155 6 is_stmt 1 view .LVU272
+ 1004 00ca 0122     		movs	r2, #1
+ 1005 00cc 0221     		movs	r1, #2
+ 1006 00ce 2046     		mov	r0, r4
+ 1007 00d0 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 1008              	.LVL80:
+ 158:Core/Src/main.c **** 
+ 1009              		.loc 1 158 6 view .LVU273
+ 1010 00d4 40F29B20 		movw	r0, #667
+ 1011 00d8 FFF7FEFF 		bl	HAL_Delay
+ 1012              	.LVL81:
+ 161:Core/Src/main.c **** 		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+ 1013              		.loc 1 161 5 view .LVU274
+ 1014 00dc 2A46     		mov	r2, r5
+ 1015 00de 0121     		movs	r1, #1
+ 1016 00e0 2046     		mov	r0, r4
+ 1017 00e2 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 1018              	.LVL82:
+ 162:Core/Src/main.c ****  // }
+ 1019              		.loc 1 162 5 view .LVU275
+ 1020 00e6 2A46     		mov	r2, r5
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 45
 
 
- 978              		.loc 1 147 36 view .LVU269
- 979 008e 4FF47A72 		mov	r2, #1000
- 980 0092 02FB00F0 		mul	r0, r2, r0
- 147:Core/Src/main.c **** 
- 981              		.loc 1 147 18 view .LVU270
- 982 0096 90FBF3F0 		sdiv	r0, r0, r3
- 983 009a FFF7FEFF 		bl	__aeabi_i2d
- 984              	.LVL77:
- 985 009e 134B     		ldr	r3, .L46+40
- 986 00a0 C3E90001 		strd	r0, [r3]
- 151:Core/Src/main.c ****   	  // Hold the LEDs on for a 1s delay
- 987              		.loc 1 151 4 is_stmt 1 view .LVU271
- 988 00a4 0122     		movs	r2, #1
- 989 00a6 0221     		movs	r1, #2
- 990 00a8 3046     		mov	r0, r6
- 991 00aa FFF7FEFF 		bl	HAL_GPIO_WritePin
- 992              	.LVL78:
- 153:Core/Src/main.c ****   	  // Turn off the LEDs
- 993              		.loc 1 153 6 view .LVU272
- 994 00ae 4FF4FA60 		mov	r0, #2000
- 995 00b2 FFF7FEFF 		bl	HAL_Delay
- 996              	.LVL79:
- 155:Core/Src/main.c ****   //	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
- 997              		.loc 1 155 4 view .LVU273
- 998 00b6 3A46     		mov	r2, r7
- 999 00b8 0121     		movs	r1, #1
- 1000 00ba 3046     		mov	r0, r6
- 1001 00bc FFF7FEFF 		bl	HAL_GPIO_WritePin
- 1002              	.LVL80:
- 1003              	.L44:
- 162:Core/Src/main.c ****   {
- 1004              		.loc 1 162 3 view .LVU274
- 179:Core/Src/main.c ****   /* USER CODE END 3 */
- 1005              		.loc 1 179 3 view .LVU275
- 162:Core/Src/main.c ****   {
- 1006              		.loc 1 162 9 view .LVU276
- 1007 00c0 FEE7     		b	.L44
- 1008              	.L47:
- 1009 00c2 00BF     		.align	2
- 1010              	.L46:
- 1011 00c4 00ED00E0 		.word	-536810240
- 1012 00c8 001000E0 		.word	-536866816
- 1013 00cc 00000000 		.word	resolutions
- 1014 00d0 00040240 		.word	1073873920
- 1015 00d4 00000000 		.word	max_iter
- 1016 00d8 00000000 		.word	checksum
- 1017 00dc 00000000 		.word	end_time
- 1018 00e0 00000000 		.word	end_cycle
- 1019 00e4 00000000 		.word	wall_clock_time
- 1020 00e8 00000000 		.word	elapsed_clock_cycles
- 1021 00ec 00000000 		.word	through_put
- 1022 00f0 00000000 		.word	start_time
- 1023 00f4 00000000 		.word	start_cycle
- 1024              		.cfi_endproc
- 1025              	.LFE134:
- 1027              		.global	num_resolutions
- 1028              		.section	.data.num_resolutions,"aw"
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 45
+ 1021 00e8 0221     		movs	r1, #2
+ 1022 00ea 2046     		mov	r0, r4
+ 1023 00ec FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 1024              	.LVL83:
+ 1025              	.L44:
+ 168:Core/Src/main.c ****   {
+ 1026              		.loc 1 168 3 view .LVU276
+ 185:Core/Src/main.c ****   /* USER CODE END 3 */
+ 1027              		.loc 1 185 3 view .LVU277
+ 168:Core/Src/main.c ****   {
+ 1028              		.loc 1 168 9 view .LVU278
+ 1029 00f0 FEE7     		b	.L44
+ 1030              	.L47:
+ 1031 00f2 00BF     		.align	2
+ 1032              	.L46:
+ 1033 00f4 00000000 		.word	imageSize
+ 1034 00f8 00ED00E0 		.word	-536810240
+ 1035 00fc 00040240 		.word	1073873920
+ 1036 0100 00000000 		.word	start_cycle
+ 1037 0104 00000000 		.word	max_iter
+ 1038 0108 00000000 		.word	checksum
+ 1039 010c 00000000 		.word	end_time
+ 1040 0110 00000000 		.word	end_cycle
+ 1041 0114 00000000 		.word	wall_clock_time
+ 1042 0118 00000000 		.word	elapsed_clock_cycles
+ 1043 011c 00000000 		.word	cycles_per_pixel
+ 1044 0120 000E2707 		.word	120000000
+ 1045 0124 00000000 		.word	through_put
+ 1046 0128 001000E0 		.word	-536866816
+ 1047 012c 00000000 		.word	start_time
+ 1048              		.cfi_endproc
+ 1049              	.LFE134:
+ 1051              		.global	cycles_per_pixel
+ 1052              		.section	.bss.cycles_per_pixel,"aw",%nobits
+ 1053              		.align	2
+ 1056              	cycles_per_pixel:
+ 1057 0000 00000000 		.space	4
+ 1058              		.global	x
+ 1059              		.section	.bss.x,"aw",%nobits
+ 1060              		.align	3
+ 1063              	x:
+ 1064 0000 00000000 		.space	8
+ 1064      00000000 
+ 1065              		.global	max_iter
+ 1066              		.section	.data.max_iter,"aw"
+ 1067              		.align	2
+ 1070              	max_iter:
+ 1071 0000 64000000 		.word	100
+ 1072              		.global	imageSize
+ 1073              		.section	.data.imageSize,"aw"
+ 1074              		.align	2
+ 1077              	imageSize:
+ 1078 0000 80000000 		.word	128
+ 1079 0004 A0000000 		.word	160
+ 1080 0008 C0000000 		.word	192
+ 1081 000c E0000000 		.word	224
+ 1082 0010 00010000 		.word	256
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 46
 
 
- 1029              		.align	2
- 1032              	num_resolutions:
- 1033 0000 05000000 		.word	5
- 1034              		.global	resolutions
- 1035              		.section	.data.resolutions,"aw"
- 1036              		.align	2
- 1039              	resolutions:
- 1040 0000 80000000 		.word	128
- 1041 0004 80000000 		.word	128
- 1042 0008 40010000 		.word	320
- 1043 000c F0000000 		.word	240
- 1044 0010 80020000 		.word	640
- 1045 0014 E0010000 		.word	480
- 1046 0018 00050000 		.word	1280
- 1047 001c D0020000 		.word	720
- 1048 0020 80070000 		.word	1920
- 1049 0024 38040000 		.word	1080
- 1050              		.global	x
- 1051              		.section	.bss.x,"aw",%nobits
- 1052              		.align	3
- 1055              	x:
- 1056 0000 00000000 		.space	8
- 1056      00000000 
- 1057              		.global	max_iter
- 1058              		.section	.data.max_iter,"aw"
- 1059              		.align	2
- 1062              	max_iter:
- 1063 0000 64000000 		.word	100
- 1064              		.global	imageSize
- 1065              		.section	.data.imageSize,"aw"
- 1066              		.align	2
- 1069              	imageSize:
- 1070 0000 80000000 		.word	128
- 1071 0004 A0000000 		.word	160
- 1072 0008 C0000000 		.word	192
- 1073 000c E0000000 		.word	224
- 1074 0010 00010000 		.word	256
- 1075              		.global	through_put
- 1076              		.section	.bss.through_put,"aw",%nobits
- 1077              		.align	3
- 1080              	through_put:
- 1081 0000 00000000 		.space	8
- 1081      00000000 
- 1082              		.global	elapsed_clock_cycles
- 1083              		.section	.bss.elapsed_clock_cycles,"aw",%nobits
- 1084              		.align	2
- 1087              	elapsed_clock_cycles:
- 1088 0000 00000000 		.space	4
- 1089              		.global	end_cycle
- 1090              		.section	.bss.end_cycle,"aw",%nobits
- 1091              		.align	2
- 1094              	end_cycle:
- 1095 0000 00000000 		.space	4
- 1096              		.global	start_cycle
- 1097              		.section	.bss.start_cycle,"aw",%nobits
- 1098              		.align	2
- 1101              	start_cycle:
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 46
-
-
- 1102 0000 00000000 		.space	4
- 1103              		.global	checksum
- 1104              		.section	.bss.checksum,"aw",%nobits
- 1105              		.align	3
- 1108              	checksum:
- 1109 0000 00000000 		.space	8
- 1109      00000000 
- 1110              		.global	wall_clock_time
- 1111              		.section	.bss.wall_clock_time,"aw",%nobits
- 1112              		.align	2
- 1115              	wall_clock_time:
- 1116 0000 00000000 		.space	4
- 1117              		.global	end_time
- 1118              		.section	.bss.end_time,"aw",%nobits
- 1119              		.align	2
- 1122              	end_time:
- 1123 0000 00000000 		.space	4
- 1124              		.global	start_time
- 1125              		.section	.bss.start_time,"aw",%nobits
- 1126              		.align	2
- 1129              	start_time:
- 1130 0000 00000000 		.space	4
- 1131              		.text
- 1132              	.Letext0:
- 1133              		.file 3 "C:\\ST\\STM32CubeIDE_1.19.0\\STM32CubeIDE\\plugins\\com.st.stm32cube.ide.mcu.externaltool
- 1134              		.file 4 "C:\\ST\\STM32CubeIDE_1.19.0\\STM32CubeIDE\\plugins\\com.st.stm32cube.ide.mcu.externaltool
- 1135              		.file 5 "Drivers/CMSIS/Include/core_cm4.h"
- 1136              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f446xx.h"
- 1137              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
- 1138              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc_ex.h"
- 1139              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h"
- 1140              		.file 10 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
- 1141              		.file 11 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
- 1142              		.file 12 "<built-in>"
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 47
+ 1083              		.global	through_put
+ 1084              		.section	.bss.through_put,"aw",%nobits
+ 1085              		.align	3
+ 1088              	through_put:
+ 1089 0000 00000000 		.space	8
+ 1089      00000000 
+ 1090              		.global	elapsed_clock_cycles
+ 1091              		.section	.bss.elapsed_clock_cycles,"aw",%nobits
+ 1092              		.align	2
+ 1095              	elapsed_clock_cycles:
+ 1096 0000 00000000 		.space	4
+ 1097              		.global	end_cycle
+ 1098              		.section	.bss.end_cycle,"aw",%nobits
+ 1099              		.align	2
+ 1102              	end_cycle:
+ 1103 0000 00000000 		.space	4
+ 1104              		.global	start_cycle
+ 1105              		.section	.bss.start_cycle,"aw",%nobits
+ 1106              		.align	2
+ 1109              	start_cycle:
+ 1110 0000 00000000 		.space	4
+ 1111              		.global	checksum
+ 1112              		.section	.bss.checksum,"aw",%nobits
+ 1113              		.align	3
+ 1116              	checksum:
+ 1117 0000 00000000 		.space	8
+ 1117      00000000 
+ 1118              		.global	wall_clock_time
+ 1119              		.section	.bss.wall_clock_time,"aw",%nobits
+ 1120              		.align	2
+ 1123              	wall_clock_time:
+ 1124 0000 00000000 		.space	4
+ 1125              		.global	end_time
+ 1126              		.section	.bss.end_time,"aw",%nobits
+ 1127              		.align	2
+ 1130              	end_time:
+ 1131 0000 00000000 		.space	4
+ 1132              		.global	start_time
+ 1133              		.section	.bss.start_time,"aw",%nobits
+ 1134              		.align	2
+ 1137              	start_time:
+ 1138 0000 00000000 		.space	4
+ 1139              		.text
+ 1140              	.Letext0:
+ 1141              		.file 3 "C:\\ST\\STM32CubeIDE_1.19.0\\STM32CubeIDE\\plugins\\com.st.stm32cube.ide.mcu.externaltool
+ 1142              		.file 4 "C:\\ST\\STM32CubeIDE_1.19.0\\STM32CubeIDE\\plugins\\com.st.stm32cube.ide.mcu.externaltool
+ 1143              		.file 5 "Drivers/CMSIS/Include/core_cm4.h"
+ 1144              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f446xx.h"
+ 1145              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 1146              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc_ex.h"
+ 1147              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h"
+ 1148              		.file 10 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ 1149              		.file 11 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 1150              		.file 12 "<built-in>"
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 47
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:21     .text.MX_GPIO_Init:00000000 $t
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:26     .text.MX_GPIO_Init:00000000 MX_GPIO_Init
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:133    .text.MX_GPIO_Init:00000074 $d
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:139    .text.calculate_mandelbrot_fixed_point_arithmetic:00000000 $t
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:145    .text.calculate_mandelbrot_fixed_point_arithmetic:00000000 calculate_mandelbrot_fixed_point_arithmetic
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:341    .text.calculate_mandelbrot_fixed_point_arithmetic:000000f4 $d
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:359    .text.calculate_mandelbrot_double:00000000 $t
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:365    .text.calculate_mandelbrot_double:00000000 calculate_mandelbrot_double
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:642    .text.calculate_mandelbrot_double:00000158 $d
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:650    .text.Error_Handler:00000000 $t
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:656    .text.Error_Handler:00000000 Error_Handler
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:688    .text.SystemClock_Config:00000000 $t
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:694    .text.SystemClock_Config:00000000 SystemClock_Config
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:845    .text.SystemClock_Config:000000a4 $d
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:851    .text.main:00000000 $t
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:857    .text.main:00000000 main
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1011   .text.main:000000c4 $d
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1039   .data.resolutions:00000000 resolutions
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1062   .data.max_iter:00000000 max_iter
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1108   .bss.checksum:00000000 checksum
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1122   .bss.end_time:00000000 end_time
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1094   .bss.end_cycle:00000000 end_cycle
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1115   .bss.wall_clock_time:00000000 wall_clock_time
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1087   .bss.elapsed_clock_cycles:00000000 elapsed_clock_cycles
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1080   .bss.through_put:00000000 through_put
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1129   .bss.start_time:00000000 start_time
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1101   .bss.start_cycle:00000000 start_cycle
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1032   .data.num_resolutions:00000000 num_resolutions
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1029   .data.num_resolutions:00000000 $d
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1036   .data.resolutions:00000000 $d
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1055   .bss.x:00000000 x
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1052   .bss.x:00000000 $d
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1059   .data.max_iter:00000000 $d
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1069   .data.imageSize:00000000 imageSize
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1066   .data.imageSize:00000000 $d
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1077   .bss.through_put:00000000 $d
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1084   .bss.elapsed_clock_cycles:00000000 $d
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1091   .bss.end_cycle:00000000 $d
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1098   .bss.start_cycle:00000000 $d
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1105   .bss.checksum:00000000 $d
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1112   .bss.wall_clock_time:00000000 $d
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1119   .bss.end_time:00000000 $d
-C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s:1126   .bss.start_time:00000000 $d
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:21     .text.MX_GPIO_Init:00000000 $t
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:26     .text.MX_GPIO_Init:00000000 MX_GPIO_Init
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:133    .text.MX_GPIO_Init:00000074 $d
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:139    .text.calculate_mandelbrot_fixed_point_arithmetic:00000000 $t
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:145    .text.calculate_mandelbrot_fixed_point_arithmetic:00000000 calculate_mandelbrot_fixed_point_arithmetic
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:341    .text.calculate_mandelbrot_fixed_point_arithmetic:000000f4 $d
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:359    .text.calculate_mandelbrot_double:00000000 $t
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:365    .text.calculate_mandelbrot_double:00000000 calculate_mandelbrot_double
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:642    .text.calculate_mandelbrot_double:00000158 $d
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:650    .text.Error_Handler:00000000 $t
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:656    .text.Error_Handler:00000000 Error_Handler
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:688    .text.SystemClock_Config:00000000 $t
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:694    .text.SystemClock_Config:00000000 SystemClock_Config
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:845    .text.SystemClock_Config:000000a4 $d
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:851    .text.main:00000000 $t
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:857    .text.main:00000000 main
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:1033   .text.main:000000f4 $d
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:1077   .data.imageSize:00000000 imageSize
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:1109   .bss.start_cycle:00000000 start_cycle
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:1070   .data.max_iter:00000000 max_iter
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:1116   .bss.checksum:00000000 checksum
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:1130   .bss.end_time:00000000 end_time
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:1102   .bss.end_cycle:00000000 end_cycle
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:1123   .bss.wall_clock_time:00000000 wall_clock_time
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:1095   .bss.elapsed_clock_cycles:00000000 elapsed_clock_cycles
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:1056   .bss.cycles_per_pixel:00000000 cycles_per_pixel
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:1088   .bss.through_put:00000000 through_put
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:1137   .bss.start_time:00000000 start_time
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:1053   .bss.cycles_per_pixel:00000000 $d
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:1063   .bss.x:00000000 x
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:1060   .bss.x:00000000 $d
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:1067   .data.max_iter:00000000 $d
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:1074   .data.imageSize:00000000 $d
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:1085   .bss.through_put:00000000 $d
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:1092   .bss.elapsed_clock_cycles:00000000 $d
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:1099   .bss.end_cycle:00000000 $d
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:1106   .bss.start_cycle:00000000 $d
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:1113   .bss.checksum:00000000 $d
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:1120   .bss.wall_clock_time:00000000 $d
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:1127   .bss.end_time:00000000 $d
+C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s:1134   .bss.start_time:00000000 $d
 
 UNDEFINED SYMBOLS
 HAL_GPIO_WritePin
@@ -2795,11 +2813,11 @@ __aeabi_dadd
 __aeabi_ul2d
 __aeabi_dcmplt
 __aeabi_dcmple
-ARM GAS  C:\Users\Tadala\AppData\Local\Temp\ccYHaFca.s 			page 48
-
-
 __aeabi_d2iz
 memset
+ARM GAS  C:\Users\Tadala\AppData\Local\Temp\cchz5Ye0.s 			page 48
+
+
 HAL_RCC_OscConfig
 HAL_RCC_ClockConfig
 HAL_Init

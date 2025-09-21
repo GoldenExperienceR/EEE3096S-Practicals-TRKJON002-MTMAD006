@@ -49,8 +49,9 @@ int start_time = 0;
 int end_time = 0;
 int wall_clock_time = 0;
 uint64_t checksum = 0;
-// NOTE: STM32F0 has no cycle counter (DWT->CYCCNT), so only SysTick (ms) timing works
-uint32_t elapsed_clock_cycles = 0; // Placeholder (not valid on F0)
+int cycles_per_pixel = 0;
+//  STM32F0 has no cycle counter (DWT->CYCCNT), so only SysTick (ms) can be used
+uint32_t elapsed_clock_cycles = 0;
 double through_put = 0;
 int imageSize[5] = {128,160,192,224,256};
 int max_iter = 100;
@@ -110,32 +111,35 @@ int main(void)
   int width = resolutions[4][0];
   int height = resolutions[4][1];
   // Turn on LED0 to signal start
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
+  	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
 
   // Record start time
-  start_time = HAL_GetTick();
+  	  start_time = HAL_GetTick();
 
   // Run Mandelbrot (choose one implementation)
-  checksum = calculate_mandelbrot_fixed_point_arithmetic(width, height, max_iter);
-  //checksum = calculate_mandelbrot_double(width, height, max_iter);
+	  checksum = calculate_mandelbrot_fixed_point_arithmetic(width, height, max_iter);
+	  //checksum = calculate_mandelbrot_double(width, height, max_iter);
 
   // Record end time
-  end_time = HAL_GetTick();
+  	  end_time = HAL_GetTick();
 
   // Execution stats
-  wall_clock_time = end_time - start_time;
-  elapsed_clock_cycles = 48000000*(wall_clock_time/1000); // Not available on F0 so needs to be caculated
-  through_put = (width * height) * 1000.0 / wall_clock_time;
+	  wall_clock_time = end_time - start_time;
+	  elapsed_clock_cycles = 48000000*(wall_clock_time/1000); // Not available on F0 so needs to be caculated
+
+  // calculation of through
+      	cycles_per_pixel = elapsed_clock_cycles/(width*height);
+      	through_put = 120000000 / cycles_per_pixel ;
 
   // Turn on LED1 to indicate end of operation
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
+      	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
 
-  // Keep LEDs ON for 2s
-  HAL_Delay(2000);
+  // Hold the LEDs on for a 2s delay
+    	HAL_Delay(667); // had originally used 2000 as recommended by HAL library but found LED didn't turn on after 2s
 
   // Turn OFF LEDs
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
- // HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
 
   /* USER CODE END 2 */
 

@@ -57,16 +57,17 @@ double through_put = 0;
 int imageSize[5] = {128,160,192,224,256};
 int max_iter = 100;
 double x = 0;
+int cycles_per_pixel = 0;
 
 // test of resolutions
-int resolutions[][2] = {
+/*int resolutions[][2] = {
     {128, 128},
     {320, 240},
     {640, 480},
     {1280, 720},
     {1920, 1080}
-};
-int num_resolutions = sizeof(resolutions) / sizeof(resolutions[0]);
+};*/
+//int num_resolutions = sizeof(resolutions) / sizeof(resolutions[0]);
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -94,12 +95,12 @@ int main(void)
   /* USER CODE BEGIN 1 */
 
 	  // image dimesnisons
-	 // int height, width;
+	  int height, width;
 	  //width = height = imageSize[0];
 	  //width = height = imageSize[1];
 	  //width = height = imageSize[2];
 	  //width = height = imageSize[3];
-	 // width = height = imageSize[4];
+	  width = height = imageSize[4];
 
 
 
@@ -125,35 +126,40 @@ int main(void)
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
  // for (int i = 0; i < num_resolutions; i++) {
-      int width = resolutions[4][0];
-      int height = resolutions[4][1];
+     // int width = resolutions[4][0];
+      // int height = resolutions[4][1];
 
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET); // CONFIGURE LED 0 ON
   // Record the start time and cycles
   	  start_time = HAL_GetTick();
   	  start_cycle = DWT->CYCCNT;
-  	  //Call the Mandelbrot Function and store the output in the checksum variable defined initially
-  	  checksum = calculate_mandelbrot_fixed_point_arithmetic(width, height, max_iter);
-  	  //checksum = calculate_mandelbrot_double(width, height, max_iter);
-  	  // Record the end time
-  	  end_time = HAL_GetTick();
-  	  end_cycle = DWT->CYCCNT;
 
-  	  // Calculate the execution time and cycles and throughput
+  	  //Call the Mandelbrot Function and store the output in the checksum variable defined initially
+		  //checksum = calculate_mandelbrot_fixed_point_arithmetic(width, height, max_iter);
+		  checksum = calculate_mandelbrot_double(width, height, max_iter);
+
+  	  // Record the end time
+		  end_time = HAL_GetTick();
+		  end_cycle = DWT->CYCCNT;
+
+  	  // Calculate the execution time and cycles
     	wall_clock_time = end_time - start_time;
     	elapsed_clock_cycles = end_cycle - start_cycle;
 
-    	// calculation of pixels per second
-    	through_put = (width * height)*1000 / (wall_clock_time) ;
+    	// calculation of through
+    	cycles_per_pixel = elapsed_clock_cycles/(width*height);
+    	through_put = 120000000 / cycles_per_pixel ;
 
 
   	  // Turn on LED 1 to signify the end of the operation
-  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
-  	  // Hold the LEDs on for a 1s delay
-  	  HAL_Delay(2000);
+    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
+
+  	  // Hold the LEDs on for a 2s delay
+    	HAL_Delay(667); // had originally used 2000 as recommended by HAL library but found LED didn't turn on after 2s
+
   	  // Turn off the LEDs
-  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
-  //	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
  // }
   /* USER CODE END 2 */
 
@@ -263,8 +269,10 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 //TODO: Function signatures you defined previously , implement them here
+
 uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int max_iterations){
 	uint64_t mandelbrot_sum = 0;
+
 	//TODO: Complete the function implementation
 	int x0, y0, xi, yi, iteration, x, y, temp;
 	// Defining scaling factor
