@@ -18,7 +18,9 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+
 #include "main.h"
+// TASKS 2: CHANGING THE MAXIMUM INTRATION VARIABLE
 #define MAX_ITER 100
 //#define MAX_ITER 200
 //#define MAX_ITER 400
@@ -51,6 +53,10 @@ int end_time = 0;
 int execution_time = 0;
 uint64_t checksum = 0;
 int imageSize[5] = { 128, 160, 192, 224, 256 };
+
+//Global variables to track risk of overflow for Task 7
+int64_t max_xi = 0;
+int64_t max_yi = 0;
 
 
 /* USER CODE BEGIN PV */
@@ -220,8 +226,8 @@ uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int 
 
 	  // Defining scaling factor
 	  //const int64_t S = 10000000; //10^6
-	  const int64_t S = 100000; //10^4
-	  //const int64_t S = 10000; //10^3
+	  //const int64_t S = 100000; //10^4
+	  const int64_t S = 10000; //10^3
 	  // Fixed-point equivalents of the constants used in the function's operations
 	  const int64_t const_2_5=  2.5*S;
 	  const int64_t const_3_5 = 3.5*S;
@@ -249,6 +255,9 @@ uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int 
 	        xi = temp + x0;
 	        iteration++;
 	      }
+
+	      if (llabs(xi) > max_xi) max_xi = llabs(xi);
+	      if (llabs(yi) > max_yi) max_yi = llabs(yi);
 	      mandelbrot_sum += iteration;
 	    }
 	  }
@@ -273,6 +282,10 @@ uint64_t calculate_mandelbrot_double(double width, double height, double max_ite
                 xi = temp + x0;
                 iteration++;
             }
+
+            // Task 7: Update global Max_xi and max_yiif new max found
+            	         if (llabs(xi) > max_xi) max_xi = llabs(xi);
+            	         if (llabs(yi) > max_yi) max_yi = llabs(yi);
 
             mandelbrot_sum += iteration;
         }

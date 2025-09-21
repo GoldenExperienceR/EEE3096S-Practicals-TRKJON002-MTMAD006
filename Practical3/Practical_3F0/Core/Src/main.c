@@ -55,7 +55,11 @@ int start_time = 0;
 int end_time = 0;
 int execution_time = 0;
 uint64_t checksum = 0;
-int imageSize[5] = { 128, 160, 192, 224, 256 };
+int imageSize[5] = {128, 160, 192, 224, 256};
+
+//Global variables to track risk of overflow for Task 7
+int64_t max_xi = 0;
+int64_t max_yi = 0;
 
 /* USER CODE END PV */
 
@@ -216,8 +220,6 @@ uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int 
 	uint64_t mandelbrot_sum = 0;
 
 	  // Defining scaling factor
-
-
 	 const int64_t S = 10000; //10^3
 	 //const int64_t S = 100000; //10^4
 	 //const int64_t S = 10000000; //10^6
@@ -249,6 +251,11 @@ uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int 
 	        xi = temp + x0;
 	        iteration++;
 	      }
+
+	      // Task 7: Update global Max_xi and max_yiif new max found
+	         if (llabs(xi) > max_xi) max_xi = llabs(xi);
+	         if (llabs(yi) > max_yi) max_yi = llabs(yi);
+
 	      mandelbrot_sum += iteration;
 	    }
 	  }
