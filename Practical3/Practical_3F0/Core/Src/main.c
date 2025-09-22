@@ -19,6 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+// TASKS 2: CHANGING THE MAXIMUM INTRATION VARIABLE
 #define MAX_ITER 100
 //#define MAX_ITER 200
 //#define MAX_ITER 400
@@ -57,7 +58,7 @@ int execution_time = 0;
 uint64_t checksum = 0;
 int imageSize[5] = {128, 160, 192, 224, 256};
 
-//Global variables to track risk of overflow for Task 7
+//TASK 7: GLOBAL VARIABES TO TRACK RISK OF OVERFLOW
 int64_t max_xi = 0;
 int64_t max_yi = 0;
 
@@ -122,6 +123,7 @@ int main(void)
 	  //TODO: Visual indicator: Turn on LED0 to signal processing start
 	  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);
 	    int height, width;
+	    // DIFFERENT SCREEN SIZES
 	      width = height = imageSize[0]; //128
 	      //width = height = imageSize[1]; //160
 	      //width = height = imageSize[2]; //192
@@ -219,7 +221,7 @@ uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int 
 
 	uint64_t mandelbrot_sum = 0;
 
-	  // Defining scaling factor
+	// TASK 7: DIFFERENT SCALING FACTORS
 	 const int64_t S = 10000; //10^3
 	 //const int64_t S = 100000; //10^4
 	 //const int64_t S = 10000000; //10^6

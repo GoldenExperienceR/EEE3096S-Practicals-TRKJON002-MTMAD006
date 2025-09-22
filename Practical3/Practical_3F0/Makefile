@@ -24,6 +24,7 @@ DEBUG = 1
 
 # TODO: Compiler Optimisation levels
 # optimization
+#TASK 6: DIFFERENT OPTIMIZATION LEVELS
 OPT = -Og
 #OPT = -O0
 #OPT = -Os

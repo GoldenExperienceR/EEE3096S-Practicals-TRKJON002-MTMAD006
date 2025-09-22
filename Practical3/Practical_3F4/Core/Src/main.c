@@ -54,7 +54,7 @@ int execution_time = 0;
 uint64_t checksum = 0;
 int imageSize[5] = { 128, 160, 192, 224, 256 };
 
-//Global variables to track risk of overflow for Task 7
+//TASK 7: GLOBAL VARIABES TO TRACK RISK OF OVERFLOW
 int64_t max_xi = 0;
 int64_t max_yi = 0;
 
@@ -111,6 +111,7 @@ int main(void)
   /* USER CODE END 2 */
   HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);
   int height, width;
+  // DIFFERENT SCREEN SIZES
     //width = height = imageSize[0]; //128
     //width = height = imageSize[1]; //160
     //width = height = imageSize[2]; //192
@@ -224,7 +225,7 @@ uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int 
 
 	uint64_t mandelbrot_sum = 0;
 
-	  // Defining scaling factor
+	  // TASK 7: DIFFERENT SCALING FACTORS
 	  //const int64_t S = 10000000; //10^6
 	  //const int64_t S = 100000; //10^4
 	  const int64_t S = 10000; //10^3
@@ -255,7 +256,7 @@ uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int 
 	        xi = temp + x0;
 	        iteration++;
 	      }
-
+	     //TASK 7: UPDATE max_xi AND max_yi TO KEEP TRACK OF OVERFLOW RISK
 	      if (llabs(xi) > max_xi) max_xi = llabs(xi);
 	      if (llabs(yi) > max_yi) max_yi = llabs(yi);
 	      mandelbrot_sum += iteration;
@@ -267,15 +268,12 @@ uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int 
 //TODO: Mandelbrot using variable type double
 uint64_t calculate_mandelbrot_double(double width, double height, double max_iterations) {
     uint64_t mandelbrot_sum = 0;
-
     for (int py = 0; py < (int)height; py++) {
         for (int px = 0; px < (int)width; px++) {
             double x0 = ((double)px / width) * 3.5 - 2.5;
             double y0 = ((double)py / height) * 2.0 - 1.0;
-
             double xi = 0.0, yi = 0.0;
             uint64_t iteration = 0;
-
             while ((iteration < max_iterations) && ((xi * xi + yi * yi) <= 4.0)) {
                 double temp = xi * xi - yi * yi;
                 yi = 2.0 * xi * yi + y0;
@@ -283,7 +281,7 @@ uint64_t calculate_mandelbrot_double(double width, double height, double max_ite
                 iteration++;
             }
 
-            // Task 7: Update global Max_xi and max_yiif new max found
+            //TASK 7: UPDATE max_xi AND max_yi TO KEEP TRACK OF OVERFLOW RISK
             	         if (llabs(xi) > max_xi) max_xi = llabs(xi);
             	         if (llabs(yi) > max_yi) max_yi = llabs(yi);
 
@@ -295,6 +293,7 @@ uint64_t calculate_mandelbrot_double(double width, double height, double max_ite
 }
 
 //TODO: Mandelbrot using variable type float
+//TASK 5: MANDELBROT FLOAT FUNCTION
 uint64_t calculate_mandelbrot_float(int width, int height, int max_iterations) {
 	uint64_t mandelbrot_sum = 0;
     for (int py = 0; py < height; py++) {
@@ -317,7 +316,6 @@ uint64_t calculate_mandelbrot_float(int width, int height, int max_iterations) {
 
     return mandelbrot_sum;
 }
-
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */

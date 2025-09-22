@@ -24,6 +24,7 @@ DEBUG = 1
 
 # TODO:Compiler Optimisation levels
 # optimization
+#TASK 6: DIFFERENT OPTIMIZATION LEVELS
 OPT = -Og
 #OPT = -O0
 #OPT = -Os
@@ -97,15 +98,16 @@ BIN = $(CP) -O binary -S
 # cpu
 CPU = -mcpu=cortex-m4
 
-#TODO: FPU Enbale/Disable
+#TODO: FPU EnaBle/Disable
 #Enable
 # fpu
+
 FPU = -mfpu=fpv4-sp-d16 # FPU enable 
 #FPU = # FPU disable
 
 # float-abi
-FLOAT-ABI = -mfloat-abi=hard 
-#FLOAT-ABI = -mfloat-abi=soft 
+FLOAT-ABI = -mfloat-abi=hard  # FPU enable 
+#FLOAT-ABI = -mfloat-abi=soft # FPU disable 
 
 # mcu
 MCU = $(CPU) -mthumb $(FPU) $(FLOAT-ABI)
