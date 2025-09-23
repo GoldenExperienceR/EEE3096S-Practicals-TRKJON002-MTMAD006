@@ -57,13 +57,13 @@ int imageSize[5] = {128,160,192,224,256};
 int max_iter = 100;
 
 // test of resolutions
-int resolutions[][2] = {
+/*int resolutions[][2] = {
     {128, 128},
     {320, 240},
     {640, 480},
     {1280, 720},
     {1920, 1080}
-};
+};*/
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -88,11 +88,11 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
- // int height, width;
+  int height, width;
   //width = height = imageSize[0];
   //width = height = imageSize[1];
   //width = height = imageSize[2];
-  //width = height = imageSize[3];
+  width = height = imageSize[3];
   //width = height = imageSize[4]; // Using 256x256 test size
   /* USER CODE END 1 */
 
@@ -108,8 +108,8 @@ int main(void)
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
 
-  int width = resolutions[4][0];
-  int height = resolutions[4][1];
+ // int width = resolutions[4][0];
+ // int height = resolutions[4][1];
   // Turn on LED0 to signal start
   	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
 
@@ -135,7 +135,7 @@ int main(void)
       	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
 
   // Hold the LEDs on for a 2s delay
-    	HAL_Delay(667); // had originally used 2000 as recommended by HAL library but found LED didn't turn on after 2s
+    	HAL_Delay(2000); // had originally used 2000 as recommended by HAL library but found LED didn't turn on after 2s
 
   // Turn OFF LEDs
 	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
@@ -212,49 +212,68 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int max_iterations){
-    uint64_t mandelbrot_sum = 0;
-    int x0, y0, xi, yi, iteration, x, y, temp;
-    const int S = 1000000; // scaling factor
 
-    height = height * S;
-    width  = width  * S;
+	uint64_t mandelbrot_sum = 0;
 
-    for (y = 0; y < height - 1*S; y += 1*S) {
-        for (x = 0; x < width - 1*S; x += 1*S) {
-            x0 = (((x/width)*S)*3500000)/S - 2500000;
-            y0 = (((y/height)*S)*2000000)/S - 1000000;
-            xi = 0;
-            yi = 0;
-            iteration = 0;
-            while ((iteration < max_iterations) && ((xi*xi)/S + (yi*yi)/S <= 4*S)) {
-                temp = (xi*xi)/S - (yi*yi)/S;
-                yi = 2*xi*yi/S + y0;
-                xi = temp + x0;
-                iteration++;
-            }
-            mandelbrot_sum += iteration;
-        }
-    }
-    return mandelbrot_sum;
+	  // Defining scaling factor
+	  const int64_t S = 10000000; //10^6
+	  // Fixed-point equivalents of the constants used in the function's operations
+	  const int64_t const_2_5=  2.5*S;
+	  const int64_t const_3_5 = 3.5*S;
+	  const int64_t const_1 = 1*S;
+	  const int64_t const_2 = 2*S;
+	  const int64_t const_4 = 4*S;
+
+	  int64_t xi, yi, temp, x0, y0;
+	  int iteration;
+
+	  for (int y = 0; y < height; ++y) {
+	    for (int x = 0; x < width; ++x) {
+	      // x0 = (x/width) * 3.5 - 2.5
+	      x0 = (x * const_3_5) / width - const_2_5;
+	      // y0 = (y/height) * 2.0 - 1.0
+	      y0 = (y * const_2) / height - const_1;
+
+	      xi = 0;
+	      yi = 0;
+	      iteration = 0;
+
+	      while (iteration < max_iterations && (xi * xi/S + yi * yi/S) <= const_4) {
+	        temp = (xi * xi)/S - (yi * yi)/S;
+	        yi = (2 * xi * yi / S) + y0;
+	        xi = temp + x0;
+	        iteration++;
+	      }
+	      mandelbrot_sum += iteration;
+	    }
+	  }
+	  return mandelbrot_sum;
+
 }
 
+//TODO: Mandelbrot using variable type double
 uint64_t calculate_mandelbrot_double(double width, double height, double max_iterations) {
     uint64_t mandelbrot_sum = 0;
+
     for (int py = 0; py < (int)height; py++) {
         for (int px = 0; px < (int)width; px++) {
             double x0 = ((double)px / width) * 3.5 - 2.5;
             double y0 = ((double)py / height) * 2.0 - 1.0;
+
             double xi = 0.0, yi = 0.0;
             uint64_t iteration = 0;
+
             while ((iteration < max_iterations) && ((xi * xi + yi * yi) <= 4.0)) {
                 double temp = xi * xi - yi * yi;
                 yi = 2.0 * xi * yi + y0;
                 xi = temp + x0;
                 iteration++;
             }
+
             mandelbrot_sum += iteration;
         }
     }
+
     return mandelbrot_sum;
 }
 /* USER CODE END 4 */
