@@ -60,13 +60,13 @@ double x = 0;
 int cycles_per_pixel = 0;
 
 // test of resolutions
-/*int resolutions[][2] = {
+int resolutions[][2] = {
     {128, 128},
     {320, 240},
     {640, 480},
     {1280, 720},
     {1920, 1080}
-};*/
+};
 //int num_resolutions = sizeof(resolutions) / sizeof(resolutions[0]);
 /* USER CODE END PV */
 
@@ -95,8 +95,8 @@ int main(void)
   /* USER CODE BEGIN 1 */
 
 	  // image dimesnisons
-	  int height, width;
-	  width = height = imageSize[0];
+	  //int height, width;
+	  //width = height = imageSize[0];
 	  //width = height = imageSize[1];
 	  //width = height = imageSize[2];
 	  //width = height = imageSize[3];
@@ -126,8 +126,8 @@ int main(void)
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
  // for (int i = 0; i < num_resolutions; i++) {
-     // int width = resolutions[4][0];
-      // int height = resolutions[4][1];
+      int width = resolutions[4][0];
+       int height = resolutions[4][1];
 
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET); // CONFIGURE LED 0 ON
   // Record the start time and cycles
@@ -143,7 +143,7 @@ int main(void)
 		  end_cycle = DWT->CYCCNT;
 
   	  // Calculate the execution time and cycles
-    	wall_clock_time = end_time - start_time;
+    	wall_clock_time = end_time - start_time; // same as execution time
     	elapsed_clock_cycles = end_cycle - start_cycle;
 
     	// calculation of through

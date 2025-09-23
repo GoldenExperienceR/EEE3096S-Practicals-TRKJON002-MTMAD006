@@ -57,13 +57,13 @@ int imageSize[5] = {128,160,192,224,256};
 int max_iter = 100;
 
 // test of resolutions
-/*int resolutions[][2] = {
+int resolutions[][2] = {
     {128, 128},
     {320, 240},
     {640, 480},
     {1280, 720},
     {1920, 1080}
-};*/
+};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -88,11 +88,11 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-  int height, width;
+  //int height, width;
   //width = height = imageSize[0];
   //width = height = imageSize[1];
   //width = height = imageSize[2];
-  width = height = imageSize[3];
+  //width = height = imageSize[3];
   //width = height = imageSize[4]; // Using 256x256 test size
   /* USER CODE END 1 */
 
@@ -108,8 +108,8 @@ int main(void)
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
 
- // int width = resolutions[4][0];
- // int height = resolutions[4][1];
+  int width = resolutions[4][0];
+  int height = resolutions[4][1];
   // Turn on LED0 to signal start
   	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
 
@@ -117,8 +117,8 @@ int main(void)
   	  start_time = HAL_GetTick();
 
   // Run Mandelbrot (choose one implementation)
-	  checksum = calculate_mandelbrot_fixed_point_arithmetic(width, height, max_iter);
-	  //checksum = calculate_mandelbrot_double(width, height, max_iter);
+	  //checksum = calculate_mandelbrot_fixed_point_arithmetic(width, height, max_iter);
+	  checksum = calculate_mandelbrot_double(width, height, max_iter);
 
   // Record end time
   	  end_time = HAL_GetTick();
@@ -135,7 +135,7 @@ int main(void)
       	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
 
   // Hold the LEDs on for a 2s delay
-    	HAL_Delay(2000); // had originally used 2000 as recommended by HAL library but found LED didn't turn on after 2s
+    	HAL_Delay(667); // had originally used 2000 as recommended by HAL library but found LED didn't turn on after 2s
 
   // Turn OFF LEDs
 	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
