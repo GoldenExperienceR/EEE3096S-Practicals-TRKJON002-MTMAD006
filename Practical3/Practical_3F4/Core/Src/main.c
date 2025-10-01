@@ -126,8 +126,8 @@ int main(void)
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
  // for (int i = 0; i < num_resolutions; i++) {
-      int width = resolutions[4][0];
-       int height = resolutions[4][1];
+      int width = resolutions[0][0];
+       int height = resolutions[0][1];
 
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET); // CONFIGURE LED 0 ON
   // Record the start time and cycles
