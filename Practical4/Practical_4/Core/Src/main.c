@@ -44,13 +44,12 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 // TODO: Add values for below variables
-#define NS1 256       // Number of samples in waveform LUT
-#define NS2 4096       // Number of samples in sound LUT
+#define NS1 256
+#define NS2 4096
 #define DAC_MAX_12B 4095u
 #define TIM2CLK  16000000 // STM Clock frequency: Hint You might want to check the ioc file
 #define F_SIGNAL 0.5 	// Frequency of output analog signal
 #define F_SAMPLE 44100 	// Frequency of audio samples
-
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -110,7 +109,6 @@ void EXTI0_IRQHandler(void);
   */
 int main(void)
 {
-
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */

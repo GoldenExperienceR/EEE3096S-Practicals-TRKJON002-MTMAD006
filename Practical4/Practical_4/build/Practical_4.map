@@ -1803,21 +1803,21 @@ LOAD C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
  .debug_ranges  0x000009c8       0x18 build/system_stm32f4xx.o
  .debug_ranges  0x000009e0       0x20 build/startup_stm32f446xx.o
 
-.debug_line     0x00000000     0xc815
- .debug_line    0x00000000      0x810 build/main.o
- .debug_line    0x00000810      0x5ec build/lcd_stm32f4.o
- .debug_line    0x00000dfc      0x39e build/stm32f4xx_it.o
- .debug_line    0x0000119a      0x455 build/stm32f4xx_hal_msp.o
- .debug_line    0x000015ef     0x48b3 build/stm32f4xx_hal_tim.o
- .debug_line    0x00005ea2     0x1bdb build/stm32f4xx_hal_tim_ex.o
- .debug_line    0x00007a7d      0xce8 build/stm32f4xx_hal_rcc.o
- .debug_line    0x00008765     0x1596 build/stm32f4xx_hal_rcc_ex.o
- .debug_line    0x00009cfb      0x805 build/stm32f4xx_hal_gpio.o
- .debug_line    0x0000a500      0xf57 build/stm32f4xx_hal_dma.o
- .debug_line    0x0000b457      0x94e build/stm32f4xx_hal_cortex.o
- .debug_line    0x0000bda5      0x68b build/stm32f4xx_hal.o
- .debug_line    0x0000c430      0x372 build/system_stm32f4xx.o
- .debug_line    0x0000c7a2       0x73 build/startup_stm32f446xx.o
+.debug_line     0x00000000     0xc813
+ .debug_line    0x00000000      0x80e build/main.o
+ .debug_line    0x0000080e      0x5ec build/lcd_stm32f4.o
+ .debug_line    0x00000dfa      0x39e build/stm32f4xx_it.o
+ .debug_line    0x00001198      0x455 build/stm32f4xx_hal_msp.o
+ .debug_line    0x000015ed     0x48b3 build/stm32f4xx_hal_tim.o
+ .debug_line    0x00005ea0     0x1bdb build/stm32f4xx_hal_tim_ex.o
+ .debug_line    0x00007a7b      0xce8 build/stm32f4xx_hal_rcc.o
+ .debug_line    0x00008763     0x1596 build/stm32f4xx_hal_rcc_ex.o
+ .debug_line    0x00009cf9      0x805 build/stm32f4xx_hal_gpio.o
+ .debug_line    0x0000a4fe      0xf57 build/stm32f4xx_hal_dma.o
+ .debug_line    0x0000b455      0x94e build/stm32f4xx_hal_cortex.o
+ .debug_line    0x0000bda3      0x68b build/stm32f4xx_hal.o
+ .debug_line    0x0000c42e      0x372 build/system_stm32f4xx.o
+ .debug_line    0x0000c7a0       0x73 build/startup_stm32f446xx.o
 
 .debug_str      0x00000000     0x387b
  .debug_str     0x00000000     0x387b build/main.o
