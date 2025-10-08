@@ -1819,22 +1819,22 @@ LOAD C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
  .debug_line    0x0000c42e      0x372 build/system_stm32f4xx.o
  .debug_line    0x0000c7a0       0x73 build/startup_stm32f446xx.o
 
-.debug_str      0x00000000     0x387b
- .debug_str     0x00000000     0x387b build/main.o
-                               0x1362 (size before relaxing)
- .debug_str     0x0000387b      0x3d4 build/lcd_stm32f4.o
- .debug_str     0x0000387b      0x4fc build/stm32f4xx_it.o
- .debug_str     0x0000387b      0x990 build/stm32f4xx_hal_msp.o
- .debug_str     0x0000387b     0x1733 build/stm32f4xx_hal_tim.o
- .debug_str     0x0000387b      0xf3f build/stm32f4xx_hal_tim_ex.o
- .debug_str     0x0000387b      0x764 build/stm32f4xx_hal_rcc.o
- .debug_str     0x0000387b      0x84b build/stm32f4xx_hal_rcc_ex.o
- .debug_str     0x0000387b      0x539 build/stm32f4xx_hal_gpio.o
- .debug_str     0x0000387b      0x7aa build/stm32f4xx_hal_dma.o
- .debug_str     0x0000387b      0xcea build/stm32f4xx_hal_cortex.o
- .debug_str     0x0000387b      0xbfe build/stm32f4xx_hal.o
- .debug_str     0x0000387b      0x3ce build/system_stm32f4xx.o
- .debug_str     0x0000387b       0xb6 build/startup_stm32f446xx.o
+.debug_str      0x00000000     0x38e0
+ .debug_str     0x00000000     0x38e0 build/main.o
+                               0x1343 (size before relaxing)
+ .debug_str     0x000038e0      0x3d4 build/lcd_stm32f4.o
+ .debug_str     0x000038e0      0x4fc build/stm32f4xx_it.o
+ .debug_str     0x000038e0      0x990 build/stm32f4xx_hal_msp.o
+ .debug_str     0x000038e0     0x1733 build/stm32f4xx_hal_tim.o
+ .debug_str     0x000038e0      0xf3f build/stm32f4xx_hal_tim_ex.o
+ .debug_str     0x000038e0      0x764 build/stm32f4xx_hal_rcc.o
+ .debug_str     0x000038e0      0x84b build/stm32f4xx_hal_rcc_ex.o
+ .debug_str     0x000038e0      0x539 build/stm32f4xx_hal_gpio.o
+ .debug_str     0x000038e0      0x7aa build/stm32f4xx_hal_dma.o
+ .debug_str     0x000038e0      0xcea build/stm32f4xx_hal_cortex.o
+ .debug_str     0x000038e0      0xbfe build/stm32f4xx_hal.o
+ .debug_str     0x000038e0      0x3ce build/system_stm32f4xx.o
+ .debug_str     0x000038e0       0xb6 build/startup_stm32f446xx.o
 
 .debug_frame    0x00000000     0x1c28
  .debug_frame   0x00000000       0xf8 build/main.o

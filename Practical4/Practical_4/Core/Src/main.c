@@ -3,7 +3,7 @@
 3
 4 2. Group Number: 32
 5
-6 3. Members: TRKJON002 MTMAD006
+6 3. Members: TRKJON002 MTMTAD006
 7 */
 
 /* USER CODE BEGIN Header */
